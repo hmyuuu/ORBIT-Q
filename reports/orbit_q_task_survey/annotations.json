@@ -1,0 +1,311 @@
+{
+  "expected_source_commit": "b3b0c08",
+  "framework_names": {
+    "tensorcircuit": "TensorCircuit-NG",
+    "pennylane": "PennyLane",
+    "torchquantum": "TorchQuantum",
+    "mindquantum": "MindQuantum"
+  },
+  "executive_finding": {
+    "text": "ORBIT-Q evaluates agent-framework co-performance on complete scientific workflows: numerical correctness is combined with semantic framework fidelity and submitted-artifact runtime.",
+    "claim_class": "official",
+    "source_ids": ["orbitq-paper", "orbitq-repository"]
+  },
+  "comparison_qualification": {
+    "text": "Framework results measure agent-mediated framework usability and performance, not the best possible expert-written implementation for every framework.",
+    "claim_class": "official",
+    "source_ids": ["orbitq-paper"]
+  },
+  "author_affiliation_caveat": {
+    "text": "The ORBIT-Q authors disclose that they are also the authors of TensorCircuit-NG, the framework used for the expert reference implementations.",
+    "claim_class": "official",
+    "source_ids": ["orbitq-paper"]
+  },
+  "clusters": [
+    {
+      "id": "interfaces",
+      "name": "Tensor-network / circuit interfaces",
+      "task_ids": ["01", "12"],
+      "summary": "External MPS states must connect directly to differentiable circuit computations.",
+      "claim_class": "survey_inference"
+    },
+    {
+      "id": "variational",
+      "name": "Constrained variational state engineering",
+      "task_ids": ["02", "06", "07"],
+      "summary": "Optimization is constrained by entanglement, continuous-time dynamics, or measurement-conditioned control flow.",
+      "claim_class": "survey_inference"
+    },
+    {
+      "id": "nonunitary",
+      "name": "Non-unitary, cooling & open-system workflows",
+      "task_ids": ["03", "04", "05"],
+      "summary": "Differentiation must survive post-selection, Kraus maps, or repeated non-unitary normalization.",
+      "claim_class": "survey_inference"
+    },
+    {
+      "id": "scalability",
+      "name": "Scalability & representation stress tests",
+      "task_ids": ["08", "09", "10"],
+      "summary": "The requested representation—not a dense fallback—is the central computational test.",
+      "claim_class": "survey_inference"
+    },
+    {
+      "id": "topology",
+      "name": "Many-body topology & physical diagnostics",
+      "task_ids": ["11"],
+      "summary": "A low energy alone is insufficient; qutrit semantics and nonlocal string order must also agree.",
+      "claim_class": "survey_inference"
+    }
+  ],
+  "task_annotations": [
+    {
+      "id": "01",
+      "cluster_id": "interfaces",
+      "workflow": "DMRG-MPS input followed by variational circuit refinement",
+      "system_size": "32 qubits",
+      "dominant_workload": "500 Adam updates over a four-layer brickwork correction",
+      "representation": "External MPS input + differentiable circuit tensor network",
+      "differentiability_pressure": "High — gradients cross the MPS/circuit interface",
+      "scaling_pressure": "High — a dense 32-qubit state is not viable",
+      "primary_success_criterion": "A finite 500-step energy history whose refined energy remains consistent with the supplied DMRG reference.",
+      "cross_methods": [
+        {"method": "MPS tangent-space or DMRG refinement", "reference_ids": ["itensor"], "claim_class": "survey_inference"},
+        {"method": "Hybrid tensor-network contraction", "reference_ids": ["hybrid-tn"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "02",
+      "cluster_id": "variational",
+      "workflow": "Energy optimization with a three-checkpoint Rényi-2 profile",
+      "system_size": "12 qubits",
+      "dominant_workload": "500 updates of a 243-parameter ansatz with reduced-density diagnostics",
+      "representation": "Statevector or tensor network with half-chain reduced density matrices",
+      "differentiability_pressure": "High — energy and three entropy penalties share one gradient",
+      "scaling_pressure": "Moderate — repeated partial traces dominate at this size",
+      "primary_success_criterion": "Energy and total loss both decrease, with a correctly recomputed final entropy-profile MSE.",
+      "config_override": {"target_entropies": [0.3, 0.6, 0.8]},
+      "cross_methods": [
+        {"method": "MPS optimization with Schmidt-spectrum penalties", "reference_ids": ["itensor"], "claim_class": "survey_inference"},
+        {"method": "Local-cost variational design", "reference_ids": ["cost-barren"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "03",
+      "cluster_id": "nonunitary",
+      "workflow": "Probability-aware post-selected many-body cooling",
+      "system_size": "12 qubits",
+      "dominant_workload": "300 updates with 60 sequential post-selection events per objective",
+      "representation": "Unnormalized branch state + differentiable event probabilities",
+      "differentiability_pressure": "High — gradients include energy and log branch probability",
+      "scaling_pressure": "High — branch normalization and probability products are numerically fragile",
+      "primary_success_criterion": "Energy and loss decrease while success probability remains consistent with the 60-event mean log probability.",
+      "cross_methods": [
+        {"method": "Parameter-shift gradients for parameterized branch circuits", "reference_ids": ["analytic-gradients"], "claim_class": "survey_inference"},
+        {"method": "MPS trajectory evolution", "reference_ids": ["itensor"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "04",
+      "cluster_id": "nonunitary",
+      "workflow": "Trainable Kraus-channel calibration from multi-circuit data",
+      "system_size": "12 qubits",
+      "dominant_workload": "120 updates over four noisy probes and 52 observables",
+      "representation": "Kraus tensor algebra / mixed-state contraction",
+      "differentiability_pressure": "High — channel probabilities are fitted through noisy circuit expectations",
+      "scaling_pressure": "Moderate — density representations expand faster than pure states",
+      "primary_success_criterion": "Both transition probabilities are recovered within 2e-4 and the fitted channel is trace preserving.",
+      "cross_methods": [
+        {"method": "Liouville-space channel contraction", "reference_ids": ["qulacs"], "claim_class": "survey_inference"},
+        {"method": "Parameter-shift gradients for parameterized circuit expectations", "reference_ids": ["analytic-gradients"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "05",
+      "cluster_id": "nonunitary",
+      "workflow": "Custom non-unitary filter cooling",
+      "system_size": "18 qubits",
+      "dominant_workload": "600 updates through ten normalized exponential-filter layers",
+      "representation": "Differentiable non-unitary state evolution",
+      "differentiability_pressure": "High — every layer includes a state renormalization",
+      "scaling_pressure": "High — an 18-qubit state is repeatedly transformed for 600 steps",
+      "primary_success_criterion": "The energy density decreases to within 0.5 of the exact sparse ground-state density without crossing below it.",
+      "cross_methods": [
+        {"method": "Imaginary-time MPS evolution", "reference_ids": ["itensor"], "claim_class": "survey_inference"},
+        {"method": "Matrix-free exponential filtering", "reference_ids": ["qulacs"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "06",
+      "cluster_id": "variational",
+      "workflow": "Digital-analog hybrid VQE with continuous-time blocks",
+      "system_size": "14 qubits",
+      "dominant_workload": "100 updates through four ODE-controlled analog blocks",
+      "representation": "Differentiable Schrödinger ODE + digital rotations",
+      "differentiability_pressure": "High — time, coupling, detuning, and gates are jointly trained",
+      "scaling_pressure": "High — repeated adaptive ODE solves dominate",
+      "primary_success_criterion": "Energy improves while all learned analog parameters remain in their specified open bounds.",
+      "cross_methods": [
+        {"method": "Krylov matrix-exponential propagation", "reference_ids": ["quspin"], "claim_class": "survey_inference"},
+        {"method": "Parameter-shift gradients for the digital circuit blocks", "reference_ids": ["analytic-gradients"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "07",
+      "cluster_id": "variational",
+      "workflow": "Measurement-feedback VQE over fixed stochastic trajectories",
+      "system_size": "16 qubits (8 data + 8 ancilla)",
+      "dominant_workload": "100 updates over 64 fixed mid-circuit measurement trajectories",
+      "representation": "Trajectory batch with classical branch-dependent feedback",
+      "differentiability_pressure": "High — conditional gates sit inside a trajectory-averaged objective",
+      "scaling_pressure": "High — trajectory count multiplies circuit cost",
+      "primary_success_criterion": "The average energy improves by at least 0.3, reaches at most -8.3, and returns 64 final trajectory energies.",
+      "cross_methods": [
+        {"method": "Parameter-shift gradients for parameterized branch circuits", "reference_ids": ["analytic-gradients"], "claim_class": "survey_inference"},
+        {"method": "Exact branch enumeration for small ancilla sets", "reference_ids": ["qulacs"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "08",
+      "cluster_id": "scalability",
+      "workflow": "7×7 mixed-axis grid tensor-network sampling",
+      "system_size": "49 qubits",
+      "dominant_workload": "8,192 samples from a shallow two-dimensional circuit",
+      "representation": "General 2D tensor-network contraction and sampling",
+      "differentiability_pressure": "None — sampling fidelity is the evaluator target",
+      "scaling_pressure": "Extreme — a 2^49 statevector and 1D reduction are disallowed",
+      "primary_success_criterion": "Returned samples meet shape/binary checks and hidden Z-string error tolerances.",
+      "cross_methods": [
+        {"method": "Hyper-optimized general tensor contraction", "reference_ids": ["hyper-tn"], "claim_class": "survey_inference"},
+        {"method": "Boundary-MPS sampling with explicit error control", "reference_ids": ["itensor"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "09",
+      "cluster_id": "scalability",
+      "workflow": "Random local light-cone optimization",
+      "system_size": "512 qubits",
+      "dominant_workload": "20,000 restart-step updates on two irregular local observables",
+      "representation": "Backward causal cones of 15 and 18 qubits",
+      "differentiability_pressure": "High — every restart optimizes local expectations",
+      "scaling_pressure": "Extreme globally, compact after correct cone extraction",
+      "primary_success_criterion": "Mean objective improves and the best final local objective reaches at least 1.0.",
+      "cross_methods": [
+        {"method": "Causal-cone circuit reduction", "reference_ids": ["cost-barren"], "claim_class": "survey_inference"},
+        {"method": "Parameter-shift or adjoint gradients on reduced circuits", "reference_ids": ["analytic-gradients"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "10",
+      "cluster_id": "scalability",
+      "workflow": "VQE with an 18-qubit controlled-Z hyperedge",
+      "system_size": "22 qubits",
+      "dominant_workload": "200 updates with a high-arity diagonal operation",
+      "representation": "Matrix-free state update or structured diagonal tensor",
+      "differentiability_pressure": "High — optimization crosses the 18-body operation",
+      "scaling_pressure": "Extreme — a dense 2^18 × 2^18 gate is forbidden",
+      "primary_success_criterion": "Energy improves and finishes within 0.25 density units of the sparse exact reference.",
+      "cross_methods": [
+        {"method": "In-place diagonal phase application", "reference_ids": ["qulacs"], "claim_class": "survey_inference"},
+        {"method": "Tensor-factorized hyperedge contraction", "reference_ids": ["hyper-tn"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "11",
+      "cluster_id": "topology",
+      "workflow": "Spin-1 Haldane-chain VQE with string-order verification",
+      "system_size": "12 qutrit sites",
+      "dominant_workload": "500 updates of 290 parameters plus three nonlocal correlators",
+      "representation": "Local-dimension-3 state/tensor network",
+      "differentiability_pressure": "High — qutrit rotations and two-site exponentials are trained",
+      "scaling_pressure": "High — Hilbert dimension is 3^12 rather than 2^12",
+      "primary_success_criterion": "Energy is close to exact and the three string correlators have mean absolute error at most 0.12.",
+      "cross_methods": [
+        {"method": "Spin-1 MPS/DMRG with string correlators", "reference_ids": ["itensor"], "claim_class": "survey_inference"},
+        {"method": "Higher-spin exact diagonalization", "reference_ids": ["quspin"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    },
+    {
+      "id": "12",
+      "cluster_id": "interfaces",
+      "workflow": "Variational circuit-to-MPS overlap optimization",
+      "system_size": "32 qubits",
+      "dominant_workload": "5,000 updates of 465 SU(4) parameters",
+      "representation": "Direct MPS-bra / circuit-ket tensor contraction",
+      "differentiability_pressure": "High — fidelity gradients traverse a mixed representation",
+      "scaling_pressure": "High — dense target conversion is explicitly avoided",
+      "primary_success_criterion": "Fidelity improves to at least 0.85 with valid loss, parameter, and overlap-phase outputs.",
+      "cross_methods": [
+        {"method": "MPS-circuit overlap contraction", "reference_ids": ["itensor", "hybrid-tn"], "claim_class": "survey_inference"},
+        {"method": "Environment-tensor gradient caching", "reference_ids": ["hyper-tn"], "claim_class": "survey_inference"}
+      ],
+      "claim_class": "official"
+    }
+  ],
+  "failure_taxonomy": [
+    {"id": "execution", "name": "Execution failure", "description": "Timeouts, missing artifacts, exceptions, or numerical evaluator failures.", "claim_class": "survey_inference"},
+    {"id": "bypass", "name": "Framework bypass", "description": "A custom simulator or contraction replaces the required framework-native computation.", "claim_class": "survey_inference"},
+    {"id": "surrogate", "name": "Surrogate physics", "description": "A cheaper objective, reduced ansatz, or omitted physical component passes some surface checks.", "claim_class": "survey_inference"},
+    {"id": "primitive", "name": "Missing primitive", "description": "The agent cannot find or compose a native representation, gate, or control-flow feature.", "claim_class": "survey_inference"},
+    {"id": "scaling", "name": "Scaling failure", "description": "Contraction, differentiation, memory, or trajectory costs make the chosen representation impractical.", "claim_class": "survey_inference"},
+    {"id": "product", "name": "Product / orchestration failure", "description": "A refusal, tool policy, or agent workflow prevents a valid artifact.", "claim_class": "survey_inference"}
+  ],
+  "cross_method_map": [
+    {"cluster_id": "interfaces", "methods": ["MPS/MPO optimization", "direct mixed-network contraction", "cached environment tensors"], "reference_ids": ["itensor", "hybrid-tn", "hyper-tn"], "claim_class": "survey_inference"},
+    {"cluster_id": "variational", "methods": ["parameter-shift gradients", "continuous-time Krylov evolution", "higher-spin Hamiltonian tooling"], "reference_ids": ["analytic-gradients", "quspin"], "claim_class": "survey_inference"},
+    {"cluster_id": "nonunitary", "methods": ["quantum trajectories", "Liouville-space Kraus contraction", "imaginary-time MPS evolution"], "reference_ids": ["itensor", "qulacs"], "claim_class": "survey_inference"},
+    {"cluster_id": "scalability", "methods": ["general contraction-path search", "causal-cone reduction", "matrix-free diagonal updates"], "reference_ids": ["hyper-tn", "qulacs"], "claim_class": "survey_inference"},
+    {"cluster_id": "topology", "methods": ["spin-1 MPS/DMRG", "higher-spin exact diagonalization", "string-order observables"], "reference_ids": ["itensor", "quspin"], "claim_class": "survey_inference"}
+  ],
+  "related_benchmarks": [
+    {"name": "Qiskit HumanEval", "scope": "Executable Qiskit function synthesis", "contrast": "Over 100 SDK coding tasks; ORBIT-Q emphasizes complete research workflows and semantic framework fidelity.", "reference_id": "qiskit-humaneval", "claim_class": "literature"},
+    {"name": "QCoder Benchmark", "scope": "Quantum contest problems with simulator feedback", "contrast": "Adds hardware-simulator feedback and contest submissions; ORBIT-Q adds framework-axis and artifact-runtime analysis.", "reference_id": "qcoder", "claim_class": "literature"},
+    {"name": "QHackBench", "scope": "PennyLane hackathon challenge generation", "contrast": "Focuses on executable challenge solutions and prompting; ORBIT-Q spans four differentiable frameworks.", "reference_id": "qhackbench", "claim_class": "literature"},
+    {"name": "QuanBench+", "scope": "Aligned multi-framework quantum code generation", "contrast": "Compares aligned Qiskit, PennyLane, and Cirq tasks; ORBIT-Q targets long scientific workflows under agent execution.", "reference_id": "quanbench-plus", "claim_class": "literature"},
+    {"name": "SciCode", "scope": "Scientist-curated research coding", "contrast": "Broad natural-science code synthesis; ORBIT-Q is narrower but adds quantum framework-native semantic review.", "reference_id": "scicode", "claim_class": "literature"},
+    {"name": "ScienceAgentBench", "scope": "Data-driven scientific workflow programs", "contrast": "Evaluates agents on publication-derived tasks; ORBIT-Q adds framework co-performance and expert runtime references.", "reference_id": "scienceagentbench", "claim_class": "literature"},
+    {"name": "AInsteinBench", "scope": "Coding agents in scientific repositories", "contrast": "Uses maintainer-authored repository tasks; ORBIT-Q uses fixed quantum workflows and specialized physics evaluators.", "reference_id": "ainsteinbench", "claim_class": "literature"}
+  ],
+  "roadmap": [
+    {"priority": 1, "text": "Add rolling or private tasks and stronger runtime provenance.", "claim_class": "survey_inference"},
+    {"priority": 2, "text": "Use blinded or multi-auditor semantic review.", "claim_class": "survey_inference"},
+    {"priority": 3, "text": "Build expert baselines for frameworks beyond TensorCircuit-NG.", "claim_class": "survey_inference"},
+    {"priority": 4, "text": "Broaden task families, including QEC simulation and decoding.", "claim_class": "survey_inference", "reference_ids": ["stim"]},
+    {"priority": 5, "text": "Record gradient and memory-complexity diagnostics for scalability claims.", "claim_class": "survey_inference", "reference_ids": ["barren-plateaus", "cost-barren"]}
+  ],
+  "sources": [
+    {"id": "orbitq-repository", "title": "ORBIT-Q repository snapshot", "url": "https://github.com/sxzgroup/ORBIT-Q/tree/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe", "evidence_class": "official"},
+    {"id": "orbitq-results", "title": "ORBIT-Q published result table", "url": "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/docs/app.js", "evidence_class": "official"},
+    {"id": "orbitq-paper", "title": "ORBIT-Q paper", "url": "https://arxiv.org/abs/2607.03105", "evidence_class": "official"}
+  ],
+  "references": [
+    {"id": "orbitq-paper", "title": "ORBIT-Q: Dual-axis benchmarking of autonomous agents in scientific quantum programming", "url": "https://arxiv.org/abs/2607.03105", "arxiv": "2607.03105", "evidence_class": "official"},
+    {"id": "qiskit-humaneval", "title": "Qiskit HumanEval: An Evaluation Benchmark For Quantum Code Generative Models", "url": "https://arxiv.org/abs/2406.14712", "arxiv": "2406.14712", "evidence_class": "literature"},
+    {"id": "qcoder", "title": "QCoder Benchmark: Bridging Language Generation and Quantum Hardware through Simulator-Based Feedback", "url": "https://aclanthology.org/2025.inlg-main.43/", "doi": "10.18653/v1/2025.inlg-main.43", "evidence_class": "literature"},
+    {"id": "qhackbench", "title": "QHackBench: Benchmarking Large Language Models for Quantum Code Generation Using PennyLane Hackathon Challenges", "url": "https://arxiv.org/abs/2506.20008", "arxiv": "2506.20008", "evidence_class": "literature"},
+    {"id": "quanbench-plus", "title": "QuanBench+: A Unified Multi-Framework Benchmark for LLM-Based Quantum Code Generation", "url": "https://arxiv.org/abs/2604.08570", "arxiv": "2604.08570", "evidence_class": "literature"},
+    {"id": "scicode", "title": "SciCode: A Research Coding Benchmark Curated by Scientists", "url": "https://arxiv.org/abs/2407.13168", "arxiv": "2407.13168", "evidence_class": "literature"},
+    {"id": "scienceagentbench", "title": "ScienceAgentBench: Toward Rigorous Assessment of Language Agents for Data-Driven Scientific Discovery", "url": "https://arxiv.org/abs/2410.05080", "arxiv": "2410.05080", "evidence_class": "literature"},
+    {"id": "ainsteinbench", "title": "AInsteinBench: Benchmarking Coding Agents on Scientific Repositories", "url": "https://arxiv.org/abs/2512.21373", "arxiv": "2512.21373", "evidence_class": "literature"},
+    {"id": "hybrid-tn", "title": "Quantum simulation with hybrid tensor networks", "url": "https://arxiv.org/abs/2007.00958", "arxiv": "2007.00958", "evidence_class": "literature"},
+    {"id": "itensor", "title": "The ITensor Software Library for Tensor Network Calculations", "url": "https://arxiv.org/abs/2007.14822", "arxiv": "2007.14822", "evidence_class": "literature"},
+    {"id": "hyper-tn", "title": "Hyper-optimized tensor network contraction", "url": "https://arxiv.org/abs/2002.01935", "arxiv": "2002.01935", "evidence_class": "literature"},
+    {"id": "barren-plateaus", "title": "Barren plateaus in quantum neural network training landscapes", "url": "https://arxiv.org/abs/1803.11173", "arxiv": "1803.11173", "evidence_class": "literature"},
+    {"id": "cost-barren", "title": "Cost Function Dependent Barren Plateaus in Shallow Parametrized Quantum Circuits", "url": "https://arxiv.org/abs/2001.00550", "arxiv": "2001.00550", "evidence_class": "literature"},
+    {"id": "analytic-gradients", "title": "Evaluating analytic gradients on quantum hardware", "url": "https://arxiv.org/abs/1811.11184", "arxiv": "1811.11184", "evidence_class": "literature"},
+    {"id": "qulacs", "title": "Qulacs: a fast and versatile quantum circuit simulator for research purpose", "url": "https://arxiv.org/abs/2011.13524", "arxiv": "2011.13524", "doi": "10.22331/q-2021-10-06-559", "evidence_class": "literature"},
+    {"id": "quspin", "title": "QuSpin: a Python Package for Dynamics and Exact Diagonalisation of Quantum Many Body Systems. Part II", "url": "https://arxiv.org/abs/1804.06782", "arxiv": "1804.06782", "evidence_class": "literature"},
+    {"id": "stim", "title": "Stim: a fast stabilizer circuit simulator", "url": "https://arxiv.org/abs/2103.02202", "arxiv": "2103.02202", "doi": "10.22331/q-2021-07-06-497", "evidence_class": "literature"}
+  ]
+}

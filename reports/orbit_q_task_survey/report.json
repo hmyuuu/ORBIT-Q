@@ -1,0 +1,441 @@
+{
+  "title": "ORBIT-Q Task Atlas",
+  "eyebrow": "Evidence-backed survey · 12 research workflows",
+  "url": "https://github.com/sxzgroup/ORBIT-Q",
+  "lede": "What each benchmark task actually tests, which representation makes it tractable, and where agent-framework workflows fail.",
+  "sections": [
+    {
+      "title": "Executive finding",
+      "blocks": [
+        {
+          "kind": "verdict",
+          "status": "good",
+          "label": "Agent-framework co-performance",
+          "why": "ORBIT-Q evaluates agent-framework co-performance on complete scientific workflows: numerical correctness is combined with semantic framework fidelity and submitted-artifact runtime."
+        },
+        {
+          "kind": "kv",
+          "pairs": [
+            [
+              "Source snapshot",
+              "b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe"
+            ],
+            [
+              "Task coverage",
+              "12 / 12"
+            ],
+            [
+              "Framework validity",
+              "TensorCircuit-NG 10/12 · PennyLane 8/12 · TorchQuantum 4/12 · MindQuantum 4/12"
+            ],
+            [
+              "Submitted / expert runtime",
+              "1.13×–21.81× the expert reference across 26 valid published timing pairs [Survey inference]"
+            ],
+            [
+              "Evidence",
+              "Official"
+            ]
+          ]
+        },
+        {
+          "kind": "note",
+          "label": "Interpretation boundary",
+          "text": "Framework results measure agent-mediated framework usability and performance, not the best possible expert-written implementation for every framework."
+        },
+        {
+          "kind": "note",
+          "label": "Competing-interest context",
+          "text": "The ORBIT-Q authors disclose that they are also the authors of TensorCircuit-NG, the framework used for the expert reference implementations.",
+          "style": "info"
+        }
+      ]
+    },
+    {
+      "title": "Task landscape",
+      "blocks": [
+        {
+          "kind": "table",
+          "columns": [
+            "Task",
+            "System",
+            "Required representation",
+            "Primary evaluator contract",
+            "TC · PL · TQ · MQ",
+            "Source"
+          ],
+          "rows": [
+            [
+              "01 · DMRG-MPS Input With Variational Circuit Refinement",
+              "32 qubits",
+              "External MPS input + differentiable circuit tensor network",
+              "A finite 500-step energy history whose refined energy remains consistent with the supplied DMRG reference.",
+              "× × × ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-01/instruction.md"
+            ],
+            [
+              "02 · Entanglement-Profile-Constrained VQE",
+              "12 qubits",
+              "Statevector or tensor network with half-chain reduced density matrices",
+              "Energy and total loss both decrease, with a correctly recomputed final entropy-profile MSE.",
+              "✓ ✓ ✓ ✓",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-02/instruction.md"
+            ],
+            [
+              "03 · Probability-Aware Post-Selected Many-Body Cooling",
+              "12 qubits",
+              "Unnormalized branch state + differentiable event probabilities",
+              "Energy and loss decrease while success probability remains consistent with the 60-event mean log probability.",
+              "✓ ✓ ✓ ✓",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-03/instruction.md"
+            ],
+            [
+              "04 · Trainable Kraus Noise Calibration From Multi-Circuit Data",
+              "12 qubits",
+              "Kraus tensor algebra / mixed-state contraction",
+              "Both transition probabilities are recovered within 2e-4 and the fitted channel is trace preserving.",
+              "✓ × × ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-04/instruction.md"
+            ],
+            [
+              "05 · Custom Non-Unitary Gate Cooling",
+              "18 qubits",
+              "Differentiable non-unitary state evolution",
+              "The energy density decreases to within 0.5 of the exact sparse ground-state density without crossing below it.",
+              "✓ ✓ ✓ ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-05/instruction.md"
+            ],
+            [
+              "06 · Digital-Analog Hybrid VQE With Trainable Analog Blocks",
+              "14 qubits",
+              "Differentiable Schrödinger ODE + digital rotations",
+              "Energy improves while all learned analog parameters remain in their specified open bounds.",
+              "✓ ✓ ✓ ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-06/instruction.md"
+            ],
+            [
+              "07 · 16-Qubit Measurement-Feedback VQE",
+              "16 qubits (8 data + 8 ancilla)",
+              "Trajectory batch with classical branch-dependent feedback",
+              "The average energy improves by at least 0.3, reaches at most -8.3, and returns 64 final trajectory energies.",
+              "✓ × × ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-07/instruction.md"
+            ],
+            [
+              "08 · 7x7 Mixed-Axis Grid Tensor-Network Sampling",
+              "49 qubits",
+              "General 2D tensor-network contraction and sampling",
+              "Returned samples meet shape/binary checks and hidden Z-string error tolerances.",
+              "× ✓ × ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-08/instruction.md"
+            ],
+            [
+              "09 · Random Local Light-Cone Optimization",
+              "512 qubits",
+              "Backward causal cones of 15 and 18 qubits",
+              "Mean objective improves and the best final local objective reaches at least 1.0.",
+              "✓ ✓ × ✓",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-09/instruction.md"
+            ],
+            [
+              "10 · 22-Qubit VQE With an 18-Qubit Controlled-Z Hyperedge",
+              "22 qubits",
+              "Matrix-free state update or structured diagonal tensor",
+              "Energy improves and finishes within 0.25 density units of the sparse exact reference.",
+              "✓ ✓ × ✓",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-10/instruction.md"
+            ],
+            [
+              "11 · Spin-1 Haldane-Chain VQE With String-Order Verification",
+              "12 qutrit sites",
+              "Local-dimension-3 state/tensor network",
+              "Energy is close to exact and the three string correlators have mean absolute error at most 0.12.",
+              "✓ ✓ × ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-11/instruction.md"
+            ],
+            [
+              "12 · Variational Circuit to MPS Overlap Optimization",
+              "32 qubits",
+              "Direct MPS-bra / circuit-ket tensor contraction",
+              "Fidelity improves to at least 0.85 with valid loss, parameter, and overlap-phase outputs.",
+              "✓ × × ×",
+              "https://github.com/sxzgroup/ORBIT-Q/blob/b3b0c08f0bbc82470da5cbe39a6ba31e39f6a7fe/tasks/challenge-12/instruction.md"
+            ]
+          ],
+          "widths": [
+            "17%",
+            "9%",
+            "20%",
+            "32%",
+            "8%",
+            "14%"
+          ]
+        },
+        {
+          "kind": "note",
+          "label": "Reading the pattern",
+          "text": "Symbols follow TensorCircuit-NG, PennyLane, TorchQuantum, and MindQuantum. ✓ and × redundantly encode pass/fail without relying on color."
+        }
+      ]
+    },
+    {
+      "title": "Interpreted task clusters",
+      "blocks": [
+        {
+          "kind": "verdict",
+          "status": "warn",
+          "label": "Survey taxonomy",
+          "why": "ORBIT-Q defines 12 workflows; these five clusters are an analytical organization, not an official taxonomy."
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Cluster",
+            "Tasks",
+            "Interpretation",
+            "Evidence"
+          ],
+          "rows": [
+            [
+              "Tensor-network / circuit interfaces",
+              "01, 12",
+              "External MPS states must connect directly to differentiable circuit computations.",
+              "Survey inference"
+            ],
+            [
+              "Constrained variational state engineering",
+              "02, 06, 07",
+              "Optimization is constrained by entanglement, continuous-time dynamics, or measurement-conditioned control flow.",
+              "Survey inference"
+            ],
+            [
+              "Non-unitary, cooling & open-system workflows",
+              "03, 04, 05",
+              "Differentiation must survive post-selection, Kraus maps, or repeated non-unitary normalization.",
+              "Survey inference"
+            ],
+            [
+              "Scalability & representation stress tests",
+              "08, 09, 10",
+              "The requested representation—not a dense fallback—is the central computational test.",
+              "Survey inference"
+            ],
+            [
+              "Many-body topology & physical diagnostics",
+              "11",
+              "A low energy alone is insufficient; qutrit semantics and nonlocal string order must also agree.",
+              "Survey inference"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Failure anatomy",
+      "blocks": [
+        {
+          "kind": "figures",
+          "items": [
+            {
+              "src": "framework_heatmap.png",
+              "caption": "Published framework-axis validity for the fixed Codex agent. Blue ✓ cells passed the full validity pipeline; orange × cells did not. This is agent-mediated evidence, not a proof of absolute framework impossibility."
+            }
+          ]
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Failure class",
+            "Operational meaning",
+            "Evidence"
+          ],
+          "rows": [
+            [
+              "Execution failure",
+              "Timeouts, missing artifacts, exceptions, or numerical evaluator failures.",
+              "Survey inference"
+            ],
+            [
+              "Framework bypass",
+              "A custom simulator or contraction replaces the required framework-native computation.",
+              "Survey inference"
+            ],
+            [
+              "Surrogate physics",
+              "A cheaper objective, reduced ansatz, or omitted physical component passes some surface checks.",
+              "Survey inference"
+            ],
+            [
+              "Missing primitive",
+              "The agent cannot find or compose a native representation, gate, or control-flow feature.",
+              "Survey inference"
+            ],
+            [
+              "Scaling failure",
+              "Contraction, differentiation, memory, or trajectory costs make the chosen representation impractical.",
+              "Survey inference"
+            ],
+            [
+              "Product / orchestration failure",
+              "A refusal, tool policy, or agent workflow prevents a valid artifact.",
+              "Survey inference"
+            ]
+          ]
+        },
+        {
+          "kind": "note",
+          "label": "Qualification",
+          "text": "Framework results measure agent-mediated framework usability and performance, not the best possible expert-written implementation for every framework."
+        }
+      ]
+    },
+    {
+      "title": "Cross-method map",
+      "blocks": [
+        {
+          "kind": "note",
+          "label": "Policy distinction",
+          "text": "A method can solve the physics without satisfying ORBIT-Q's framework-native policy. External solvers are alternatives or references, not automatically valid submissions."
+        },
+        {
+          "kind": "table",
+          "columns": [
+            "Survey cluster",
+            "Credible alternative methods",
+            "References",
+            "Evidence"
+          ],
+          "rows": [
+            [
+              "Tensor-network / circuit interfaces",
+              "MPS/MPO optimization; direct mixed-network contraction; cached environment tensors",
+              "itensor, hybrid-tn, hyper-tn",
+              "Survey inference"
+            ],
+            [
+              "Constrained variational state engineering",
+              "parameter-shift gradients; continuous-time Krylov evolution; higher-spin Hamiltonian tooling",
+              "analytic-gradients, quspin",
+              "Survey inference"
+            ],
+            [
+              "Non-unitary, cooling & open-system workflows",
+              "quantum trajectories; Liouville-space Kraus contraction; imaginary-time MPS evolution",
+              "itensor, qulacs",
+              "Survey inference"
+            ],
+            [
+              "Scalability & representation stress tests",
+              "general contraction-path search; causal-cone reduction; matrix-free diagonal updates",
+              "hyper-tn, qulacs",
+              "Survey inference"
+            ],
+            [
+              "Many-body topology & physical diagnostics",
+              "spin-1 MPS/DMRG; higher-spin exact diagonalization; string-order observables",
+              "itensor, quspin",
+              "Survey inference"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Benchmark position and roadmap",
+      "blocks": [
+        {
+          "kind": "table",
+          "columns": [
+            "Benchmark",
+            "Scope",
+            "Contrast with ORBIT-Q",
+            "Evidence"
+          ],
+          "rows": [
+            [
+              "Qiskit HumanEval",
+              "Executable Qiskit function synthesis",
+              "Over 100 SDK coding tasks; ORBIT-Q emphasizes complete research workflows and semantic framework fidelity.",
+              "Literature"
+            ],
+            [
+              "QCoder Benchmark",
+              "Quantum contest problems with simulator feedback",
+              "Adds hardware-simulator feedback and contest submissions; ORBIT-Q adds framework-axis and artifact-runtime analysis.",
+              "Literature"
+            ],
+            [
+              "QHackBench",
+              "PennyLane hackathon challenge generation",
+              "Focuses on executable challenge solutions and prompting; ORBIT-Q spans four differentiable frameworks.",
+              "Literature"
+            ],
+            [
+              "QuanBench+",
+              "Aligned multi-framework quantum code generation",
+              "Compares aligned Qiskit, PennyLane, and Cirq tasks; ORBIT-Q targets long scientific workflows under agent execution.",
+              "Literature"
+            ],
+            [
+              "SciCode",
+              "Scientist-curated research coding",
+              "Broad natural-science code synthesis; ORBIT-Q is narrower but adds quantum framework-native semantic review.",
+              "Literature"
+            ],
+            [
+              "ScienceAgentBench",
+              "Data-driven scientific workflow programs",
+              "Evaluates agents on publication-derived tasks; ORBIT-Q adds framework co-performance and expert runtime references.",
+              "Literature"
+            ],
+            [
+              "AInsteinBench",
+              "Coding agents in scientific repositories",
+              "Uses maintainer-authored repository tasks; ORBIT-Q uses fixed quantum workflows and specialized physics evaluators.",
+              "Literature"
+            ]
+          ]
+        },
+        {
+          "kind": "list",
+          "title": "Prioritized roadmap · Survey inference",
+          "items": [
+            "1. Add rolling or private tasks and stronger runtime provenance.",
+            "2. Use blinded or multi-auditor semantic review.",
+            "3. Build expert baselines for frameworks beyond TensorCircuit-NG.",
+            "4. Broaden task families, including QEC simulation and decoding.",
+            "5. Record gradient and memory-complexity diagnostics for scalability claims."
+          ]
+        },
+        {
+          "kind": "card",
+          "title": "Citations and provenance · 17 references",
+          "blocks": [
+            {
+              "kind": "list",
+              "items": [
+                "[Official] ORBIT-Q: Dual-axis benchmarking of autonomous agents in scientific quantum programming — https://arxiv.org/abs/2607.03105",
+                "[Literature] Qiskit HumanEval: An Evaluation Benchmark For Quantum Code Generative Models — https://arxiv.org/abs/2406.14712",
+                "[Literature] QCoder Benchmark: Bridging Language Generation and Quantum Hardware through Simulator-Based Feedback — https://aclanthology.org/2025.inlg-main.43/",
+                "[Literature] QHackBench: Benchmarking Large Language Models for Quantum Code Generation Using PennyLane Hackathon Challenges — https://arxiv.org/abs/2506.20008",
+                "[Literature] QuanBench+: A Unified Multi-Framework Benchmark for LLM-Based Quantum Code Generation — https://arxiv.org/abs/2604.08570",
+                "[Literature] SciCode: A Research Coding Benchmark Curated by Scientists — https://arxiv.org/abs/2407.13168",
+                "[Literature] ScienceAgentBench: Toward Rigorous Assessment of Language Agents for Data-Driven Scientific Discovery — https://arxiv.org/abs/2410.05080",
+                "[Literature] AInsteinBench: Benchmarking Coding Agents on Scientific Repositories — https://arxiv.org/abs/2512.21373",
+                "[Literature] Quantum simulation with hybrid tensor networks — https://arxiv.org/abs/2007.00958",
+                "[Literature] The ITensor Software Library for Tensor Network Calculations — https://arxiv.org/abs/2007.14822",
+                "[Literature] Hyper-optimized tensor network contraction — https://arxiv.org/abs/2002.01935",
+                "[Literature] Barren plateaus in quantum neural network training landscapes — https://arxiv.org/abs/1803.11173",
+                "[Literature] Cost Function Dependent Barren Plateaus in Shallow Parametrized Quantum Circuits — https://arxiv.org/abs/2001.00550",
+                "[Literature] Evaluating analytic gradients on quantum hardware — https://arxiv.org/abs/1811.11184",
+                "[Literature] Qulacs: a fast and versatile quantum circuit simulator for research purpose — https://arxiv.org/abs/2011.13524",
+                "[Literature] QuSpin: a Python Package for Dynamics and Exact Diagonalisation of Quantum Many Body Systems. Part II — https://arxiv.org/abs/1804.06782",
+                "[Literature] Stim: a fast stabilizer circuit simulator — https://arxiv.org/abs/2103.02202"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
