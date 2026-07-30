@@ -18,6 +18,7 @@ SOLVER_AGENT_IMPORTS = {
     "codex": "harbor.agents.installed.codex:Codex",
     "codex-para": "adapters.codex_para:CodexPara",
     "claude-code": "adapters.claude_para:ClaudePara",
+    "kimi-code": "adapters.kimi_code:KimiCode",
 }
 
 
@@ -64,6 +65,20 @@ def env_value(*names: str) -> str | None:
         if value:
             return value
     return None
+
+
+def string_list(value: Any) -> list[str]:
+    if value is None:
+        return []
+    raw_values = value if isinstance(value, (list, tuple)) else [value]
+    items: list[str] = []
+    for raw_value in raw_values:
+        items.extend(
+            item
+            for item in (part.strip() for part in str(raw_value).split(","))
+            if item
+        )
+    return items
 
 
 def parse_bool(value: Any, *, default: bool | None = None) -> bool | None:
@@ -179,8 +194,8 @@ def parse_args() -> argparse.Namespace:
         "--solver-reasoning-effort",
         default=None,
         help=(
-            "Agent reasoning effort kwarg. For claude-code, defaults to max; "
-            "Harbor's current ClaudeCode adapter accepts low/medium/high/xhigh/max."
+            "Agent reasoning effort kwarg. Defaults to max for claude-code "
+            "and high for kimi-code."
         ),
     )
     parser.add_argument(
@@ -194,6 +209,49 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=None,
         help="Harbor concurrency.",
+    )
+    parser.add_argument(
+        "-r",
+        "--max-retries",
+        type=int,
+        default=None,
+        help="Maximum Harbor trial retries for classified infrastructure errors.",
+    )
+    parser.add_argument(
+        "--retry-include",
+        action="append",
+        default=None,
+        help="Exception type eligible for retry; repeat or comma-separate values.",
+    )
+    parser.add_argument(
+        "--retry-exclude",
+        action="append",
+        default=None,
+        help="Exception type excluded from retry; repeat or comma-separate values.",
+    )
+    parser.add_argument(
+        "--cpus",
+        choices=("auto", "limit", "request", "guarantee", "ignore"),
+        default=None,
+        help="Harbor CPU enforcement policy.",
+    )
+    parser.add_argument(
+        "--memory",
+        choices=("auto", "limit", "request", "guarantee", "ignore"),
+        default=None,
+        help="Harbor memory enforcement policy.",
+    )
+    parser.add_argument(
+        "--override-cpus",
+        type=int,
+        default=None,
+        help="Override the task CPU count for this run without modifying task.toml.",
+    )
+    parser.add_argument(
+        "--override-memory-mb",
+        type=int,
+        default=None,
+        help="Override task memory in MB for this run without modifying task.toml.",
     )
     parser.add_argument(
         "--jobs-dir",
@@ -231,6 +289,15 @@ def parse_args() -> argparse.Namespace:
         help="Upload ~/.codex/auth.json instead of relying on OPENAI_API_KEY.",
     )
     parser.add_argument(
+        "--kimi-code-home-path",
+        type=Path,
+        default=None,
+        help=(
+            "Host Kimi Code home containing config.toml and credentials/. "
+            "Defaults to KIMI_CODE_HOME or ~/.kimi-code."
+        ),
+    )
+    parser.add_argument(
         "--yes",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -249,6 +316,8 @@ def challenge_name(raw: str) -> str:
 def resolve_solver_model(solver_agent: str, explicit_model: str | None) -> str:
     if explicit_model:
         return explicit_model
+    if solver_agent == "kimi-code":
+        return "kimi-code/k3"
     if solver_agent == "claude-code":
         model = os.environ.get("ANTHROPIC_MODEL") or os.environ.get(
             "ANTHROPIC_DEFAULT_OPUS_MODEL"
@@ -260,6 +329,25 @@ def resolve_solver_model(solver_agent: str, explicit_model: str | None) -> str:
             )
         return model
     return "gpt-5"
+
+
+def default_solver_reasoning_effort(solver_agent: str) -> str | None:
+    if solver_agent == "claude-code":
+        return "max"
+    if solver_agent == "kimi-code":
+        return "high"
+    return None
+
+
+def validate_solver_concurrency(solver_agent: str, n_concurrent: int) -> None:
+    if n_concurrent < 1:
+        raise ValueError("--n-concurrent must be at least 1")
+    if solver_agent == "kimi-code" and n_concurrent != 1:
+        raise ValueError(
+            "Kimi Code requires --n-concurrent 1 because its OAuth provider "
+            "rotates refresh tokens and the adapter synchronizes refreshed "
+            "credentials back to the host login."
+        )
 
 
 def main() -> int:
@@ -318,11 +406,10 @@ def main() -> int:
             f"{', '.join(sorted(SOLVER_AGENT_IMPORTS))}"
         )
 
-    configured_model = first_value(
-        args.model,
-        env_value("MODEL_NAME", "MODEL"),
-        config_get(config, "codex", "model"),
-    )
+    configured_model = first_value(args.model, env_value("MODEL_NAME", "MODEL"))
+    if configured_model is None:
+        model_section = "kimi" if solver_agent == "kimi-code" else "codex"
+        configured_model = config_get(config, model_section, "model")
     solver_model = resolve_solver_model(
         solver_agent, str(configured_model) if configured_model is not None else None
     )
@@ -344,11 +431,15 @@ def main() -> int:
     )
     solver_reasoning_effort = first_value(
         args.solver_reasoning_effort,
-        env_value("SOLVER_REASONING_EFFORT", "CLAUDE_CODE_EFFORT_LEVEL"),
+        env_value(
+            "SOLVER_REASONING_EFFORT",
+            "CLAUDE_CODE_EFFORT_LEVEL",
+            "KIMI_CODE_REASONING_EFFORT",
+        ),
         config_get(config, "run", "solver_reasoning_effort"),
     )
-    if solver_agent == "claude-code" and not solver_reasoning_effort:
-        solver_reasoning_effort = "max"
+    if not solver_reasoning_effort:
+        solver_reasoning_effort = default_solver_reasoning_effort(solver_agent)
 
     n_concurrent = int(
         first_value(
@@ -357,6 +448,63 @@ def main() -> int:
             config_get(config, "harbor", "n_concurrent"),
             1,
         )
+    )
+    validate_solver_concurrency(solver_agent, n_concurrent)
+    max_retries = int(
+        first_value(
+            args.max_retries,
+            env_value("HARBOR_MAX_RETRIES"),
+            config_get(config, "harbor", "max_retries"),
+            0,
+        )
+    )
+    if max_retries < 0:
+        raise ValueError("--max-retries must be non-negative")
+    retry_include = string_list(
+        first_value(
+            args.retry_include,
+            env_value("HARBOR_RETRY_INCLUDE"),
+            config_get(config, "harbor", "retry_include"),
+        )
+    )
+    retry_exclude = string_list(
+        first_value(
+            args.retry_exclude,
+            env_value("HARBOR_RETRY_EXCLUDE"),
+            config_get(config, "harbor", "retry_exclude"),
+        )
+    )
+    override_cpus_value = first_value(
+        args.override_cpus,
+        env_value("HARBOR_OVERRIDE_CPUS"),
+        config_get(config, "harbor", "override_cpus"),
+    )
+    override_cpus = (
+        int(override_cpus_value) if override_cpus_value is not None else None
+    )
+    override_memory_value = first_value(
+        args.override_memory_mb,
+        env_value("HARBOR_OVERRIDE_MEMORY_MB"),
+        config_get(config, "harbor", "override_memory_mb"),
+    )
+    override_memory_mb = (
+        int(override_memory_value) if override_memory_value is not None else None
+    )
+    if override_cpus is not None and override_cpus < 1:
+        raise ValueError("--override-cpus must be at least 1")
+    if override_memory_mb is not None and override_memory_mb < 1:
+        raise ValueError("--override-memory-mb must be at least 1")
+    cpu_policy = first_value(
+        args.cpus,
+        env_value("HARBOR_CPU_POLICY"),
+        config_get(config, "harbor", "cpu_policy"),
+        "limit" if override_cpus is not None else None,
+    )
+    memory_policy = first_value(
+        args.memory,
+        env_value("HARBOR_MEMORY_POLICY"),
+        config_get(config, "harbor", "memory_policy"),
+        "limit" if override_memory_mb is not None else None,
     )
     jobs_dir = resolve_path(
         first_value(
@@ -415,6 +563,21 @@ def main() -> int:
         )
     )
     env["CODEX_FORCE_AUTH_JSON"] = "true" if codex_force_auth_json else "false"
+    kimi_code_home_path = resolve_path(
+        first_value(
+            args.kimi_code_home_path,
+            env_value("KIMI_CODE_HOME"),
+            config_get(config, "kimi", "home_path"),
+            Path.home() / ".kimi-code",
+        )
+    )
+    if solver_agent == "kimi-code":
+        assert kimi_code_home_path is not None
+        if not (kimi_code_home_path / "config.toml").is_file():
+            raise FileNotFoundError(
+                "Kimi Code config not found. Run `kimi login` first or pass "
+                f"--kimi-code-home-path: {kimi_code_home_path / 'config.toml'}"
+            )
 
     cmd = [
         str(harbor_bin),
@@ -446,6 +609,20 @@ def main() -> int:
         "--job-name",
         str(job_name),
     ]
+    if max_retries:
+        cmd.extend(["--max-retries", str(max_retries)])
+    for exception_type in retry_include:
+        cmd.extend(["--retry-include", exception_type])
+    for exception_type in retry_exclude:
+        cmd.extend(["--retry-exclude", exception_type])
+    if cpu_policy:
+        cmd.extend(["--cpus", str(cpu_policy)])
+    if memory_policy:
+        cmd.extend(["--memory", str(memory_policy)])
+    if override_cpus is not None:
+        cmd.extend(["--override-cpus", str(override_cpus)])
+    if override_memory_mb is not None:
+        cmd.extend(["--override-memory-mb", str(override_memory_mb)])
     if solver_reasoning_effort:
         cmd.extend(["--agent-kwarg", f"reasoning_effort={solver_reasoning_effort}"])
 
@@ -463,6 +640,13 @@ def main() -> int:
             "--agent-kwarg",
             "model_catalog_path",
             codex_model_catalog_path,
+        )
+    elif solver_agent == "kimi-code":
+        add_kwarg(
+            cmd,
+            "--agent-kwarg",
+            "kimi_home_path",
+            kimi_code_home_path,
         )
 
     add_kwarg(cmd, "--verifier-kwarg", "profile", codex_profile)
@@ -492,6 +676,19 @@ def main() -> int:
     print(f"Solver reasoning effort: {solver_reasoning_effort or '(agent default)'}")
     print(f"Audit model: {audit_model}")
     print(f"Codex profile: {codex_profile or '(default)'}")
+    if max_retries:
+        print(
+            "Harbor retries: "
+            f"{max_retries} "
+            f"(include={retry_include or 'default'}, "
+            f"exclude={retry_exclude or 'default'})"
+        )
+    if override_cpus is not None:
+        print(f"CPU override: {override_cpus} ({cpu_policy})")
+    if override_memory_mb is not None:
+        print(f"Memory override: {override_memory_mb} MB ({memory_policy})")
+    if solver_agent == "kimi-code":
+        print("Kimi Code credentials: file-backed host login")
     sys.stdout.flush()
     return subprocess.run(cmd, env=env, check=False).returncode
 

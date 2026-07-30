@@ -7,7 +7,8 @@ ARG FRAMEWORK_REQUIREMENTS=frameworks/tensorcircuit/requirements.txt
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PIP_INDEX_URL=https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple
 
-RUN for file in /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources; do \
+RUN set -eu; \
+    for file in /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources; do \
         if [ -f "$file" ]; then \
             sed -i \
                 -e 's|http://deb.debian.org/debian-security|https://mirrors.tuna.tsinghua.edu.cn/debian-security|g' \
@@ -18,21 +19,24 @@ RUN for file in /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources; do
                 -e 's|https://deb.debian.org/debian|https://mirrors.tuna.tsinghua.edu.cn/debian|g' \
                 "$file"; \
         fi; \
-    done && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends \
-        bash \
-        build-essential \
-        ca-certificates \
-        cargo \
-        curl \
-        git \
-        nodejs \
-        npm \
-        pkg-config \
-        procps \
-        ripgrep \
-        rustc && \
+    done; \
+    packages="bash build-essential ca-certificates cargo curl git nodejs npm \
+        pkg-config procps ripgrep rustc"; \
+    apt-get update; \
+    if ! apt-get install -y --no-install-recommends ${packages}; then \
+        echo "TUNA apt mirror failed; retrying with official Debian mirrors" >&2; \
+        for file in /etc/apt/sources.list /etc/apt/sources.list.d/debian.sources; do \
+            if [ -f "$file" ]; then \
+                sed -i \
+                    -e 's|https://mirrors.tuna.tsinghua.edu.cn/debian-security|http://deb.debian.org/debian-security|g' \
+                    -e 's|https://mirrors.tuna.tsinghua.edu.cn/debian|http://deb.debian.org/debian|g' \
+                    "$file"; \
+            fi; \
+        done; \
+        apt-get clean; \
+        apt-get update; \
+        apt-get install -y --no-install-recommends ${packages}; \
+    fi; \
     rm -rf /var/lib/apt/lists/*
 
 COPY ${FRAMEWORK_REQUIREMENTS} /tmp/framework-requirements.txt
@@ -48,6 +52,25 @@ RUN npm config set registry https://registry.npmmirror.com && \
 RUN npm config set registry https://registry.npmmirror.com && \
     npm install -g "@anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}" && \
     claude --version
+
+ARG KIMI_CODE_INSTALL_URL=https://code.kimi.com/kimi-code/install.sh
+ARG KIMI_CODE_VERSION=0.29.2
+RUN curl -fsSL --retry 3 "${KIMI_CODE_INSTALL_URL}" \
+        -o /tmp/install-kimi-code.sh && \
+    for attempt in 1 2 3; do \
+        if [ "${KIMI_CODE_VERSION}" = "latest" ]; then \
+            KIMI_NO_MODIFY_PATH=1 bash /tmp/install-kimi-code.sh; \
+        else \
+            KIMI_NO_MODIFY_PATH=1 bash /tmp/install-kimi-code.sh \
+                --version "${KIMI_CODE_VERSION}"; \
+        fi && break; \
+        if [ "${attempt}" -eq 3 ]; then exit 1; fi; \
+        sleep 2; \
+    done && \
+    test -x /root/.kimi-code/bin/kimi && \
+    install -m 0755 /root/.kimi-code/bin/kimi /usr/local/bin/kimi && \
+    rm -f /tmp/install-kimi-code.sh && \
+    kimi --version
 
 WORKDIR /root
 RUN mkdir -p /root/results /logs/verifier

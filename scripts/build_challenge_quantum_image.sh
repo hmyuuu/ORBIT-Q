@@ -11,6 +11,8 @@ FRAMEWORK_SLUG="$(
 IMAGE="${IMAGE:-challenge-benchmark-quantum-${FRAMEWORK_SLUG}:py311}"
 CODEX_VERSION="${CODEX_VERSION:-latest}"
 CLAUDE_CODE_VERSION="${CLAUDE_CODE_VERSION:-latest}"
+KIMI_CODE_INSTALL_URL="${KIMI_CODE_INSTALL_URL:-https://code.kimi.com/kimi-code/install.sh}"
+KIMI_CODE_VERSION="${KIMI_CODE_VERSION:-0.29.2}"
 DOCKERFILE="${DOCKERFILE:-${ROOT}/images/framework/Dockerfile}"
 BUILD_CONTEXT="${BUILD_CONTEXT:-${ROOT}}"
 REQUIREMENTS_FILE="${REQUIREMENTS_FILE:-${ROOT}/frameworks/${FRAMEWORK_SLUG}/requirements.txt}"
@@ -38,10 +40,12 @@ docker build \
   -f "${DOCKERFILE}" \
   --build-arg "CODEX_VERSION=${CODEX_VERSION}" \
   --build-arg "CLAUDE_CODE_VERSION=${CLAUDE_CODE_VERSION}" \
+  --build-arg "KIMI_CODE_INSTALL_URL=${KIMI_CODE_INSTALL_URL}" \
+  --build-arg "KIMI_CODE_VERSION=${KIMI_CODE_VERSION}" \
   --build-arg "FRAMEWORK_REQUIREMENTS=${FRAMEWORK_REQUIREMENTS}" \
   -t "${IMAGE}" \
   "${BUILD_CONTEXT}"
 
 docker image inspect "${IMAGE}" >/dev/null
-docker run --rm "${IMAGE}" sh -lc 'codex --version && claude --version'
+docker run --rm "${IMAGE}" sh -lc 'codex --version && claude --version && kimi --version'
 echo "Built ${IMAGE}"
