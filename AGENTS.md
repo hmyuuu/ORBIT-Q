@@ -36,11 +36,11 @@ The default TensorCircuit tag is:
 challenge-benchmark-quantum-tensorcircuit:py311
 ```
 
-Verify that the image contains Codex CLI and Claude Code:
+Verify that the image contains Codex CLI, Claude Code, and Kimi Code:
 
 ```bash
 docker run --rm challenge-benchmark-quantum-tensorcircuit:py311 \
-  sh -lc 'codex --version && claude --version'
+  sh -lc 'codex --version && claude --version && kimi --version'
 ```
 
 Generate framework prompt files and canonical tasks only when templates or upstream problem files change:
@@ -159,6 +159,58 @@ python3 scripts/run_harbor_challenge.py \
 ```
 
 The Claude adapter accepts either `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` from the host and exposes `ANTHROPIC_API_KEY` inside Docker for Claude Code.
+
+To solve with Kimi K3 using its official Kimi Code harness, sign in on the
+trusted host with `kimi login`, then select `--solver-agent kimi-code`. The
+adapter copies the host Kimi Code config and credentials into the trusted
+solver container, synchronizes refreshed OAuth credentials back to the same
+host login for sequential runs, and removes the container copy before artifact
+collection:
+
+```bash
+python3 scripts/run_harbor_challenge.py \
+  --challenge 01 \
+  --framework tensorcircuit \
+  --solver-agent kimi-code \
+  --model kimi-code/k3 \
+  --solver-reasoning-effort high \
+  --max-retries 2 \
+  --retry-include ApiRateLimitError \
+  --retry-include ApiOverloadedError \
+  --retry-include ApiConnectionClosedError \
+  --audit-model gpt-5 \
+  --codex-force-auth-json
+```
+
+Use `--kimi-code-home-path` or `KIMI_CODE_HOME` when the login is not stored
+under `~/.kimi-code`. Kimi Code defaults to `high` reasoning effort when the
+flag is omitted; use `max` only for deliberate comparison runs. Kimi Code
+runs must remain sequential (`--n-concurrent 1`) because its OAuth provider
+rotates refresh tokens and the adapter persists each refresh to the host login.
+Framework images pin Kimi Code `0.29.2`, matching the recorded K3 campaign.
+Set `KIMI_CODE_VERSION=latest` or a released version for a separate comparison.
+
+Use Harbor's run-time override when the local Docker engine has fewer CPUs than
+the canonical task request:
+
+```bash
+python3 scripts/run_harbor_challenge.py \
+  --challenge 01 \
+  --solver-agent kimi-code \
+  --override-cpus 8
+```
+
+The wrapper defaults to Harbor's `limit` policy when an override is present.
+For repeated local runs, set `cpu_policy` and `override_cpus` under `[harbor]`
+in gitignored `conf.local.toml`.
+
+Use `scripts/run_harbor_suite.py --challenges 1-12` for a sequential, resumable
+suite after one challenge passes. It writes a gitignored JSON summary under
+`jobs/` and stops on the first errored trial unless the command includes
+`--continue-on-error`.
+Classified transient provider errors can be retried with `--max-retries` and
+`--retry-include`; do not include `ApiUsageLimitError`, because retrying cannot
+restore exhausted account quota.
 
 When manually smoke-testing Claude Code inside the framework image with
 `docker run`, remember that the container runs as `root`. In that situation,
@@ -280,7 +332,8 @@ build-essential, pkg-config, rustc, cargo, procps
 
 Python packages are installed from `frameworks/<framework>/requirements.txt`. For example, TensorCircuit uses `frameworks/tensorcircuit/requirements.txt`, which currently includes NumPy/SciPy/PyTest, TensorCircuit-NG, TensorNetwork-NG, JAX/JAXLIB, Optax, Quimb, and OMECo.
 
-The build uses TUNA apt/PyPI mirrors and the adapter's npm fallback uses:
+The build prefers TUNA apt/PyPI mirrors, falls back to official Debian mirrors
+when TUNA package downloads fail, and the adapter's npm fallback uses:
 
 ```bash
 https://registry.npmmirror.com
@@ -302,6 +355,7 @@ scripts/generate_framework_prompts.py
 prompts/frameworks/
 adapters/codex_para.py
 adapters/claude_para.py
+adapters/kimi_code.py
 adapters/codex_para_verifier.py
 adapters/framework_docker.py
 scripts/inspect_harbor_job.py
@@ -414,5 +468,6 @@ public solver agent: Harbor built-in `codex` from `conf.toml`
 local private override: `conf.local.toml` may set `codex-para`, `para`, and custom model names
 Codex reasoning effort: high
 Claude Code reasoning effort: max when `--solver-agent claude-code` unless overridden by `--solver-reasoning-effort` / `SOLVER_REASONING_EFFORT`
+Kimi Code reasoning effort: high when `--solver-agent kimi-code` unless overridden by `--solver-reasoning-effort` / `SOLVER_REASONING_EFFORT`
 verifier audit model: `gpt-5` from `conf.toml` unless overridden
 ```

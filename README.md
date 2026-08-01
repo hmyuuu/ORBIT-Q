@@ -45,6 +45,10 @@ Token use, solve wall time, and service cost describe how expensive it was to pr
 
 ![Agent and framework resource use](docs/assets/fig4_agent_framework_consumption.png)
 
+See the [Kimi K3 benchmark observations](reports/kimi_k3_benchmark_observations.md)
+for per-challenge controlled timeouts, evaluated candidates, verifier gaps,
+and provider exclusions.
+
 ## Task Suite
 
 ORBIT-Q compresses diverse quantum-research workflows into 12 containerized tasks.
@@ -130,11 +134,11 @@ Build the TensorCircuit image:
 FRAMEWORK=tensorcircuit bash scripts/build_challenge_quantum_image.sh
 ```
 
-Verify that the image contains both supported coding-agent CLIs:
+Verify that the image contains the supported coding-agent CLIs:
 
 ```bash
 docker run --rm challenge-benchmark-quantum-tensorcircuit:py311 \
-  sh -lc 'codex --version && claude --version'
+  sh -lc 'codex --version && claude --version && kimi --version'
 ```
 
 Build other framework images with the same shared Dockerfile:
@@ -209,6 +213,88 @@ python3 scripts/run_harbor_challenge.py \
 ```
 
 The Claude adapter accepts either `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` from the host and exposes `ANTHROPIC_API_KEY` inside the solver container.
+
+To run Kimi K3 with its official Kimi Code agent harness, first sign in once
+on the host:
+
+```bash
+kimi login
+```
+
+Then run a challenge with K3 at high reasoning effort:
+
+```bash
+python3 scripts/run_harbor_challenge.py \
+  --challenge 01 \
+  --framework tensorcircuit \
+  --solver-agent kimi-code \
+  --model kimi-code/k3 \
+  --solver-reasoning-effort high \
+  --audit-model gpt-5 \
+  --codex-force-auth-json
+```
+
+The adapter copies Kimi Code's configuration and credential files into
+the trusted solver container, runs `kimi -p` in noninteractive mode, synchronizes
+any OAuth credential refresh back to the same host login, and removes the
+temporary credential copy before Harbor collects artifacts. Persisting the
+refresh is necessary for sequential runs when the OAuth provider rotates its
+refresh token. Override the host login location with
+`--kimi-code-home-path` or `KIMI_CODE_HOME`.
+
+Kimi Code runs must use `--n-concurrent 1`; the wrapper rejects parallel Kimi
+trials because concurrent refresh-token rotation could corrupt the shared host
+login.
+
+The wrapper defaults Kimi Code to `high` when the command omits effort. This
+matches K3's local default and leaves more of the 30-minute agent window for
+implementation and end-to-end testing.
+
+Framework images pin Kimi Code `0.29.2`, the CLI version used for the recorded
+K3 campaign. Set `KIMI_CODE_VERSION=latest` or another released version when
+building an image to run a separate comparison.
+
+Use a runtime resource cap when the local Docker engine has fewer CPUs than the
+canonical task request:
+
+```bash
+python3 scripts/run_harbor_challenge.py \
+  --challenge 01 \
+  --solver-agent kimi-code \
+  --override-cpus 8
+```
+
+The wrapper defaults the CPU policy to `limit` when `--override-cpus` is set.
+For repeated local runs, put `cpu_policy = "limit"` and
+`override_cpus = 8` under `[harbor]` in gitignored `conf.local.toml`.
+
+Run all 12 sequentially with a resumable suite summary after one challenge
+passes:
+
+```bash
+python3 scripts/run_harbor_suite.py \
+  --job-prefix tensorcircuit-kimi-k3 \
+  --framework tensorcircuit \
+  --docker-image challenge-benchmark-quantum-tensorcircuit:py311 \
+  --solver-agent kimi-code \
+  --model kimi-code/k3 \
+  --solver-reasoning-effort high \
+  --max-retries 2 \
+  --retry-include ApiRateLimitError \
+  --retry-include ApiOverloadedError \
+  --retry-include ApiConnectionClosedError \
+  --audit-model gpt-5 \
+  --codex-force-auth-json \
+  --override-cpus 8
+```
+
+The suite stops on the first errored trial by default, so authentication or
+infrastructure failures do not create 12 identical failed jobs. Pass
+`--continue-on-error` only when independent challenge failures should not stop
+the run. Reusing the same job prefix skips successful challenges and creates a
+numbered retry for previously failed challenges. The retry flags above cover
+transient provider failures; billing-cycle usage-limit errors are classified
+separately and excluded from retries.
 
 ## Verify an Existing Candidate
 

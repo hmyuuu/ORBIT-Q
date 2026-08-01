@@ -21,6 +21,15 @@ solver_agent = "codex"
 jobs_dir = "jobs"
 n_concurrent = 1
 yes = true
+# Retry only explicitly classified transient provider errors. Usage-limit
+# errors should remain excluded because retrying cannot restore quota.
+# max_retries = 2
+# retry_include = ["ApiRateLimitError", "ApiOverloadedError", "ApiConnectionClosedError"]
+# Machine-local resource overrides belong in conf.local.toml:
+# cpu_policy = "limit"
+# override_cpus = 8
+# memory_policy = "limit"
+# override_memory_mb = 8192
 
 [codex]
 # Public default: use Harbor's built-in Codex agent and authenticate through
@@ -31,3 +40,8 @@ profile = ""
 force_auth_json = false
 # profile_config_path = "~/.codex/default.config.toml"
 # model_catalog_path = "~/.codex/models.json"
+
+[kimi]
+# Kimi K3's official Kimi Code model alias and file-backed login location.
+model = "kimi-code/k3"
+home_path = "~/.kimi-code"
