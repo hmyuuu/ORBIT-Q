@@ -151,25 +151,48 @@ A later minimal host preflight on 2026-07-30 still returned the billing-cycle
 usage-limit 403. Starting another Harbor job at that point would only add
 another pre-model exclusion, so the campaign left those five retries pending.
 
+## High-effort continuation retry on 2026-08-02
+
+The K3 quota became available for another sequential suite under
+`tensorcircuit-kimi-k3-high-20260730-resume-*` with Harbor retry job number 02.
+The retry produced controlled outcomes for Challenges 07 and 09 before the
+provider quota closed again.
+
+| Challenge | Harbor outcome | Wall time | Solution artifact | Observation |
+| --- | --- | ---: | --- | --- |
+| 07 | `AgentTimeoutError`; candidate evaluated | 30m agent + 99.76s verifier | Yes | K3 spent the first part of the window validating TensorCircuit measurement and projection APIs, then found a finite joint-marginal measurement implementation. The final 104-line candidate passed every functional and static-policy check in 99.76s: mean energy improved from -6.55104828 to -9.87679641, with improvement 3.30727863. The independent GPT-5 audit timed out after 300s, so the raw reward remained zero despite the functional, runtime, and static passes. |
+| 09 | Candidate evaluated; runtime miss | 27m 23s agent + 482.52s verifier | Yes | K3 extracted exact 18- and 15-qubit causal cones with 74 and 80 relevant gates, and its reduced TensorCircuit matched a small full-state check within 8.9e-08. The 88-line candidate passed all functional and static-policy checks: mean objective improved from -0.00228925 to 1.56457582, best final objective was 1.56459141, and success fraction was 1.0 over 200 restarts. Sequential restart execution took 482.52s, so the runtime score was zero. The GPT-5 audit also timed out after 300s. Kimi returned an auth error after the artifact and verifier evidence had been collected; Harbor retained the completed evaluated trial. |
+| 10 | Excluded: provider quota 403 | 30s | No | Kimi Code rejected the prompt before model work began with the billing-cycle usage-limit error. |
+| 11 | Excluded: provider quota 403 | 28s | No | Kimi Code rejected the prompt before model work began with the billing-cycle usage-limit error. |
+| 12 | Excluded: provider quota 403 | 28s | No | Kimi Code rejected the prompt before model work began with the billing-cycle usage-limit error. |
+
+This retry closes the controlled-results gap for Challenges 07 and 09. The
+candidate for Challenge 07 meets the 300-second evaluator limit. Challenge 09
+needs a faster restart schedule before it can count as a runtime pass. The
+quota failures for Challenges 10–12 remain account/provider exclusions.
+
+The post-suite host probe on 2026-08-02 returned the same billing-cycle 403,
+so another Harbor retry would not add model evidence until the Kimi account
+quota refreshes.
+
 ## Campaign summary
 
-- Valid high-effort K3 observations: Challenges 01–06 and 08.
+- Valid high-effort K3 observations: Challenges 01–09.
 - No candidate after the controlled 1,800-second agent timeout: Challenges 01,
   02, and 08.
+- Candidate passed functional and runtime checks: Challenges 05, 06, and 07.
 - Candidate passed functional checks but missed the 300-second runtime:
-  Challenges 03 and 04.
-- Candidate passed functional and runtime checks: Challenges 05 and 06.
-- No substantive GPT-5 audit verdict: Challenges 03–06 all hit the independent
-  300-second audit-command timeout.
-- Still missing a controlled result: Challenges 07 and 09–12. Challenge 07 was
-  interrupted by provider overload; Challenge 09 was interrupted by quota
-  after useful profiling; Challenges 10–12 were rejected before model work.
+  Challenges 03, 04, and 09.
+- No substantive GPT-5 audit verdict: Challenges 03–07 and 09 all hit the
+  independent 300-second audit-command timeout.
+- Missing controlled candidate results: Challenges 10–12. Kimi rejected all
+  three prompts before model work because the billing-cycle quota was exhausted.
 
 The raw Harbor summary contains a zero reward for every row, but that number is
-not a faithful single-number comparison here. For Challenges 03–06 it is
-dominated by missing audit evidence. Challenge 08's zero represents a
-controlled no-artifact timeout, while the zeros for Challenges 07 and 09–12
-come from externally interrupted or rejected trials. Any later PR should
-publish the functional, runtime, static-policy, agent-timeout, audit-timeout,
-and provider-exclusion fields separately instead of ranking K3 by the raw
-reward column.
+not a faithful single-number comparison here. For Challenges 03–07 and 09 it
+is dominated by missing audit evidence; Challenge 09 also missed the runtime
+limit. Challenge 08's zero represents a controlled no-artifact timeout, while
+the zeros for Challenges 10–12 come from provider quota rejection. Any later
+PR should publish the functional, runtime, static-policy, agent-timeout,
+audit-timeout, and provider-exclusion fields separately instead of ranking K3
+by the raw reward column.
