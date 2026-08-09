@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "problem_id": 112,
+  "numeric_id": 112,
+  "slug": "charged-renyi-replica",
+  "candidate_id": "f05_symmetry_resolved_renyi--representation_stress--forward",
+  "provenance": {
+    "catalog_membership": "frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "candidate_hash": "bf489cc250706507430c8bb75849b279f33ca9ba9105451ae3a1234f85c967df",
+    "mapping_decision": "Direct implementation of catalog reserve f05 at its representation-stress/forward contract. The scattered subsystem forces a replica transfer rather than reducing the task to a single Schmidt cut.",
+    "source_evidence": [
+      {
+        "id": "symmetry-resolved-entanglement",
+        "title": "Symmetry-resolved entanglement in many-body systems",
+        "url": "https://arxiv.org/abs/1711.09418",
+        "role": "scientific basis for charge-sector reduced states and replica/flux resolution"
+      },
+      {
+        "id": "randomized-measurement-toolbox",
+        "title": "The randomized measurement toolbox",
+        "url": "https://arxiv.org/abs/2203.11374",
+        "role": "scientific basis for multi-copy permutation observables and symmetry-resolved moments"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for tensor-network quantum-circuit simulation"
+      },
+      {
+        "id": "tensorcircuit-mps-docs",
+        "title": "TensorCircuit Advanced Usage: MPS Simulator",
+        "url": "https://tensorcircuit.readthedocs.io/en/stable/advance.html#mps-simulator",
+        "role": "official API evidence for MPSCircuit and MPS tensors"
+      }
+    ]
+  },
+  "title": "Charged-replica symmetry-resolved Renyi-2",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_112.py",
+  "expert_solution": "expert/solution_112.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 12,
+  "tags": [
+    "symmetry-resolved-entanglement",
+    "renyi-2",
+    "charged-moments",
+    "replica-swap",
+    "matrix-product-state",
+    "representation-stress"
+  ],
+  "difficulty_explanation": "The solver must preserve a global U(1) charge under complex hopping gates, prepare two implicit replicas of a 72-qubit TensorCircuit MPS, contract a seed-scrambled noncontiguous swap/charge pattern, and invert a shifted Fourier grid with the correct sign and sector normalization. Dense simulation requires 2^72 complex amplitudes per replica.",
+  "solution_explanation": "The expert prepares the exact fixed-charge state with TensorCircuit MPSCircuit, reads its public MPS tensors, evaluates one- and two-replica transfer networks using the TensorCircuit backend, performs the declared shifted DFT, and computes normalized sector Renyi-2 entropies.",
+  "verification_explanation": "The evaluator never imports TensorCircuit. It independently implements complex128 canonical NumPy TEBD and explicit one-/two-replica transfers, validates them against a separately evolved dense six-qubit reduced density matrix, and checks both oracle agreement and Fourier/normalization identities.",
+  "relevant_experience": "This prototype combines fixed-charge circuit design, exact MPS gauge motion, replica permutation observables, charged generating functions, and shifted finite-group Fourier reconstruction.",
+  "status": "reserve_prototype_untested_by_model",
+  "framework": {
+    "required": "tensorcircuit",
+    "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "tested_numpy": "2.2.6",
+    "tested_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "MPSCircuit",
+      "MPSCircuit.apply_adjacent_double_gate",
+      "MPSCircuit.normalize",
+      "MPSCircuit.get_tensors",
+      "backend.einsum"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_112.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "Exact case bytes are bound by the pinned image/runtime and evaluator-emitted case_digest; a seed alone is not a cross-NumPy case identity.",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_RENYI_SEED fallback, or evaluator --seed",
+    "hidden_holdout_status": "pending; published seeds are validation canaries and are not private model-trial holdouts",
+    "anti_hardcoding": "The seed changes both fixed-charge input strings, complex hopping and interaction angles, subsystem masks and ordering, Fourier offsets, sector queries, and nonces. Oracle moments and entropies are not supplied.",
+    "oracle": "Independent NumPy canonical TEBD plus explicit one-/two-replica transfer networks and a separate dense reduced-density-matrix canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_RENYI_SEED",
+    "local_default": 1122026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits both ordered fixed-charge replica cases.",
+    "determinism_scope": "Exact public case bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over both ordered exact public cases; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
+  "difficulty_levers": [
+    "72 qubits rule out dense statevectors and 144-qubit explicit dense replicas",
+    "a scattered 24-site subsystem creates many swap boundaries and defeats a single-Schmidt-cut purity shortcut",
+    "complex U(1)-preserving hopping phases make basis and conjugation conventions observable",
+    "a per-case shifted 25-point Fourier grid tests transform sign, offset compensation, and charge labels",
+    "both unnormalized sector moments and normalized sector Renyi-2 values are scored",
+    "two cases generated sequentially from one verifier-only seed must share one deterministic implementation"
+  ],
+  "claim_boundary": "This is a deterministic synthetic fixed-charge circuit diagnostic, not an experimental randomized-measurement protocol. No solver-model trial has been run and no model-hardness claim is made.",
+  "pinned_image_validation": {
+    "seeds_completed": [1122026, 1122037, 1122112, 9876543],
+    "pinned_case_digests": {
+      "1122026": "9062d053356f0ef8ac84109a8b00b47e8b280a96fb713256e2f07cfc9ba106c0",
+      "1122037": "b961591a24d659a24dce2bbfa8c3af5e3c70928dcc4fc5a5f6c36c528bfa9328",
+      "1122112": "8aceac6b76f68b234deb6ba302bb32c8a4a0a555252e421a7ebd6481e102c6fc",
+      "9876543": "a96075ddaaebfa323b2744be2543ecd24b17876c6880741fcebc427b601f33b1"
+    },
+    "additional_seeds_pending": [],
+    "all_completed_passed": true,
+    "expert_runtime_range_sec": [11.666, 28.474],
+    "maximum_charged_moment_error": 1.206e-16,
+    "maximum_sector_probability_error": 2.498e-15,
+    "maximum_sector_second_moment_error": 4.597e-17,
+    "maximum_resolved_entropy_error": 8.198e-13,
+    "minimum_queried_sector_probability": 0.002189,
+    "minimum_queried_sector_second_moment": 1.253e-7,
+    "maximum_oracle_bond_dimension": 16,
+    "static_policy_effective_lines": 92,
+    "static_policy_passed": true,
+    "ruff_passed": true,
+    "materialized_oracle_layout_passed": true,
+    "runner_single_task_dry_run_passed": true
+  },
+  "admission_blockers": [
+    "Freeze and independently record a private holdout seed schedule plus exact case_digest values before any solver-model trial.",
+    "Complete the authenticated full Harbor expert verifier and policy audit under the frozen trial image and resource envelope.",
+    "Human review must confirm the charged-moment convention, sector normalization, and framework-native replica contraction before promotion."
+  ],
+  "exploitability_risks": [
+    "The evaluator source and completed validation seeds are public canaries; they cannot be reused as a private hardness holdout.",
+    "Because the entire circuit specification is public to run_solution, a standalone MPS implementation could reproduce the oracle; static and LLM policy audits must enforce that TensorCircuit prepares the state and performs the quantum tensor contraction."
+  ],
+  "numerical_statistical_risks": [
+    "Fourier inversion can leave tiny imaginary or negative roundoff in weak sectors; the public validation minima are p(q)=2.189e-3 and Z2(q)=1.253e-7, and private holdouts still require prequalification.",
+    "The independent TEBD removes only relative-singular values below 2e-14 as numerical null directions; a pinned linear-algebra change that moves physical weight across this threshold requires revalidation.",
+    "Exact MPS ranks grow exponentially with brickwork depth despite the large qubit count; the four-layer profile is intentional and any depth increase requires fresh peak-memory and runtime profiling.",
+    "Sector Renyi-2 divides by p(q)^2, so low-weight sectors are excluded from queries and separately guarded by admission floors."
+  ],
+  "api_risks": [
+    "MPSCircuit.apply_adjacent_double_gate must preserve the custom rank-4 gate tensor's output/input index convention.",
+    "MPSCircuit.get_tensors exposes the public MPS tensors but their gauge and center position are not fixed; the replica observable must remain gauge invariant.",
+    "MPSCircuit.normalize and the NumPy backend are process-global through TensorCircuit's backend/dtype settings.",
+    "backend.einsum contraction planning can change performance across TensorCircuit/NumPy versions; the pinned image and runtime margin must be revalidated after upgrades.",
+    "NumPy Generator byte-level cases can change across NumPy versions; manifests must bind case_digest and the pinned NumPy version."
+  ],
+  "commands": {
+    "default": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/charged-renyi-replica:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_112.py --solution solution_112'",
+    "alternate_seed": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/charged-renyi-replica:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_112.py --solution solution_112 --seed 1122037'"
+  }
+}

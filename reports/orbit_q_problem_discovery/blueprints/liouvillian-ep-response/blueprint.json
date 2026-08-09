@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "problem_id": 114,
+  "numeric_id": 114,
+  "slug": "liouvillian-ep-response",
+  "candidate_id": "r114_liouvillian_ep_response--post_shortlist_reserve--inverse",
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "inspired_by_candidate_id": "f07_floquet_cptp_spectral_mode--benchmark--inverse",
+    "inspired_by_candidate_hash": "840456c305b79266a167ad212cf3d1c778309cf3e0d8597117a7425932eaf76e",
+    "mapping_decision": "Do not claim a direct frozen-f07 realization. The frozen contract requires a production-scale matrix-free noisy Floquet spectrum without materializing the full superoperator; problem 114 instead uses a one-qubit time-independent semigroup, explicitly materializes its 4 by 4 generator, and adds EP-focused inverse response. It is a scientifically related post-shortlist reserve requiring separate human promotion.",
+    "source_evidence": [
+      {
+        "id": "dissipative-qubit-lep",
+        "title": "Decoherence-Induced Exceptional Points in a Dissipative Superconducting Qubit",
+        "url": "https://doi.org/10.1103/PhysRevLett.128.110402",
+        "role": "primary experimental and theoretical basis for Liouvillian exceptional points in a driven dissipative qubit"
+      },
+      {
+        "id": "hybrid-liouvillian",
+        "title": "Hybrid-Liouvillian formalism connecting exceptional points of non-Hermitian Hamiltonians and Liouvillians via postselection of quantum trajectories",
+        "url": "https://doi.org/10.1103/PhysRevA.101.062112",
+        "role": "scientific basis for distinguishing unconditional Liouvillian modes from effective non-Hermitian Hamiltonian modes"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for density-matrix circuit simulation and tensor contractions"
+      },
+      {
+        "id": "tensorcircuit-channels",
+        "title": "TensorCircuit: Density Matrix and Mixed State Evolution",
+        "url": "https://tensorcircuit.readthedocs.io/en/stable/whitepaper/5-density-matrix.html",
+        "role": "official API evidence for DMCircuit and Kraus-channel evolution"
+      }
+    ]
+  },
+  "title": "Near-exceptional-point Liouvillian inference and response",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_114.py",
+  "expert_solution": "expert/solution_114.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 16,
+  "tags": [
+    "open-quantum-systems",
+    "lindblad-inference",
+    "liouvillian-exceptional-point",
+    "non-normal-response",
+    "biorthogonal-modes",
+    "kraus-channel",
+    "inverse-identification"
+  ],
+  "difficulty_explanation": "The solver must fit a rotated finite-temperature Lindbladian through exact multitime density-matrix evolution, maintain column-vectorization and Choi/Kraus conventions, distinguish real-split from complex-conjugate modes across two cases, recover the laboratory generator through channel tomography, and evaluate gauge-invariant spectral-projector residues whose large near-EP terms cancel in the physical susceptibility.",
+  "solution_explanation": "The expert exponentiates the six-parameter GKSL generator, converts the exact CPTP map to Kraus support, fits multitime responses through TensorCircuit DMCircuit evolution, reconstructs the laboratory transfer generator from TensorCircuit channel tomography, and forms ordered analytic EP modes, spectral projectors, residues, and resolvents.",
+  "verification_explanation": "The TensorCircuit-free evaluator independently builds the complex128 Lindblad superoperator, exponentiates it by spectral decomposition, evolves density matrices directly, and evaluates all hidden parameters and responses. A separate analytic Bloch/Kraus canary checks frame rotation, vectorization, Choi positivity, trace preservation, and the exceptional-point discriminant.",
+  "relevant_experience": "This reserve combines open-system identification, exact CPTP channel construction, non-Hermitian eigensystems, exceptional-point branch conventions, biorthogonal response, and TensorCircuit density-matrix tomography.",
+  "status": "reserve_prototype_local_static_only",
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_numpy": "2.2.6",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "DMCircuit",
+      "DMCircuit.apply_general_kraus",
+      "DMCircuit.densitymatrix",
+      "backend.einsum"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_114.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "Exact cases are bound by the pinned image/runtime and evaluator-emitted case_digest; a seed alone is not a cross-NumPy case identity.",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_LIOUVILLIAN_EP_SEED fallback, or evaluator --seed",
+    "hidden_holdout_status": "pending; local host digests are non-binding canaries and no pinned-image private holdout has been frozen",
+    "anti_hardcoding": "The seed changes the two hidden generators and their EP-side ordering, frame rotations, time steps, nonconsecutive training preparations, measurement frames, held-out trajectories, source/readout pairs, frequencies, opaque IDs, and nonces. Full parameter, held-out, generator, steady-state, modal-residue, and resolvent outputs are scored.",
+    "oracle": "Independent NumPy GKSL superoperator, exact spectral exponential, density evolution, affine Bloch generator, and analytic EP response, plus a separate fixed-parameter Kraus canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_LIOUVILLIAN_EP_SEED",
+    "local_default": 1142026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits the ordered pair of opposite-side Liouvillian-EP cases.",
+    "determinism_scope": "Exact public case bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over both ordered exact public cases; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
+  "difficulty_levers": [
+    "two cases lie on opposite sides of the same second-order Liouvillian EP and require one implementation to handle real and complex mode branches",
+    "six hidden parameters include a laboratory-frame rotation, so fitting only decay rates or only the spectrum cannot reproduce multiaxis held-out data",
+    "nonconsecutive multitime observations prevent a direct one-step process-tomography lookup",
+    "exact semigroup channels require consistent column vectorization, Choi reshuffling, Kraus orientation, and TensorCircuit channel application",
+    "the ordered principal-square-root convention and the separate transverse mode expose branch and sorting mistakes",
+    "spectral-projector residues are gauge invariant but individually amplified near the EP and must cancel to the direct resolvent response",
+    "the 160-line ceiling leaves little room for redundant simulators or unconstrained search"
+  ],
+  "claim_boundary": "This is a deterministic synthetic one-qubit Lindblad identification and linear-response diagnostic. It uses exact noiseless training data, does not claim exceptional-point sensing advantage under experimental noise, and does not model non-Markovian dynamics. No pinned-image, Harbor, or solver-model trial has run, so no model-hardness claim is made.",
+  "local_static_validation": {
+    "host_numpy": "2.4.4",
+    "binding_status": "non-binding local design canaries only; do not use these digests in a trial manifest",
+    "seeds_checked": [1142026, 1142037, 1142114, 9876543],
+    "host_case_digests": {
+      "1142026": "423039996606a092765165692572bed79f31ddd7e051de26d78992a5de2503c8",
+      "1142037": "f8019c78b7601ec65e6d5881064ea0c6670ed399b20753c46eb397b8655fea3f",
+      "1142114": "62b3e73cbdd22233249e983abbae77d4c07c567e8a0aae1f6410a5fd546d6e0c",
+      "9876543": "beeb087dfe2de8540cd0070ee7c6c0765c4b2020896185e1d20557f4bb22fa55"
+    },
+    "analytic_bloch_kraus_canary_passed": true,
+    "numpy_proxy_inverse_fit_passed": true,
+    "proxy_parameter_max_error": 5.2e-12,
+    "random_seed_screen_count": 200,
+    "absolute_normalized_discriminant_range": [0.004525, 0.011462],
+    "all_mode_minimum_gap_range": [0.040956, 0.130978],
+    "nonnormality_range": [0.039947, 0.125399],
+    "steady_bloch_norm_range": [0.550759, 0.701633],
+    "minimum_choi_eigenvalue": 0.046534,
+    "right_eigenvector_condition_range": [3.136, 7.083],
+    "expert_effective_lines": 156,
+    "static_policy_score": 1.0,
+    "ruff_passed": true,
+    "tensorcircuit_expert_executed": false
+  },
+  "admission_blockers": [
+    "Promote this post-shortlist reserve through explicit human review; it is inspired by frozen f07 but does not implement f07's matrix-free production contract.",
+    "Run the expert in the pinned TensorCircuit image only after the active Harbor job releases Docker; verify DMCircuit arbitrary Kraus acceptance, density-matrix reuse semantics, laboratory input ordering, and NumPy/TensorCircuit parity.",
+    "Measure expert p50/p95 runtime and peak memory on several public canary seeds under the 8 CPU/8192 MiB envelope; require p95 below 180 seconds.",
+    "Prequalify and independently freeze private verifier-only seeds with exact pinned case_digest values, all-mode gaps, discriminant signs, Choi margins, parameter Jacobian conditioning, and response-residue tolerances before any solver trial.",
+    "Complete an authenticated expert-only Harbor functional, static-policy, and LLM-policy audit.",
+    "Human reviewers must sign the GKSL rate convention, column-vectorized superoperator, Choi/Kraus reshuffling, EP branch/order, steady-state sign, and biorthogonal response formula before promotion."
+  ],
+  "exploitability_risks": [
+    "A one-qubit NumPy simulator is easy; static import checks alone cannot enforce TensorCircuit use. The LLM audit must verify that every timed probe evolution, observable contraction, and channel tomography step actually uses DMCircuit/backend operations.",
+    "The exact noiseless inverse fit is deliberately identifiable and can be attacked through classical system realization; the full TensorCircuit held-out evolution and policy audit, not obscurity, enforce the framework contract.",
+    "Published evaluator and expert files are public canaries and cannot serve as uncontaminated private hardness evidence."
+  ],
+  "numerical_statistical_risks": [
+    "At the EP itself spectral projectors diverge and eigenvalue ordering becomes undefined; every admitted case therefore enforces a nonzero normalized discriminant and explicit all-mode gap floor.",
+    "Near-EP residues can be much larger than their summed susceptibility, so pinned validation must check both absolute oracle errors and the modal-to-direct-resolvent identity.",
+    "Eigendecomposition-based matrix exponentials and Choi truncation can drift across LAPACK/NumPy builds; manifests must bind the image, NumPy version, exact case_digest, Choi floor, and fitted-parameter margins.",
+    "Noise-free data test convention handling and numerical inference, not statistical uncertainty; experimental sensing claims are out of scope."
+  ],
+  "api_risks": [
+    "DMCircuit.apply_general_kraus must accept the evaluator-equivalent 2 by 2 Kraus list without renormalizing or changing operator order.",
+    "DMCircuit.densitymatrix(reuse=False) must permit intermediate readouts followed by later channel applications.",
+    "DMCircuit input preparation and Pauli expectation ordering must agree with the laboratory Bloch convention.",
+    "backend.einsum and process-global complex128 settings must preserve the small imaginary cancellations used in tomography.",
+    "Principal matrix logarithms inferred from the sampled channel are safe only while the prequalified spectrum remains away from the negative real branch cut."
+  ],
+  "commands": {
+    "default_after_docker_is_free": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/liouvillian-ep-response:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_114.py --solution solution_114'",
+    "alternate_seed_after_docker_is_free": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/liouvillian-ep-response:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_114.py --solution solution_114 --seed 1142037'"
+  }
+}

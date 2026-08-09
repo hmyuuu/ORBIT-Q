@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "problem_id": 113,
+  "numeric_id": 113,
+  "slug": "coherent-css-coset-inference",
+  "candidate_id": "r113_coherent_degenerate_css_inference--post_shortlist_reserve--inverse",
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "mapping_decision": "Do not remap this reserve to frozen shortlist f03. Candidate f03 is encoder and fault-detection synthesis under enumerated Pauli faults; problem 113 instead infers a syndrome-conditioned coherent logical process under a correlated non-Pauli channel.",
+    "source_evidence": [
+      {
+        "id": "qec-decoheres-noise",
+        "title": "Quantum Error Correction Decoheres Noise",
+        "url": "https://doi.org/10.1103/PhysRevLett.121.190501",
+        "role": "scientific basis for syndrome-resolved logical channels and per-syndrome recovery optimization"
+      },
+      {
+        "id": "coherent-qec-performance",
+        "title": "Performance of quantum error correction with coherent errors",
+        "url": "https://doi.org/10.1103/PhysRevA.99.022313",
+        "role": "scientific basis for retaining coherent logical noise rather than substituting a Pauli model"
+      },
+      {
+        "id": "correlated-noise-stat-mech",
+        "title": "Statistical mechanical models for quantum codes with correlated noise",
+        "url": "https://arxiv.org/abs/1809.10704",
+        "role": "scientific basis for degenerate logical-coset likelihoods under correlated noise"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for tensor-network circuit simulation and contractions"
+      }
+    ]
+  },
+  "title": "Coherent degenerate CSS logical-coset inference",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_113.py",
+  "expert_solution": "expert/solution_113.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 14,
+  "tags": [
+    "quantum-error-correction",
+    "degenerate-css-decoding",
+    "coherent-noise",
+    "correlated-noise",
+    "logical-process-matrix",
+    "inverse-inference"
+  ],
+  "difficulty_explanation": "The solver must reconstruct scrambled two-logical-qubit CSS bases, retain phase-sensitive interference among stabilizer-degenerate physical errors, evolve a mixed ensemble of ordered noncommuting correlated rotations, condition on multiple seeded syndromes, and express each logical process matrix in a shuffled Hermitian Pauli frame with opaque identities. Minimum-weight or Pauli-twirled decoding cannot reproduce the scored off-diagonal process coherence.",
+  "solution_explanation": "The expert enumerates only the 64 X-stabilizer words needed to construct each logical basis state, evolves the four basis states for every branch with TensorCircuit Circuit.unitary, applies each declared recovery with TensorCircuit gates, uses the TensorCircuit backend for the quantum overlaps, and performs the declared Pauli-basis process reconstruction.",
+  "verification_explanation": "The evaluator never imports TensorCircuit. It independently constructs dense CSS codewords, implements Hermitian physical Pauli action and ordered coherent rotations in NumPy, computes each recovery-conditioned logical Kraus matrix, mixes branch coefficient outer products, and checks the full complex normalized process matrix plus physical invariants.",
+  "relevant_experience": "This reserve combines CSS symplectic conventions, degeneracy-aware maximum-likelihood decoding, coherent logical channels, correlated Pauli rotations, conditional process tomography, and framework-native circuit simulation.",
+  "status": "reserve_prototype_static_only_untested",
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_numpy": "2.2.6",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "Circuit(inputs=...)",
+      "Circuit.unitary",
+      "Circuit.state",
+      "backend.einsum"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_113.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "Exact cases are bound by the pinned runtime and evaluator-emitted case_digest; a seed alone is not a cross-NumPy case identity.",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_COHERENT_CSS_SEED fallback, or evaluator --seed",
+    "hidden_holdout_status": "pending; no pinned-image seed has yet been prequalified",
+    "anti_hardcoding": "The verifier-only seed changes the nonlocal CSS transform, qubit permutation, independent stabilizer bases, syndrome recoveries and opaque IDs, shuffled logical-frame order and IDs, mixture weights, ordered local/correlated Pauli supports, all rotation angles, and nonces.",
+    "oracle": "Independent complex128 NumPy CSS basis, physical Pauli, coherent branch, logical Kraus, and process-matrix implementation",
+    "pass_signal": "Overall: PASS"
+  },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_COHERENT_CSS_SEED",
+    "local_default": 1132026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits both ordered coherent-CSS cases.",
+    "determinism_scope": "Exact public case bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over both ordered exact public cases; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
+  "difficulty_levers": [
+    "two encoded logical qubits make the conditioned process matrix 16 by 16 rather than a scalar coset probability",
+    "CSS-preserving nonlocal CNOT transforms hide the two-Steane-block construction while retaining checked distance at least three",
+    "three classical noise branches contain ordered noncommuting local, two-qubit, and seeded recovery-aligned correlated rotations",
+    "four syndromes per case require phase-consistent recovery conditioning rather than one most-likely error",
+    "randomized Hermitian Pauli-frame order and opaque identifiers expose logical-bit, Y-phase, matrix-orientation, and tie-breaking errors",
+    "two sequential hidden cases must share one implementation"
+  ],
+  "claim_boundary": "This is a deterministic synthetic memory-noise diagnostic with ideal syndrome projection and declared Pauli recoveries. It does not model faulty syndrome extraction or claim a surface-code threshold. No pinned-image, Harbor, or solver-model trial has been run and no hardness claim is made.",
+  "admission_blockers": [
+    "Validate the TensorCircuit APIs, static policy, memory, and runtime in the pinned image before any model trial.",
+    "Prequalify several public canary seeds and independently freeze private verifier-only holdouts with exact case_digest values and syndrome/coherence margins.",
+    "Complete an authenticated expert-only Harbor verifier and LLM policy audit.",
+    "Human review must confirm the Pauli phase, logical-basis, recovery, process-matrix, and per-syndrome best-frame conventions before promotion."
+  ],
+  "exploitability_risks": [
+    "Fourteen-qubit dense simulation is computationally possible; static and LLM policy audits must enforce that TensorCircuit performs the noisy quantum evolution and overlap contraction.",
+    "The evaluator and expert become public canaries after publication and cannot serve as uncontaminated private hardness evidence.",
+    "The supplied recovery makes syndrome projection implicit in the logical overlap; reviewers must reject solutions that use the syndrome label only to hardcode an output lookup."
+  ],
+  "numerical_statistical_risks": [
+    "Rare syndrome probabilities amplify normalization error; every private seed needs a prequalified probability floor.",
+    "The maximum-coherence admission check only proves a non-Pauli regime is active, not that every syndrome has a large off-diagonal signal.",
+    "NumPy Generator output and exact case bytes can drift across versions; manifests must bind the pinned image, NumPy version, and case_digest."
+  ],
+  "api_risks": [
+    "Circuit(inputs=...) computational-axis ordering must agree with qubit zero as the most-significant codeword bit.",
+    "Circuit.unitary site ordering must match the supplied sites and tensor-product Pauli order, especially for unsorted correlated supports.",
+    "tc.gates.Gate custom 2-, 4-, and 8-dimensional unitary acceptance requires a pinned-image canary.",
+    "Circuit.state and backend.einsum dtype/order behavior are process-global under TensorCircuit backend settings."
+  ],
+  "commands": {
+    "default_after_harbor_is_free": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/coherent-css-coset-inference:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_113.py --solution solution_113'",
+    "alternate_seed_after_harbor_is_free": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/coherent-css-coset-inference:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_113.py --solution solution_113 --seed 1132037'"
+  }
+}
