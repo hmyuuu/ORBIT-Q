@@ -12,12 +12,12 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from reports.orbit_q_problem_discovery.pipeline import (
+from reports.orbit_q_problem_discovery.pipeline import (  # noqa: E402
     CONCEPT_REVIEW_ROLES,
     EXCLUDED_FAILURE_CLASSES,
+    FAILURE_AUDIT_ROLES,
     PILOT_REVIEW_ROLES,
     SUBSTANTIVE_FAILURE_CLASSES,
-    TRIAL_EXECUTION_STATUSES,
     audit_model_trial,
     authorize_model_test,
     build_workspace,
@@ -34,6 +34,32 @@ DEFAULT_WORKSPACE = ROOT / "reports" / "orbit_q_problem_discovery"
 
 def _print(value: object) -> None:
     print(json.dumps(value, indent=2, ensure_ascii=False, sort_keys=True))
+
+
+def _seed_schedule(value: str) -> list[int]:
+    try:
+        seeds = [int(part.strip()) for part in value.split(",") if part.strip()]
+    except ValueError as error:
+        raise argparse.ArgumentTypeError(
+            "seeds must be comma-separated integers"
+        ) from error
+    if not seeds:
+        raise argparse.ArgumentTypeError("at least one seed is required")
+    return seeds
+
+
+def _validated_workspace(value: Path) -> Path:
+    workspace = value.resolve()
+    if workspace.is_relative_to(ROOT):
+        artifact_root = (ROOT / ".artifacts" / "problem-discovery").resolve()
+        if workspace != DEFAULT_WORKSPACE.resolve() and not workspace.is_relative_to(
+            artifact_root
+        ):
+            raise ValueError(
+                "in-repository workspaces are restricted to the discovery report or "
+                f"{artifact_root}"
+            )
+    return workspace
 
 
 def main() -> None:
@@ -62,33 +88,17 @@ def main() -> None:
         "record-prototype", help="record expert baseline and verifier-only evidence"
     )
     prototype.add_argument("--candidate", required=True)
-    prototype.add_argument("--expert-baseline-path", required=True)
-    prototype.add_argument("--expert-baseline-sha256", required=True)
-    prototype.add_argument("--independent-oracle-path", required=True)
-    prototype.add_argument("--independent-oracle-sha256", required=True)
-    prototype.add_argument("--evaluator-path", required=True)
-    prototype.add_argument("--evaluator-sha256", required=True)
-    prototype.add_argument("--verifier-job-id", required=True)
-    prototype.add_argument("--container-image-digest", required=True)
-    prototype.add_argument("--framework-prompt-sha256", required=True)
-    prototype.add_argument("--source-commit", required=True)
-    prototype.add_argument("--public-api-canary-passed", action="store_true")
-    prototype.add_argument("--expert-runtime-p95-sec", type=float, required=True)
-    prototype.add_argument("--independent-oracle-runtime-sec", type=float, required=True)
-    prototype.add_argument("--gold-effective-lines", type=int, required=True)
-    prototype.add_argument("--reproducibility-runs", type=int, required=True)
-    prototype.add_argument("--observed-cpu-count", type=int, required=True)
-    prototype.add_argument("--observed-memory-mb", type=float, required=True)
-    prototype.add_argument("--expert-peak-memory-mb", type=float, required=True)
-    prototype.add_argument("--verifier-only-passed", action="store_true")
-    prototype.add_argument("--notes", default="")
+    prototype.add_argument("--evidence-bundle", type=Path, required=True)
 
     authorize = sub.add_parser(
         "authorize", help="emit a run manifest; never launches a model or Harbor"
     )
     authorize.add_argument("--candidate", required=True)
-    authorize.add_argument("--model", default="gpt-5.6-sol")
-    authorize.add_argument("--trials", type=int, default=5)
+    authorize.add_argument("--protocol-config", type=Path, required=True)
+    authorize.add_argument(
+        "--stage", choices=("pilot", "confirmation"), default="pilot"
+    )
+    authorize.add_argument("--seeds", type=_seed_schedule, required=True)
     authorize.add_argument("--output", type=Path, required=True)
 
     trial = sub.add_parser(
@@ -97,22 +107,14 @@ def main() -> None:
     trial.add_argument("--candidate", required=True)
     trial.add_argument("--manifest", type=Path, required=True)
     trial.add_argument("--trial-id", required=True)
-    trial.add_argument("--job-id", required=True)
-    trial.add_argument("--protocol-seed", type=int, required=True)
-    trial.add_argument("--result-sha256", required=True)
-    trial.add_argument("--execution-status", choices=TRIAL_EXECUTION_STATUSES, required=True)
-    trial.add_argument("--reward", type=float, required=True)
-    trial.add_argument("--functional-score", type=float, required=True)
-    trial.add_argument("--static-policy-score", type=float, required=True)
-    trial.add_argument("--llm-audit-score", type=float, required=True)
-    trial.add_argument("--runtime-sec", type=float, required=True)
-    trial.add_argument("--notes", default="")
+    trial.add_argument("--result", type=Path, required=True)
 
     audit = sub.add_parser(
         "audit-trial", help="human-classify one recorded pass or failure"
     )
     audit.add_argument("--candidate", required=True)
     audit.add_argument("--trial-id", required=True)
+    audit.add_argument("--role", choices=FAILURE_AUDIT_ROLES, required=True)
     audit.add_argument(
         "--failure-class",
         choices=("success",) + SUBSTANTIVE_FAILURE_CLASSES + EXCLUDED_FAILURE_CLASSES,
@@ -128,7 +130,7 @@ def main() -> None:
     hardness.add_argument("--manifest-hash", required=True)
 
     args = parser.parse_args()
-    workspace = args.workspace.resolve()
+    workspace = _validated_workspace(args.workspace)
     if args.command == "build":
         _print(build_workspace(workspace))
     elif args.command == "status":
@@ -159,28 +161,7 @@ def main() -> None:
             record_prototype(
                 workspace,
                 args.candidate,
-                {
-                    "expert_baseline_path": args.expert_baseline_path,
-                    "expert_baseline_sha256": args.expert_baseline_sha256,
-                    "independent_oracle_path": args.independent_oracle_path,
-                    "independent_oracle_sha256": args.independent_oracle_sha256,
-                    "evaluator_path": args.evaluator_path,
-                    "evaluator_sha256": args.evaluator_sha256,
-                    "verifier_job_id": args.verifier_job_id,
-                    "container_image_digest": args.container_image_digest,
-                    "framework_prompt_sha256": args.framework_prompt_sha256,
-                    "source_commit": args.source_commit,
-                    "public_api_canary_passed": args.public_api_canary_passed,
-                    "expert_runtime_p95_sec": args.expert_runtime_p95_sec,
-                    "independent_oracle_runtime_sec": args.independent_oracle_runtime_sec,
-                    "gold_effective_lines": args.gold_effective_lines,
-                    "reproducibility_runs": args.reproducibility_runs,
-                    "observed_cpu_count": args.observed_cpu_count,
-                    "observed_memory_mb": args.observed_memory_mb,
-                    "expert_peak_memory_mb": args.expert_peak_memory_mb,
-                    "verifier_only_passed": args.verifier_only_passed,
-                    "notes": args.notes,
-                },
+                args.evidence_bundle.resolve(),
             )
         )
     elif args.command == "authorize":
@@ -188,8 +169,9 @@ def main() -> None:
             authorize_model_test(
                 workspace,
                 args.candidate,
-                args.model,
-                args.trials,
+                args.protocol_config.resolve(),
+                args.stage,
+                args.seeds,
                 args.output.resolve(),
             )
         )
@@ -200,18 +182,7 @@ def main() -> None:
                 args.candidate,
                 args.manifest.resolve(),
                 args.trial_id,
-                {
-                    "job_id": args.job_id,
-                    "protocol_seed": args.protocol_seed,
-                    "result_sha256": args.result_sha256,
-                    "execution_status": args.execution_status,
-                    "reward": args.reward,
-                    "functional_score": args.functional_score,
-                    "static_policy_score": args.static_policy_score,
-                    "llm_audit_score": args.llm_audit_score,
-                    "runtime_sec": args.runtime_sec,
-                    "notes": args.notes,
-                },
+                args.result.resolve(),
             )
         )
     elif args.command == "audit-trial":
@@ -220,14 +191,14 @@ def main() -> None:
                 workspace,
                 args.candidate,
                 args.trial_id,
+                args.role,
                 args.failure_class,
                 args.reviewer,
                 args.note,
             )
         )
     elif args.command == "hardness-status":
-        state = json.loads((workspace / "review_state.json").read_text())
-        _print(model_hardness_status(state, args.candidate, args.manifest_hash))
+        _print(model_hardness_status(workspace, args.candidate, args.manifest_hash))
 
 
 if __name__ == "__main__":

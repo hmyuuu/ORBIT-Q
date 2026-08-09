@@ -2,19 +2,19 @@
   "active_shortlist_ids": [
     "f01_fermionic_gaussian_conditioned_quench--representation_stress--inverse",
     "f02_mixed_state_sld_qfim_probe--benchmark--robust_ensemble",
-    "f03_five_qubit_coherent_logical_channel--benchmark--robust_ensemble",
+    "f03_fault_tolerant_css_state_preparation--benchmark--robust_ensemble",
     "f04_nonmarkovian_memory_identification--benchmark--inverse",
     "f09_qsp_phase_synthesis--benchmark--inverse",
     "f16_robust_leakage_grape--benchmark--robust_ensemble",
     "f28_quantum_lanczos_excited_states--benchmark--robust_ensemble",
-    "f43_circuit_cutting_reconstruction--benchmark--robust_ensemble",
-    "f45_semantics_preserving_routing--benchmark--robust_ensemble",
-    "f50_hardware_metric_cross_benchmark--representation_stress--forward"
+    "f43_circuit_cutting_reconstruction--benchmark--finite_shot_noise",
+    "f45_dynamic_circuit_branch_equivalence--benchmark--adaptive",
+    "f50_memory_constrained_contraction--representation_stress--forward"
   ],
   "candidates": {
     "f01_fermionic_gaussian_conditioned_quench--representation_stress--inverse": {
       "authorizations": [],
-      "candidate_hash": "bf2c67e20e90990a",
+      "candidate_hash": "40456821bcf45981180886097788fcf6867750de17ee90840ace3b7785bcbf06",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
@@ -22,15 +22,15 @@
     },
     "f02_mixed_state_sld_qfim_probe--benchmark--robust_ensemble": {
       "authorizations": [],
-      "candidate_hash": "5b52d68978b11122",
+      "candidate_hash": "d0947debfeb60374c68778fc577b94e81ea54baabf8e4348ecaa687d0e85101e",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
       "prototype": {}
     },
-    "f03_five_qubit_coherent_logical_channel--benchmark--robust_ensemble": {
+    "f03_fault_tolerant_css_state_preparation--benchmark--robust_ensemble": {
       "authorizations": [],
-      "candidate_hash": "3d153e8d8a63cc99",
+      "candidate_hash": "b681a83d4e4f4cee9200b9cde0716ad36617fd54d83dd80f7860210af8d66897",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
@@ -38,7 +38,7 @@
     },
     "f04_nonmarkovian_memory_identification--benchmark--inverse": {
       "authorizations": [],
-      "candidate_hash": "93e955e196e1bca6",
+      "candidate_hash": "e314b459f2436fe5725b191875c5be552a44c3c3e05a59a567080379bb587840",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
@@ -46,7 +46,7 @@
     },
     "f09_qsp_phase_synthesis--benchmark--inverse": {
       "authorizations": [],
-      "candidate_hash": "859d844ccc255b7b",
+      "candidate_hash": "c364fda8c6b81045f5b6c3c4ea47c111202630e6cf0a7861f1ae13b4f4a2bfe6",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
@@ -54,7 +54,7 @@
     },
     "f16_robust_leakage_grape--benchmark--robust_ensemble": {
       "authorizations": [],
-      "candidate_hash": "998a859f87067348",
+      "candidate_hash": "fb1880db3d041ae7414b7ccdb97dee9546ff080b1dedef05ce6c53050ceabdf7",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
@@ -62,31 +62,31 @@
     },
     "f28_quantum_lanczos_excited_states--benchmark--robust_ensemble": {
       "authorizations": [],
-      "candidate_hash": "e4d41b9a070e90b2",
+      "candidate_hash": "684ddb0b1711485be21b185a5e1ffcd467833ba8faac273d2d165e4424864f72",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
       "prototype": {}
     },
-    "f43_circuit_cutting_reconstruction--benchmark--robust_ensemble": {
+    "f43_circuit_cutting_reconstruction--benchmark--finite_shot_noise": {
       "authorizations": [],
-      "candidate_hash": "de0543455ef7a503",
+      "candidate_hash": "d6eddc62baedc740d27db395f09dec808161f4adc087f96f3e5e9f8151ae4952",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
       "prototype": {}
     },
-    "f45_semantics_preserving_routing--benchmark--robust_ensemble": {
+    "f45_dynamic_circuit_branch_equivalence--benchmark--adaptive": {
       "authorizations": [],
-      "candidate_hash": "d737bd9bcfe13d2a",
+      "candidate_hash": "33fec298a816426595a6b980025906b1dfb9616757a3ea2b87204c5ef187adf7",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
       "prototype": {}
     },
-    "f50_hardware_metric_cross_benchmark--representation_stress--forward": {
+    "f50_memory_constrained_contraction--representation_stress--forward": {
       "authorizations": [],
-      "candidate_hash": "3d13f511047791d9",
+      "candidate_hash": "09d873ad318aa815cd242ef317f0574e4b0060383d670b475119ce1c063b2610",
       "concept_reviews": {},
       "model_trials": {},
       "pilot_reviews": {},
@@ -95,5 +95,6 @@
   },
   "event_log": [],
   "schema_version": 1,
-  "shortlist_snapshot": "c4d2ce2bc6df05f1c0accb60"
+  "shortlist_snapshot": "38da42d73ac90f7185791416fa2e02ac77191d1561ce712d804a9d2f6ed22eba",
+  "shortlist_source_snapshot_hash": "4c75a0925b6a9ca72813cfdad10aa8d706450f11ff285e9a5fee17431f278297"
 }

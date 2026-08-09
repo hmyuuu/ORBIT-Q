@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit-q.local/schemas/problem-discovery-trial-result-v1.json",
+  "title": "ORBIT-Q normalized Harbor trial result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manifest_hash",
+    "candidate_hash",
+    "model",
+    "protocol_config_sha256",
+    "container_image_digest",
+    "framework_prompt_sha256",
+    "task_bundle_sha256",
+    "job_id",
+    "protocol_seed",
+    "execution_status",
+    "reward",
+    "functional_score",
+    "static_policy_score",
+    "llm_audit_score",
+    "runtime_sec",
+    "raw_job",
+    "solver_transcript"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "manifest_hash": {"$ref": "#/$defs/sha256"},
+    "candidate_hash": {"$ref": "#/$defs/sha256"},
+    "model": {"type": "string", "minLength": 1},
+    "protocol_config_sha256": {"$ref": "#/$defs/sha256"},
+    "container_image_digest": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-fA-F]{64}$"
+    },
+    "framework_prompt_sha256": {"$ref": "#/$defs/sha256"},
+    "task_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "job_id": {"type": "string", "minLength": 1},
+    "protocol_seed": {"type": "integer"},
+    "execution_status": {
+      "enum": [
+        "completed",
+        "agent_timeout",
+        "verifier_timeout",
+        "infrastructure_error",
+        "authentication_error"
+      ]
+    },
+    "reward": {"type": "number", "minimum": 0, "maximum": 1},
+    "functional_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "static_policy_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "llm_audit_score": {"type": "number", "minimum": 0, "maximum": 1},
+    "runtime_sec": {"type": "number", "minimum": -1},
+    "raw_job": {
+      "$ref": "#/$defs/file",
+      "description": "One finished Harbor trial result.json containing verifier_result.rewards plus an operator-named orbit_q_attestation block bound to the manifest and complete protocol config."
+    },
+    "solver_transcript": {"$ref": "#/$defs/file"},
+    "notes": {"type": "string"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

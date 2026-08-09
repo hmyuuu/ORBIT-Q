@@ -1,0 +1,184 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit-q.local/schemas/problem-discovery-prototype-evidence-v1.json",
+  "title": "ORBIT-Q problem-discovery prototype evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "candidate_id",
+    "candidate_hash",
+    "artifacts",
+    "environment",
+    "public_api_canary",
+    "verifier_runs",
+    "independent_oracle_runs",
+    "gold_effective_lines",
+    "valid_alternatives",
+    "mutation_tests"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "candidate_id": {"type": "string", "minLength": 1},
+    "candidate_hash": {"$ref": "#/$defs/sha256"},
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "expert_baseline",
+        "independent_oracle",
+        "evaluator",
+        "task_bundle",
+        "framework_prompt"
+      ],
+      "properties": {
+        "expert_baseline": {"$ref": "#/$defs/artifact"},
+        "independent_oracle": {"$ref": "#/$defs/artifact"},
+        "evaluator": {"$ref": "#/$defs/artifact"},
+        "task_bundle": {"$ref": "#/$defs/artifact"},
+        "framework_prompt": {"$ref": "#/$defs/artifact"}
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "container_image_digest",
+        "source_commit",
+        "observed_cpu_count",
+        "observed_memory_mb"
+      ],
+      "properties": {
+        "container_image_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-fA-F]{64}$"
+        },
+        "source_commit": {"type": "string", "pattern": "^[0-9a-fA-F]{7,64}$"},
+        "observed_cpu_count": {"type": "integer", "minimum": 1},
+        "observed_memory_mb": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "public_api_canary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "log"],
+      "properties": {
+        "passed": {"const": true},
+        "log": {
+          "$ref": "#/$defs/file",
+          "description": "Structured JSON result binding pass status to the frozen image digest and source commit."
+        }
+      }
+    },
+    "verifier_runs": {
+      "type": "array",
+      "minItems": 20,
+      "items": {"$ref": "#/$defs/verifier_run"}
+    },
+    "independent_oracle_runs": {
+      "type": "array",
+      "minItems": 3,
+      "items": {"$ref": "#/$defs/timed_log"}
+    },
+    "gold_effective_lines": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 160,
+      "description": "Must equal the effective nonblank, noncomment Python line count recomputed from expert_baseline."
+    },
+    "valid_alternatives": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["accepted", "log"],
+        "properties": {
+          "accepted": {"const": true},
+          "log": {
+            "$ref": "#/$defs/file",
+            "description": "Structured JSON containing accepted=true and a unique implementation_style."
+          }
+        }
+      }
+    },
+    "mutation_tests": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "rejected", "log"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "rejected": {"const": true},
+          "log": {
+            "$ref": "#/$defs/file",
+            "description": "Structured JSON containing rejected=true and a unique mutation_type."
+          }
+        }
+      }
+    },
+    "notes": {"type": "string"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+    "file": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "author"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "author": {"type": "string", "minLength": 1}
+      }
+    },
+    "timed_log": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runtime_sec", "log"],
+      "properties": {
+        "runtime_sec": {"type": "number", "exclusiveMinimum": 0},
+        "log": {
+          "$ref": "#/$defs/file",
+          "description": "Structured JSON containing passed=true, the declared runtime, and an oracle_method."
+        }
+      }
+    },
+    "verifier_run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_id",
+        "passed",
+        "runtime_sec",
+        "peak_memory_mb",
+        "container_image_digest",
+        "log"
+      ],
+      "properties": {
+        "job_id": {"type": "string", "minLength": 1},
+        "passed": {"const": true},
+        "runtime_sec": {"type": "number", "exclusiveMinimum": 0},
+        "peak_memory_mb": {"type": "number", "exclusiveMinimum": 0},
+        "container_image_digest": {
+          "type": "string",
+          "pattern": "^sha256:[0-9a-fA-F]{64}$"
+        },
+        "log": {
+          "$ref": "#/$defs/file",
+          "description": "Finished Harbor verifier result JSON with compound rewards and operator-attested image and peak-memory facts."
+        }
+      }
+    }
+  }
+}

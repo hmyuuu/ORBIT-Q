@@ -1,10 +1,11 @@
-# ORBIT-Q problem autoresearch
+# ORBIT-Q problem-discovery research loop
 
-This package contains the first source-grounded discovery batch for future
-TensorCircuit benchmark problems. It expands 50 scientific families across
-four resource scales and five operational situations, producing 1,000
-deterministic candidate contracts. It then selects ten candidates for human
-design review.
+This package contains the first source-grounded design matrix and a gated,
+resumable workflow for future TensorCircuit benchmark problems. It expands 50
+scientific families across four resource scales and five operational
+situations, producing 1,000 deterministic candidate contracts. These are 1,000
+auditable regimes, not 1,000 independently sourced problem statements. The
+pipeline then selects ten candidates for human design review.
 
 The shortlist is **not** a claim that GPT-5.6-sol cannot solve these problems.
 All candidates have `empirical_status=untested`. A model-hardness claim is
@@ -31,6 +32,14 @@ fit, determinism, novelty, and shortcut resistance. These are transparent
 design priors recorded in `candidates.jsonl`; they are never mixed with model
 trial results.
 
+`research_protocol.json` defines the repeatable next-cycle stages: query
+planning, immutable raw-result ingest, claim-level normalization, exact and
+semantic deduplication, coverage sampling, scoring, and human source review.
+The current snapshot used agent-assisted primary-source research; this package
+does not silently perform network searches. A search adapter must preserve its
+query log and raw response hashes under `.artifacts/problem-discovery/` before
+new source records can be curated into `catalog.json`.
+
 ## Human-gated workflow
 
 ```mermaid
@@ -47,13 +56,16 @@ flowchart LR
     H -->|fail| R
     I -->|approve| J["Hash-bound dry-run manifest"]
     I -->|reject| R
-    J --> K["≥5 frozen GPT-5.6-sol trials"]
-    K --> L{"Human failure audit"}
-    L -->|substantive failures only| M["Model-hard evidence; confirm with 10 trials"]
+    J --> K["5+ precommitted pilot trials"]
+    K --> L{"Two-auditor failure review"}
+    L -->|zero passes; substantive failures| N["Pilot hardness signal"]
+    N --> O["Fresh 20+ trial confirmation"]
+    O --> P{"Two-auditor confirmation review"}
+    P -->|zero passes; all substantive| M["Protocol-scoped model-hard evidence"]
     L -->|infra/spec/API failure| R
 ```
 
-The gate roles are deliberately separated:
+The CLI requires distinct declared identities for the gate roles:
 
 - `quantum_scientist`: physical meaning, conventions, and scientific value;
 - `tensorcircuit_expert`: public pinned API and framework-native centrality;
@@ -98,10 +110,13 @@ python3 scripts/run_problem_discovery.py review \
   --note "reason and evidence"
 ```
 
-`record-prototype` records the baseline/oracle hashes, pinned environment,
-resource measurements, and reproducibility evidence. After all three concept
-reviews and the prototype gate pass, two pilot reviews are recorded with the
-same `review` command using `--gate pilot`.
+`record-prototype` accepts one JSON evidence bundle under
+`.artifacts/problem-discovery/`. It recomputes artifact and log hashes, p95
+runtime, peak memory, and reproduction counts rather than accepting summary
+flags. The bundle must contain 20 verifier runs, three independent-oracle runs,
+two accepted valid implementation styles, and six rejected verifier mutations.
+After all three concept reviews and the prototype gate pass, two pilot reviews
+are recorded with the same `review` command using `--gate pilot`.
 
 Authorization is deliberately a dry action. It writes a manifest and never
 launches Harbor or a model:
@@ -109,21 +124,35 @@ launches Harbor or a model:
 ```bash
 python3 scripts/run_problem_discovery.py authorize \
   --candidate CANDIDATE_ID \
-  --model gpt-5.6-sol \
-  --trials 5 \
+  --protocol-config .artifacts/problem-discovery/protocol.json \
+  --stage pilot \
+  --seeds 101,102,103,104,105 \
   --output .artifacts/problem-discovery/run-manifest.json
 ```
 
 The manifest binds the reviewed candidate hash to the model, prompt hash,
 container digest, source commit, evaluator, baseline, oracle, and reviewer
-decisions. Any candidate content change invalidates its prior approvals.
+decisions. The protocol config additionally freezes provider/model build,
+reasoning effort, budgets, solver and Harbor versions, audit model, tool/network
+policy, and hardware class. Outputs outside `.artifacts/problem-discovery/` or
+overwrites of an existing manifest are rejected. Any reviewed content or gate
+change revokes the authorization.
 
-After an approved external Harbor run, `record-trial` imports only the raw
-compound scores, runtime, execution status, seed, job ID, and result digest.
-It does not infer why a run failed. A named reviewer must then use
+After an approved external Harbor run, `record-trial` imports a normalized
+result JSON under `.artifacts/problem-discovery/`, verifies its raw Harbor-job
+and solver-transcript hashes, derives scores and execution status from the
+finished Harbor `result.json`, and checks its `orbit_q_attestation` against the
+frozen manifest. A separately typed score cannot override the raw result. The
+attestation binds the complete protocol configuration and names the responsible
+runner operator. Local hashes provide tamper evidence, not third-party identity
+proof; the two human auditors remain part of the trust boundary. The importer
+does not infer why a run failed. A named reviewer must then use
 `audit-trial` to classify that outcome. `hardness-status` counts only unique,
-human-audited substantive failures toward the manifest's trial requirement;
-excluded failures remain visible but do not count.
+substantive failures on which two distinct failure auditors agree toward the
+precommitted seed schedule; excluded, missing, extra, or disputed failures
+invalidate the schedule. Any raw compound pass blocks a model-hard conclusion,
+even before human audit. Five failures yield only a pilot signal. A fresh
+confirmation manifest needs at least 20 valid trials before the stronger label.
 
 ```bash
 python3 scripts/run_problem_discovery.py hardness-status \
@@ -148,7 +177,11 @@ explicit human decision.
 - `shortlist.md`: human review report with scientific rationale and sources;
 - `summary.json`: deterministic counts, score weights, and snapshot hash;
 - `review_state.json`: empty-by-default human decisions and evidence ledger;
-- `pipeline.py`: generation, validation, review gates, and manifest authorization.
+- `pipeline.py`: generation, validation, review gates, and manifest authorization;
+- `research_protocol.json`: staged, resumable source-search and ingestion contract;
+- `prototype_evidence.schema.json`: required file-backed prototype evidence;
+- `trial_result.schema.json`: normalized, manifest-bound Harbor result format;
+- `protocol_config.example.json`: frozen solver/verifier protocol template.
 
 The next autoresearch cycle should append or replace normalized families only
 after source/license review and near-duplicate analysis, then rebuild the

@@ -1,0 +1,957 @@
+{
+  "protocol_id": "orbit-q-problem-autoresearch-v1",
+  "schema_version": 1,
+  "status": "declarative_protocol_only",
+  "purpose": "Define a resumable, source-grounded search and review workflow for discovering future TensorCircuit benchmark problem families.",
+  "claim_boundary": "Search hits, design scores, and human plausibility judgments are not evidence that a model cannot solve a candidate. A model-hardness claim requires the separately frozen expert, verifier, pilot, and confirmation workflow.",
+  "automation_boundary": {
+    "web_search_executed_by_this_change": false,
+    "search_adapter_implementation_included": false,
+    "network_credentials_included": false,
+    "existing_catalog_rebuilt": false,
+    "existing_shortlist_rebuilt": false,
+    "behavior": "This file is a machine-readable contract. An operator or a future runner must configure and invoke a conforming adapter; importing or validating this JSON must perform no network access.",
+    "human_approval_required_before_real_model_test": true
+  },
+  "terminology": {
+    "raw_search_record": "One immutable result returned by one query page; it is not yet accepted scientific evidence.",
+    "source_snapshot": "One content-addressed, normalized snapshot of a paper, official document, dataset, or benchmark source.",
+    "problem_lead": "One source-grounded computational problem hypothesis before semantic deduplication and coverage sampling.",
+    "problem_family": "A deduplicated problem mechanism with an explicit TensorCircuit path and an independently checkable oracle design.",
+    "candidate_contract": "A problem family instantiated at one resource scale and one operational situation.",
+    "design_prior": "A pre-trial score used for triage; it must not contain or imply empirical model performance.",
+    "model_hard_evidence": "Evidence produced only by the separately authorized frozen-model trial protocol."
+  },
+  "artifact_policy": {
+    "working_root_template": ".artifacts/problem-discovery/research/{research_run_id}",
+    "raw_payload_root_template": ".artifacts/problem-discovery/research/{research_run_id}/raw/sha256/{content_sha256}",
+    "checkpoint_path_template": ".artifacts/problem-discovery/research/{research_run_id}/checkpoints/{stage_id}.json",
+    "ledger_path_template": ".artifacts/problem-discovery/research/{research_run_id}/ledgers/{stage_id}.jsonl",
+    "normalized_output_root_template": ".artifacts/problem-discovery/research/{research_run_id}/normalized",
+    "review_output_root_template": ".artifacts/problem-discovery/research/{research_run_id}/review",
+    "repository_promotion_target": "reports/orbit_q_problem_discovery/catalog.json",
+    "raw_artifacts_are_gitignored": true,
+    "append_only_ledgers": true,
+    "overwrite_existing_content_addressed_artifact": false,
+    "hash_algorithm": "sha256",
+    "canonical_json": "UTF-8 JSON with object keys sorted, no insignificant whitespace, and a trailing newline only for stored files.",
+    "timestamp_format": "RFC3339 UTC",
+    "secret_policy": "Never persist credentials, authorization headers, cookies, signed URLs, or full environment dumps. Persist only the names of credential variables used."
+  },
+  "resume_contract": {
+    "stage_state_enum": [
+      "not_started",
+      "running",
+      "paused",
+      "complete",
+      "failed",
+      "invalidated"
+    ],
+    "checkpoint_required_fields": [
+      "protocol_id",
+      "schema_version",
+      "research_run_id",
+      "stage_id",
+      "stage_state",
+      "input_manifest_sha256",
+      "completed_unit_ids",
+      "pending_unit_ids",
+      "output_ledger_sha256",
+      "updated_at",
+      "runner_name",
+      "runner_version"
+    ],
+    "idempotency_key": "sha256(protocol_id, research_run_id, stage_id, canonical unit input)",
+    "resume_rule": "On resume, verify the input manifest and output ledger hashes, skip completed idempotency keys, and continue pending units from their recorded cursor. Never infer completion from file existence alone.",
+    "invalidation_rule": "A changed protocol, adapter version, query definition, normalized source snapshot, quota policy, score rubric, or human decision creates a new input manifest hash and invalidates downstream checkpoints without deleting prior artifacts.",
+    "failure_rule": "Record terminal and retryable failures as ledger events. A failed page or source remains pending until retried, explicitly waived by a human, or excluded with a reason code.",
+    "event_chain": {
+      "enabled": true,
+      "genesis_previous_event_sha256": "64_zero_hex_characters",
+      "event_hash_rule": "sha256(canonical event including previous_event_sha256)"
+    }
+  },
+  "query_strategies": [
+    {
+      "id": "domain_landscape",
+      "ordinal": 1,
+      "purpose": "Map scientifically meaningful computational tasks across the principal quantum-computing domains rather than beginning from a preferred algorithm.",
+      "required_facets": [
+        "algorithms",
+        "control",
+        "metrology",
+        "error_correction",
+        "simulation",
+        "open_systems",
+        "measurement",
+        "chemistry",
+        "many_body_dynamics",
+        "verification"
+      ],
+      "query_templates": [
+        "{facet} quantum computing benchmark task exact verifier",
+        "{facet} quantum algorithm dataset reproducible instances",
+        "{facet} quantum numerical method primary paper implementation"
+      ],
+      "expected_yield": "Broad problem mechanisms and authoritative benchmark definitions."
+    },
+    {
+      "id": "cross_vocabulary_obstruction",
+      "ordinal": 2,
+      "purpose": "Find the same computational obstruction under different subfield terminology and avoid counting vocabulary variants as independent ideas.",
+      "required_facets": [
+        "ill_conditioning",
+        "branching_semantics",
+        "rank_deficiency",
+        "memory_constrained_contraction",
+        "non_markovian_memory",
+        "sampling_variance",
+        "leakage",
+        "degeneracy"
+      ],
+      "query_templates": [
+        "quantum {facet} algorithm verification",
+        "{facet} quantum simulation equivalent terminology",
+        "{facet} numerical failure quantum circuit"
+      ],
+      "expected_yield": "Synonym maps, related formulations, and semantic-dedup candidates."
+    },
+    {
+      "id": "framework_method_capability",
+      "ordinal": 3,
+      "purpose": "Search around TensorCircuit-native representations and methods so that the framework performs the core quantum computation.",
+      "required_facets": [
+        "automatic_differentiation",
+        "density_matrix_channels",
+        "fermionic_gaussian_states",
+        "dynamic_circuits",
+        "qudits",
+        "tensor_network_contraction",
+        "noise_and_trajectories",
+        "distributed_slicing"
+      ],
+      "query_templates": [
+        "TensorCircuit {facet} documentation example",
+        "TensorCircuit-NG {facet} primary paper",
+        "differentiable quantum simulation {facet} benchmark"
+      ],
+      "expected_yield": "Pinned public-API evidence, feasible framework paths, and framework-obstruction warnings."
+    },
+    {
+      "id": "negative_result_failure_mode",
+      "ordinal": 4,
+      "purpose": "Find scientifically substantive failure modes that create reasoning or numerical difficulty without merely increasing brute-force size.",
+      "required_facets": [
+        "barren_plateau",
+        "np_hard_training",
+        "sampling_error",
+        "ill_conditioned_inverse",
+        "identifiability",
+        "variance_explosion",
+        "approximation_breakdown",
+        "fault_propagation"
+      ],
+      "query_templates": [
+        "quantum algorithm {facet} primary paper",
+        "quantum benchmark failure analysis {facet}",
+        "quantum numerical method {facet} counterexample"
+      ],
+      "expected_yield": "Mechanistic difficulty priors and explicit falsification tests; not automatic model-hardness evidence."
+    },
+    {
+      "id": "benchmark_dataset_agent_gap",
+      "ordinal": 5,
+      "purpose": "Locate reusable task structures, public datasets, independent oracles, and direct evidence of agent capability gaps.",
+      "required_facets": [
+        "quantum_circuit_benchmark",
+        "quantum_program_synthesis",
+        "quantum_agent_evaluation",
+        "error_correction_synthesis",
+        "application_oriented_benchmark",
+        "randomized_measurement_benchmark"
+      ],
+      "query_templates": [
+        "quantum benchmark dataset {facet}",
+        "LLM agent quantum programming benchmark {facet}",
+        "quantum task suite verifier public instances {facet}"
+      ],
+      "expected_yield": "Benchmark context and, when directly measured, model-specific agent evidence."
+    }
+  ],
+  "quota_policy": {
+    "severity_enum": [
+      "blocking",
+      "human_override_required",
+      "advisory"
+    ],
+    "search": {
+      "minimum_query_runs_per_strategy": {
+        "value": 12,
+        "severity": "blocking"
+      },
+      "minimum_raw_search_records_per_strategy": {
+        "value": 200,
+        "severity": "human_override_required",
+        "note": "A provider may return fewer useful records; a waiver must record exhaustion evidence rather than silently lowering the quota."
+      },
+      "target_total_raw_search_records": {
+        "value": 1000,
+        "severity": "advisory"
+      },
+      "maximum_fraction_from_one_query": {
+        "value": 0.1,
+        "severity": "human_override_required"
+      }
+    },
+    "ingest_and_normalize": {
+      "minimum_unique_admissible_source_snapshots": {
+        "value": 40,
+        "severity": "blocking"
+      },
+      "minimum_primary_or_official_fraction": {
+        "value": 0.8,
+        "severity": "blocking"
+      },
+      "minimum_normalized_problem_leads": {
+        "value": 100,
+        "severity": "human_override_required"
+      },
+      "minimum_deduplicated_problem_families": {
+        "value": 50,
+        "severity": "blocking"
+      },
+      "maximum_family_fraction_supported_by_one_nonframework_source": {
+        "value": 0.2,
+        "severity": "human_override_required"
+      }
+    },
+    "domain_coverage": {
+      "minimum_families_per_domain": {
+        "value": 3,
+        "severity": "human_override_required",
+        "domains": [
+          "algorithms",
+          "control",
+          "metrology",
+          "qec",
+          "simulation",
+          "open_systems",
+          "measurement",
+          "chemistry",
+          "dynamics",
+          "verification"
+        ]
+      }
+    },
+    "coverage_sample": {
+      "problem_family_count": {
+        "value": 50,
+        "severity": "blocking"
+      },
+      "scale_ids": [
+        "tiny_exact",
+        "benchmark",
+        "representation_stress",
+        "runtime_edge"
+      ],
+      "situation_ids": [
+        "forward",
+        "inverse",
+        "robust_ensemble",
+        "finite_shot_noise",
+        "adaptive"
+      ],
+      "cross_product_required": true,
+      "expected_candidate_contract_count": {
+        "value": 1000,
+        "severity": "blocking",
+        "derivation": "50 problem families x 4 scale regimes x 5 operational situations"
+      }
+    },
+    "shortlist": {
+      "candidate_count": {
+        "value": 10,
+        "severity": "blocking"
+      },
+      "maximum_candidates_per_domain": {
+        "value": 1,
+        "severity": "human_override_required"
+      },
+      "minimum_distinct_operational_situations": {
+        "value": 4,
+        "severity": "human_override_required"
+      },
+      "minimum_candidates_from_finite_shot_or_adaptive": {
+        "value": 1,
+        "severity": "human_override_required"
+      },
+      "minimum_direct_agent_evidence_candidates": {
+        "value": 1,
+        "severity": "advisory",
+        "note": "Absence of direct agent evidence does not reject a scientifically strong candidate, but must remain visible."
+      }
+    }
+  },
+  "immutable_record_contracts": {
+    "mutation_policy": "Records are immutable snapshots. Corrections append a new record with supersedes_record_id and preserve every prior record and raw payload.",
+    "raw_search_record": {
+      "required_fields": [
+        "raw_record_id",
+        "research_run_id",
+        "query_run_id",
+        "strategy_id",
+        "query_text",
+        "query_parameters_sha256",
+        "adapter_name",
+        "adapter_version",
+        "provider_name",
+        "provider_record_id",
+        "result_rank",
+        "observed_url",
+        "retrieved_at",
+        "request_sha256",
+        "response_sha256",
+        "raw_payload_path",
+        "raw_payload_sha256"
+      ],
+      "optional_fields": [
+        "provider_query_id",
+        "page_cursor_in",
+        "page_cursor_out",
+        "title_as_returned",
+        "snippet_as_returned",
+        "authors_as_returned",
+        "published_at_as_returned",
+        "doi_as_returned",
+        "arxiv_id_as_returned",
+        "content_type",
+        "http_status",
+        "etag",
+        "last_modified",
+        "license_hint",
+        "rate_limit_observation",
+        "supersedes_record_id"
+      ],
+      "immutable_fields": "all_fields",
+      "identity_rule": "raw_record_id is the SHA-256 of the canonical record excluding raw_record_id and supersedes_record_id."
+    },
+    "raw_fetch_record": {
+      "required_fields": [
+        "fetch_record_id",
+        "research_run_id",
+        "source_request_url",
+        "resolved_url",
+        "retrieved_at",
+        "adapter_name",
+        "adapter_version",
+        "http_status",
+        "content_type",
+        "request_sha256",
+        "response_headers_sha256",
+        "content_sha256",
+        "payload_path",
+        "referring_raw_record_ids"
+      ],
+      "optional_fields": [
+        "etag",
+        "last_modified",
+        "redirect_chain",
+        "robots_observation",
+        "license_hint",
+        "supersedes_record_id"
+      ],
+      "immutable_fields": "all_fields"
+    },
+    "source_snapshot": {
+      "required_fields": [
+        "source_snapshot_id",
+        "source_id",
+        "source_type",
+        "title",
+        "authors",
+        "publication_date",
+        "canonical_url",
+        "identifiers",
+        "version_locator",
+        "raw_record_ids",
+        "raw_fetch_record_ids",
+        "evidence_class",
+        "evidence_roles",
+        "supported_claims",
+        "license_review",
+        "publication_status",
+        "normalized_at",
+        "normalizer_name",
+        "normalizer_version",
+        "normalized_metadata_sha256"
+      ],
+      "optional_fields": [
+        "abstract",
+        "venue",
+        "published_version_url",
+        "retraction_or_correction_status",
+        "supersedes_source_snapshot_id"
+      ],
+      "immutable_fields": "all_fields",
+      "identity_rule": "source_snapshot_id is a SHA-256 over normalized metadata, identifier versions, raw provenance IDs, and license review; later paper or documentation versions create new snapshots."
+    },
+    "problem_lead": {
+      "required_fields": [
+        "problem_lead_id",
+        "title",
+        "domain",
+        "mechanism",
+        "objective",
+        "input_contract",
+        "output_contract",
+        "tensorcircuit_path",
+        "oracle_design",
+        "source_snapshot_ids",
+        "source_roles",
+        "claim_citations",
+        "created_at",
+        "generator_name",
+        "generator_version"
+      ],
+      "optional_fields": [
+        "known_failure_modes",
+        "falsification_check",
+        "resource_estimate",
+        "supersedes_problem_lead_id"
+      ],
+      "immutable_fields": "all_fields"
+    },
+    "semantic_dedup_decision": {
+      "required_fields": [
+        "decision_id",
+        "cluster_id",
+        "member_problem_lead_ids",
+        "decision",
+        "canonical_problem_lead_id",
+        "reviewer_id",
+        "reviewer_role",
+        "reviewed_at",
+        "reason",
+        "comparison_artifact_sha256"
+      ],
+      "optional_fields": [
+        "second_reviewer_id",
+        "disagreement_resolution",
+        "supersedes_decision_id"
+      ],
+      "immutable_fields": "all_fields"
+    }
+  },
+  "license_and_evidence_policy": {
+    "source_type_enum": [
+      "primary_research",
+      "official_documentation",
+      "official_benchmark_or_dataset",
+      "official_repository_release",
+      "secondary_review",
+      "search_result_only",
+      "unverified"
+    ],
+    "evidence_class_enum": [
+      "primary",
+      "official",
+      "secondary_seed_only",
+      "agent_empirical",
+      "unverified"
+    ],
+    "evidence_role_enum": [
+      "scientific_basis",
+      "software_feasibility",
+      "agent_evidence",
+      "benchmark_context"
+    ],
+    "license_status_enum": [
+      "redistributable",
+      "metadata_and_link_only",
+      "restricted",
+      "unknown"
+    ],
+    "license_review_required_fields": [
+      "license_status",
+      "license_name_or_spdx",
+      "license_url",
+      "rights_holder_if_known",
+      "redistribution_allowed",
+      "reviewed_at",
+      "reviewer_id",
+      "evidence_snapshot_sha256"
+    ],
+    "redistribution_rules": [
+      "Raw source content with restricted or unknown licensing stays outside the repository in the gitignored artifact store.",
+      "Unknown licensing does not prevent recording bibliographic metadata and a canonical link, but it prevents committing the downloaded payload.",
+      "Search snippets are discovery hints only and must not be treated as scientific evidence.",
+      "Committed excerpts must be necessary, short, attributed, and permitted by the source license; evidence locators are preferred over copied text."
+    ],
+    "source_admission_requirements": [
+      "Resolve and record a stable DOI, arXiv identifier with version, official release tag or commit, or content-hashed official documentation snapshot when one exists.",
+      "Record whether the work is a preprint, peer-reviewed publication, official documentation, benchmark release, corrected work, or retracted work.",
+      "Reject retracted evidence as a scientific basis unless the task explicitly studies the retraction and a human approves that use.",
+      "Mutable latest-documentation URLs require a captured content hash and a framework package version or source commit.",
+      "Every normalized factual claim needs a source_snapshot_id and a section, page, equation, figure, table, API symbol, or dataset-field locator."
+    ],
+    "problem_family_admission_requirements": {
+      "minimum_scientific_basis_sources": 1,
+      "scientific_basis_allowed_classes": [
+        "primary",
+        "official"
+      ],
+      "minimum_software_feasibility_sources": 1,
+      "software_feasibility_rule": "Use pinned official API or release evidence for framework-specific claims; a general framework paper alone is insufficient for a new or nightly API.",
+      "secondary_source_rule": "A secondary review may seed queries and supply vocabulary but may not be the sole scientific basis.",
+      "agent_evidence_rule": "Only a benchmark or trial that names the evaluated model, version or snapshot, prompt/tool policy, trial count, and outcome may populate agent_evidence. Generic complexity, barren-plateau, or NP-hardness results remain design priors.",
+      "oracle_rule": "At least one cited source or independently specified derivation must justify the physical quantity and conventions checked by the oracle."
+    }
+  },
+  "semantic_deduplication": {
+    "raw_records_are_never_deleted": true,
+    "exact_identity_keys": [
+      "normalized_doi",
+      "normalized_arxiv_base_id",
+      "official_release_or_commit",
+      "canonical_url_after_redirects",
+      "content_sha256"
+    ],
+    "source_version_rule": "Different arXiv versions, corrected publications, software releases, or documentation builds remain distinct source snapshots linked by a common source_id.",
+    "problem_comparison_fields": [
+      "domain",
+      "mechanism",
+      "objective",
+      "input_contract",
+      "output_contract",
+      "tensorcircuit_path",
+      "oracle_design",
+      "physical_conventions"
+    ],
+    "semantic_model_provenance_required": [
+      "model_name",
+      "model_version",
+      "provider_or_local_artifact",
+      "model_artifact_sha256_if_local",
+      "prompt_or_feature_schema_sha256",
+      "distance_metric",
+      "runner_version"
+    ],
+    "default_thresholds": {
+      "probable_same_problem_at_or_above": 0.94,
+      "near_duplicate_review_at_or_above": 0.86,
+      "below_near_duplicate_is_not_proof_of_distinctness": true
+    },
+    "automatic_action": "Create review clusters only. Never automatically delete, merge, or suppress a problem lead based on semantic similarity.",
+    "human_decision_enum": [
+      "same_problem",
+      "related_variant_keep_both",
+      "distinct",
+      "defer_for_domain_expert"
+    ],
+    "review_requirements": [
+      "A reviewer compares the full problem contracts and supporting source snapshots, not titles or embeddings alone.",
+      "same_problem requires a canonical representative and an explanation of which mechanism, input-output contract, and oracle coincide.",
+      "related_variant_keep_both requires a scientifically material distinction and states how hidden tests will distinguish the variants.",
+      "A second reviewer is required for disputed clusters, clusters containing a shortlisted lead, or clusters whose merge changes a blocking quota.",
+      "Every decision is append-only and hash-bound to the comparison artifact."
+    ]
+  },
+  "score_policy": {
+    "score_names": [
+      "agent_difficulty_prior",
+      "tensorcircuit_path_confidence",
+      "scientific_value",
+      "verifier_feasibility",
+      "runtime_fit",
+      "determinism",
+      "novelty",
+      "anti_shortcut"
+    ],
+    "scale": {
+      "minimum": 1,
+      "maximum": 5,
+      "integer_only": true
+    },
+    "required_score_provenance": [
+      "rubric_version",
+      "scorer_id",
+      "scorer_type",
+      "scored_at",
+      "input_candidate_sha256",
+      "per_score_rationale",
+      "source_snapshot_ids",
+      "score_record_sha256"
+    ],
+    "empirical_fields_forbidden": [
+      "model_pass_rate",
+      "model_failure_rate",
+      "unsolved",
+      "cannot_solve",
+      "model_hard"
+    ],
+    "rule": "Scoring ranks design hypotheses only. Empirical model outcomes remain null until a separately authorized trial manifest is executed and human-audited."
+  },
+  "adapter_contract": {
+    "contract_version": 1,
+    "implementation_in_this_change": false,
+    "supported_adapter_kinds": [
+      "search_api",
+      "bibliographic_api",
+      "repository_api",
+      "manual_export_import"
+    ],
+    "required_capabilities": [
+      "declare_identity_and_version",
+      "accept_explicit_query_and_cursor",
+      "emit_immutable_raw_records",
+      "emit_next_cursor_or_exhausted",
+      "report_rate_limits_and_errors",
+      "preserve_provider_record_ids_and_rank",
+      "support_idempotency_keys",
+      "avoid_secret_persistence"
+    ],
+    "forbidden_capabilities": [
+      "editing_catalog_json_directly",
+      "normalizing_or_scoring_records_inside_the_adapter",
+      "dropping_results_without_reason_codes",
+      "treating_snippets_as_verified_evidence",
+      "launching_model_benchmark_trials"
+    ],
+    "search_request_required_fields": [
+      "contract_version",
+      "research_run_id",
+      "query_run_id",
+      "strategy_id",
+      "query_text",
+      "filters",
+      "page_size",
+      "cursor",
+      "idempotency_key",
+      "requested_at"
+    ],
+    "search_response_required_fields": [
+      "contract_version",
+      "research_run_id",
+      "query_run_id",
+      "adapter_name",
+      "adapter_version",
+      "provider_name",
+      "request_sha256",
+      "response_sha256",
+      "responded_at",
+      "status",
+      "records",
+      "next_cursor",
+      "exhausted",
+      "rate_limit_observation",
+      "errors"
+    ],
+    "search_status_enum": [
+      "ok",
+      "partial",
+      "retryable_error",
+      "terminal_error"
+    ],
+    "result_required_fields": [
+      "provider_record_id",
+      "result_rank",
+      "observed_url",
+      "title_as_returned",
+      "raw_payload",
+      "license_hint"
+    ],
+    "fetch_request_required_fields": [
+      "contract_version",
+      "research_run_id",
+      "fetch_run_id",
+      "source_url",
+      "referring_raw_record_ids",
+      "idempotency_key",
+      "requested_at"
+    ],
+    "fetch_response_required_fields": [
+      "contract_version",
+      "research_run_id",
+      "fetch_run_id",
+      "adapter_name",
+      "adapter_version",
+      "source_request_url",
+      "resolved_url",
+      "retrieved_at",
+      "http_status",
+      "content_type",
+      "response_headers",
+      "content_sha256",
+      "payload",
+      "license_hint",
+      "errors"
+    ],
+    "transport": {
+      "preferred_format": "JSON Lines",
+      "encoding": "UTF-8",
+      "one_response_per_line": true,
+      "stdout_contains_machine_records_only": true,
+      "diagnostics_stream": "stderr"
+    },
+    "retry_policy": {
+      "maximum_attempts": 5,
+      "backoff": "adapter-reported Retry-After, otherwise bounded exponential backoff with jitter",
+      "retryable_conditions": [
+        "rate_limit",
+        "timeout",
+        "temporary_network_error",
+        "provider_5xx"
+      ],
+      "terminal_conditions": [
+        "invalid_query",
+        "authentication_not_configured",
+        "provider_4xx_other_than_rate_limit",
+        "license_or_robots_policy_block"
+      ],
+      "rule": "Every attempt is ledgered. Exhausted retries pause the stage; they do not silently mark a unit complete."
+    }
+  },
+  "stages": [
+    {
+      "id": "search",
+      "ordinal": 1,
+      "depends_on": [],
+      "implementation_status": "specified_not_implemented",
+      "purpose": "Execute the five query strategies through a configured adapter and preserve every returned page and result immutably.",
+      "inputs": [
+        "protocol snapshot",
+        "research_run manifest",
+        "adapter configuration without secrets",
+        "expanded query plan"
+      ],
+      "outputs": [
+        "query-run ledger",
+        "raw search records",
+        "raw provider response payloads",
+        "search quota report"
+      ],
+      "resume_unit": "one strategy_id plus query_run_id plus page cursor",
+      "completion_criteria": [
+        "Every planned query is exhausted, completed, or explicitly waived by a human with a reason.",
+        "Every response and result has immutable request, response, payload, adapter, provider, rank, and cursor provenance.",
+        "Blocking search quotas pass or have a recorded human override where permitted."
+      ],
+      "human_gate": false
+    },
+    {
+      "id": "ingest",
+      "ordinal": 2,
+      "depends_on": [
+        "search"
+      ],
+      "implementation_status": "specified_not_implemented",
+      "purpose": "Resolve identifiers and stable source versions, fetch allowed metadata or content, and record content-addressed raw fetch snapshots.",
+      "inputs": [
+        "completed search ledger",
+        "raw search records",
+        "source-resolution rules",
+        "license and robots policy"
+      ],
+      "outputs": [
+        "raw fetch records",
+        "identifier-resolution ledger",
+        "license observations",
+        "ingest exclusion ledger"
+      ],
+      "resume_unit": "one canonical source request plus version locator",
+      "completion_criteria": [
+        "Every raw search record is linked to a fetched or metadata-only source, excluded with a reason, or marked pending.",
+        "Restricted or unknown-license payloads remain outside the repository.",
+        "All redirects, content hashes, timestamps, and adapter versions are recorded."
+      ],
+      "human_gate": false
+    },
+    {
+      "id": "normalize",
+      "ordinal": 3,
+      "depends_on": [
+        "ingest"
+      ],
+      "implementation_status": "specified_not_implemented",
+      "purpose": "Create immutable source snapshots and source-grounded problem leads with explicit evidence roles and claim locators.",
+      "inputs": [
+        "raw search and fetch records",
+        "normalizer version",
+        "domain and evidence taxonomies"
+      ],
+      "outputs": [
+        "source snapshots",
+        "problem leads",
+        "normalization validation report",
+        "unverified-claim queue"
+      ],
+      "resume_unit": "one raw source identity group",
+      "completion_criteria": [
+        "Every accepted source snapshot passes provenance, identifier, publication-status, evidence-role, and license validation.",
+        "Every problem lead has an explicit objective, TensorCircuit path, oracle design, and claim-to-source mapping.",
+        "Search snippets and unverified sources are not used as scientific bases."
+      ],
+      "human_gate": false
+    },
+    {
+      "id": "dedupe",
+      "ordinal": 4,
+      "depends_on": [
+        "normalize"
+      ],
+      "implementation_status": "specified_not_implemented",
+      "purpose": "Collapse exact source identities, cluster semantically overlapping problem leads, and obtain reviewable human decisions without discarding provenance.",
+      "inputs": [
+        "source snapshots",
+        "problem leads",
+        "exact identifier rules",
+        "semantic model configuration"
+      ],
+      "outputs": [
+        "exact-identity groups",
+        "semantic comparison artifacts",
+        "semantic review clusters",
+        "append-only dedup decisions",
+        "deduplicated problem-family manifest"
+      ],
+      "resume_unit": "one exact-identity group or semantic cluster",
+      "completion_criteria": [
+        "Every probable-same and near-duplicate cluster has a human decision or an explicit defer decision.",
+        "Required second reviews are complete.",
+        "Every retained family links back to all constituent problem leads and source snapshots.",
+        "Blocking family and source quotas pass."
+      ],
+      "human_gate": true,
+      "required_roles": [
+        "domain_reviewer",
+        "benchmark_methodologist_for_disputes"
+      ]
+    },
+    {
+      "id": "coverage-sample",
+      "ordinal": 5,
+      "depends_on": [
+        "dedupe"
+      ],
+      "implementation_status": "specified_not_implemented",
+      "purpose": "Select a deterministic, quota-aware family pool and expand it across four scales and five operational situations.",
+      "inputs": [
+        "deduplicated problem-family manifest",
+        "coverage quotas",
+        "sampling seed",
+        "sampler name and version"
+      ],
+      "outputs": [
+        "family-selection manifest",
+        "quota and waiver report",
+        "1,000 candidate contracts",
+        "coverage-sample snapshot hash"
+      ],
+      "resume_unit": "one quota stratum followed by one family-scale-situation tuple",
+      "completion_criteria": [
+        "Exactly 50 selected families are expanded over the declared 4-by-5 cross-product.",
+        "Exactly 1,000 unique candidate IDs and hashes are produced.",
+        "The selection seed, sampler version, input hash, quotas, and human waivers are frozen in the output manifest."
+      ],
+      "human_gate": true,
+      "required_roles": [
+        "benchmark_owner"
+      ]
+    },
+    {
+      "id": "score",
+      "ordinal": 6,
+      "depends_on": [
+        "coverage-sample"
+      ],
+      "implementation_status": "partially_represented_by_existing_pipeline_but_not_wired_to_this_protocol",
+      "purpose": "Apply the frozen eight-perspective design rubric while keeping all empirical model fields empty.",
+      "inputs": [
+        "candidate contracts",
+        "score rubric and weights",
+        "source snapshots",
+        "scorer identity and version"
+      ],
+      "outputs": [
+        "append-only score records",
+        "ranked design-prior report",
+        "score disagreement queue"
+      ],
+      "resume_unit": "one candidate hash plus rubric version plus scorer identity",
+      "completion_criteria": [
+        "Every candidate has a complete score vector and per-score rationale.",
+        "No empirical model-hardness field is populated.",
+        "Scores are hash-bound to candidate and source snapshots."
+      ],
+      "human_gate": false
+    },
+    {
+      "id": "human-review",
+      "ordinal": 7,
+      "depends_on": [
+        "score"
+      ],
+      "implementation_status": "later_review_gates_exist_but_search_stage_integration_is_not_implemented",
+      "purpose": "Select approximately ten candidates for concept review and authorize prototype work only after scientific, framework, and verifier review.",
+      "inputs": [
+        "ranked design-prior report",
+        "coverage report",
+        "source and dedup snapshots",
+        "candidate contracts"
+      ],
+      "outputs": [
+        "human-reviewed shortlist",
+        "role-specific decisions",
+        "revision or rejection queue",
+        "prototype-admission decisions"
+      ],
+      "resume_unit": "one candidate plus review gate plus reviewer role",
+      "completion_criteria": [
+        "Shortlist quotas pass or all permitted overrides are recorded.",
+        "Quantum scientist, TensorCircuit expert, and verifier engineer decisions are distinct and hash-bound.",
+        "Rejected and deferred candidates retain reasons and provenance.",
+        "No real model trial is launched by this stage; an approved candidate proceeds only to the separate prototype, authorization, and frozen-trial workflow."
+      ],
+      "human_gate": true,
+      "required_roles": [
+        "quantum_scientist",
+        "tensorcircuit_expert",
+        "verifier_engineer"
+      ]
+    }
+  ],
+  "stage_order": [
+    "search",
+    "ingest",
+    "normalize",
+    "dedupe",
+    "coverage-sample",
+    "score",
+    "human-review"
+  ],
+  "promotion_contract": {
+    "automatic_catalog_edit_allowed": false,
+    "required_before_catalog_promotion": [
+      "all stage checkpoints complete",
+      "blocking quotas pass",
+      "all license reviews complete",
+      "all semantic-dedup clusters resolved or explicitly deferred outside the promoted set",
+      "source and family snapshots validated",
+      "human-review decisions complete",
+      "promotion diff reviewed by a benchmark owner"
+    ],
+    "required_promotion_manifest_fields": [
+      "research_run_id",
+      "protocol_sha256",
+      "stage_checkpoint_sha256s",
+      "source_snapshot_sha256",
+      "dedupe_decision_snapshot_sha256",
+      "coverage_sample_sha256",
+      "score_snapshot_sha256",
+      "human_review_snapshot_sha256",
+      "promoter_id",
+      "promoted_at"
+    ],
+    "real_test_boundary": "Promotion into a discovery catalog or shortlist does not authorize a Harbor/model run. Real tests require the separate frozen manifest and human gates described by the ORBIT-Q problem-discovery workflow."
+  }
+}

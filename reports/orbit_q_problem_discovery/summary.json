@@ -1,5 +1,6 @@
 {
   "candidate_count": 1000,
+  "catalog_source_snapshot_hash": "0b9642911f9a7afe5cb8c8fd46baa3538ebe87339a8a14bec376005a68d5f17a",
   "claim_boundary": "Scores are design priors, not measured GPT-5.6-sol outcomes. No real solver trials were run during discovery.",
   "domains": {
     "algorithms": 60,
@@ -46,6 +47,6 @@
     "shortlist_eligible": 539
   },
   "shortlist_count": 10,
-  "shortlist_snapshot": "c4d2ce2bc6df05f1c0accb60",
-  "source_count": 40
+  "shortlist_snapshot": "38da42d73ac90f7185791416fa2e02ac77191d1561ce712d804a9d2f6ed22eba",
+  "source_count": 51
 }

@@ -1,0 +1,13 @@
+{
+  "model": "gpt-5.6-sol",
+  "provider_snapshot": "<immutable provider/model build identifier>",
+  "reasoning_effort": "max",
+  "token_budget": 200000,
+  "wall_time_sec": 1800,
+  "solver_agent_version": "<codex or adapter version>",
+  "harbor_version": "<harbor version or commit>",
+  "audit_model": "<frozen audit model build>",
+  "tools_policy": "<tool allowlist and sandbox policy digest>",
+  "network_policy": "disabled",
+  "hardware_class": "<observed CPU and memory class>"
+}

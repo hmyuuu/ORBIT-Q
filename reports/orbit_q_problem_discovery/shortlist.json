@@ -1,7 +1,7 @@
 {
   "candidates": [
     {
-      "candidate_hash": "3d153e8d8a63cc99",
+      "candidate_hash": "b681a83d4e4f4cee9200b9cde0716ad36617fd54d83dd80f7860210af8d66897",
       "current_task_overlap": [],
       "design_score": 98.0,
       "domain": "qec",
@@ -9,11 +9,11 @@
       "empirical_status": "untested",
       "evidence_class": "survey_inference",
       "falsification_check": "Reject if the held-out CSS family lacks a short expert construction, if any fault class is underspecified, or if the TensorCircuit execution is only a wrapper around a classical tableau answer.",
-      "family_id": "f03_five_qubit_coherent_logical_channel",
-      "id": "f03_five_qubit_coherent_logical_channel--benchmark--robust_ensemble",
+      "family_id": "f03_fault_tolerant_css_state_preparation",
+      "id": "f03_fault_tolerant_css_state_preparation--benchmark--robust_ensemble",
       "mechanism": "stabilizer_synthesis_plus_fault_enumeration",
-      "novelty_note": "Directly fills the QEC/fault-tolerant-synthesis roadmap gap; StabilizerBench reports that advanced fault-tolerant synthesis remains largely unsuccessful for frontier agents.",
-      "objective": "Synthesize a flagged CSS logical-state preparation circuit that preserves the target stabilizers and detects every declared low-weight propagated fault.",
+      "novelty_note": "Directly fills the QEC/fault-tolerant-synthesis roadmap gap; StabilizerBench reports substantial headroom across three frontier agents, none of which was GPT-5.6-sol.",
+      "objective": "Synthesize a CSS logical-state preparation and verification circuit that preserves the target stabilizers and detects every declared low-weight propagated fault.",
       "oracle_design": "Polynomial stabilizer/isometry checks plus exhaustive single-fault propagation and exact small-code state verification.",
       "rank": 1,
       "review_questions": [
@@ -43,6 +43,7 @@
         "tensorcircuit_path_confidence": 5,
         "verifier_feasibility": 5
       },
+      "screen_candidate_hash": "0d9501611143d98d2d48de755fb181647dc77e567b1c69552c3fe4aa15ef7291",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.",
@@ -57,14 +58,28 @@
       "source_ids": [
         "stabilizerbench",
         "flagged-css-preparation",
+        "tensorcircuit-ng-paper",
         "tensorcircuit-docs"
       ],
-      "tensorcircuit_path": "Construct and execute the candidate encoder, flag checks, and injected Pauli faults as TensorCircuit circuits; use tableau logic only as an independent verifier.",
-      "title": "Fault-tolerant flagged CSS state preparation",
-      "why_plausibly_hard": "Requires constructive stabilizer reasoning, flag placement, propagation analysis, and exact fault-tolerance semantics; this is supported by direct agent-benchmark evidence rather than size alone."
+      "source_roles": {
+        "agent_evidence": [
+          "stabilizerbench"
+        ],
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "flagged-css-preparation"
+        ]
+      },
+      "source_snapshot_hash": "ae95f03a5979d907041ac5999849fe2bb2dc4bd821e2e267850a1fd391762f4e",
+      "tensorcircuit_path": "Construct and execute the candidate encoder, verification checks, and injected Pauli faults as TensorCircuit circuits; use tableau logic only as an independent verifier.",
+      "title": "Fault-tolerant CSS state-preparation synthesis",
+      "why_plausibly_hard": "Requires constructive stabilizer reasoning, verification-circuit synthesis, propagation analysis, and exact fault-tolerance semantics; this is supported by direct agent-benchmark evidence rather than size alone."
     },
     {
-      "candidate_hash": "bf2c67e20e90990a",
+      "candidate_hash": "40456821bcf45981180886097788fcf6867750de17ee90840ace3b7785bcbf06",
       "current_task_overlap": [],
       "design_score": 89.6,
       "domain": "fermions",
@@ -110,6 +125,7 @@
         "tensorcircuit_path_confidence": 4,
         "verifier_feasibility": 4
       },
+      "screen_candidate_hash": "ff79dc96297956683b2db97c0d7fbe18d734139bc3388eb7f74e7b956d54f263",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Infer hidden parameters from seeded observations and validate on held-out interventions.",
@@ -123,14 +139,24 @@
       "source_ids": [
         "fermionic-gaussian",
         "tensorcircuit-fgs",
-        "tensorcircuit-paper"
+        "tensorcircuit-ng-paper"
       ],
+      "source_roles": {
+        "framework_evidence": [
+          "tensorcircuit-fgs",
+          "tensorcircuit-ng-paper"
+        ],
+        "scientific_basis": [
+          "fermionic-gaussian"
+        ]
+      },
+      "source_snapshot_hash": "d43d53b0b171dfccc10babfcaa8418870129e010567b4867422072cd32424010",
       "tensorcircuit_path": "Use TensorCircuit's FGS covariance engine for Bogoliubov evolution, measurement conditioning, and parity observables; forbid dense Jordan-Wigner statevectors at production scale.",
       "title": "Conditioned fermionic-Gaussian Kitaev quench",
       "why_plausibly_hard": "Requires translating BdG/covariance conventions into an unfamiliar specialized API, then composing measurement conditioning with inverse validation."
     },
     {
-      "candidate_hash": "5b52d68978b11122",
+      "candidate_hash": "d0947debfeb60374c68778fc577b94e81ea54baabf8e4348ecaa687d0e85101e",
       "current_task_overlap": [
         "04"
       ],
@@ -139,16 +165,16 @@
       "empirical_pass_rate": null,
       "empirical_status": "untested",
       "evidence_class": "survey_inference",
-      "falsification_check": "Require a lower eigenvalue bound and agreement between AD and finite-difference QFIMs before any solver trial.",
+      "falsification_check": "Require a fixed nullspace, a lower bound on every nonzero support eigenvalue, and agreement between AD and finite-difference QFIMs before any solver trial.",
       "family_id": "f02_mixed_state_sld_qfim_probe",
       "id": "f02_mixed_state_sld_qfim_probe--benchmark--robust_ensemble",
       "mechanism": "density_matrix_ad_plus_spectral_geometry",
       "novelty_note": "Adds multiparameter information geometry and rank-aware mixed-state optimization, unlike current energy/fidelity objectives.",
-      "objective": "Optimize a noisy probe circuit using the symmetric-logarithmic-derivative quantum Fisher information matrix under explicit rank and conditioning bounds.",
+      "objective": "Optimize a noisy probe circuit using the symmetric-logarithmic-derivative quantum Fisher information matrix on a fixed support whose nonzero eigenvalues obey an explicit lower bound.",
       "oracle_design": "Finite-difference density derivatives and an independent eigenbasis SLD implementation with hidden parameter points.",
       "rank": 3,
       "review_questions": [
-        "Is the state rank safely bounded?",
+        "Is the density-matrix support fixed over the full parameter domain?",
         "Are SLD and parameter-order conventions explicit?",
         "Is the target reachable without optimizer luck?"
       ],
@@ -174,6 +200,7 @@
         "tensorcircuit_path_confidence": 4,
         "verifier_feasibility": 5
       },
+      "screen_candidate_hash": "3cf0290de84b95151bd311e4abae7fd4c16838579af3f0aea9a6a11f307ec2e3",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.",
@@ -187,15 +214,29 @@
       },
       "source_ids": [
         "qfim-review",
-        "tensorcircuit-docs",
-        "tensorcircuit-paper"
+        "qfi-discontinuities",
+        "qfi-dependent-rank",
+        "tensorcircuit-ng-paper",
+        "tensorcircuit-docs"
       ],
+      "source_roles": {
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "qfim-review",
+          "qfi-discontinuities",
+          "qfi-dependent-rank"
+        ]
+      },
+      "source_snapshot_hash": "cc63ec55f6cf62caa13b0e04fbafe42736432a662bd0e78fc270cd37f03d7e95",
       "tensorcircuit_path": "Use DMCircuit for parameterized noisy channels and backend Jacobians; compute the stable spectral SLD formula as support code.",
       "title": "Mixed-state multiparameter SLD-QFIM probe design",
-      "why_plausibly_hard": "Combines noisy circuit AD, complex-valued Jacobian conventions, rank-deficient spectral formulas, and a non-scalar design objective."
+      "why_plausibly_hard": "Combines noisy circuit AD, complex-valued Jacobian conventions, support-restricted spectral formulas, and a non-scalar design objective."
     },
     {
-      "candidate_hash": "859d844ccc255b7b",
+      "candidate_hash": "c364fda8c6b81045f5b6c3c4ea47c111202630e6cf0a7861f1ae13b4f4a2bfe6",
       "current_task_overlap": [],
       "design_score": 95.6,
       "domain": "algorithms",
@@ -237,6 +278,7 @@
         "tensorcircuit_path_confidence": 5,
         "verifier_feasibility": 4
       },
+      "screen_candidate_hash": "a82d311dcd530dcf6c21d92feb89514a8091014ff12cb8d7ffb39cb1ca8e6605",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Infer hidden parameters from seeded observations and validate on held-out interventions.",
@@ -249,26 +291,42 @@
       },
       "source_ids": [
         "qsp-phases",
+        "qsp-efficient-phases",
+        "tensorcircuit-ng-paper",
         "tensorcircuit-docs",
         "qcircuitbench"
       ],
+      "source_roles": {
+        "benchmark_context": [
+          "qcircuitbench"
+        ],
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "qsp-phases",
+          "qsp-efficient-phases"
+        ]
+      },
+      "source_snapshot_hash": "fde77575ff8f41618eed00151d884277e9fd39451bcb508ae6a1a51cb0285d9b",
       "tensorcircuit_path": "Implement the QSP SU(2) sequence as a parameterized TensorCircuit and use backend AD to fit phase factors under fixed gauge conventions.",
       "title": "Quantum signal-processing phase synthesis",
       "why_plausibly_hard": "Requires mapping polynomial parity and gauge constraints to a numerically stable phase parameterization, not merely composing familiar gates."
     },
     {
-      "candidate_hash": "d737bd9bcfe13d2a",
+      "candidate_hash": "33fec298a816426595a6b980025906b1dfb9616757a3ea2b87204c5ef187adf7",
       "current_task_overlap": [
         "07"
       ],
-      "design_score": 94.8,
+      "design_score": 91.6,
       "domain": "verification",
       "empirical_pass_rate": null,
       "empirical_status": "untested",
       "evidence_class": "survey_inference",
-      "falsification_check": "Reject if the pinned TensorCircuit API cannot express every branch directly or if the verifier silently averages away branch-specific errors.",
-      "family_id": "f45_semantics_preserving_routing",
-      "id": "f45_semantics_preserving_routing--benchmark--robust_ensemble",
+      "falsification_check": "Reject unless pinned-image canaries cover reset, zero-probability branches, normalization, and classical feed-forward, or if the verifier averages away branch-specific errors.",
+      "family_id": "f45_dynamic_circuit_branch_equivalence",
+      "id": "f45_dynamic_circuit_branch_equivalence--benchmark--adaptive",
       "mechanism": "midcircuit_instrument_equivalence",
       "novelty_note": "Adds semantic verification of adaptive circuits rather than another feedback-control objective.",
       "objective": "Given two measurement-conditioned circuits with resets and feed-forward, construct a branch-sensitive certificate or counterexample showing whether their induced quantum instruments agree.",
@@ -276,12 +334,12 @@
       "rank": 5,
       "review_questions": [
         "Are zero-probability branches handled explicitly?",
-        "Can mutations isolate each dynamic semantic failure?",
-        "Is TensorCircuit doing substantive instrument execution?"
+        "Can mutations isolate reset, normalization, and feed-forward failures?",
+        "Is TensorCircuit doing substantive branch execution?"
       ],
       "risk_flags": {
         "framework_obstruction": 2,
-        "oracle_weakness": 1,
+        "oracle_weakness": 2,
         "runtime_overflow": 2,
         "stochastic_flake": 1
       },
@@ -299,30 +357,44 @@
         "runtime_fit": 4,
         "scientific_value": 5,
         "tensorcircuit_path_confidence": 4,
-        "verifier_feasibility": 5
+        "verifier_feasibility": 4
       },
+      "screen_candidate_hash": "8acbf0e43e356ce84388808457071552299f2f64904c60bac5401989de3212af",
       "screen_status": "shortlist_eligible",
       "situation": {
-        "description": "Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.",
-        "id": "robust_ensemble",
-        "label": "robust ensemble",
+        "description": "Use intermediate results to choose later circuit operations or experiments.",
+        "id": "adaptive",
+        "label": "adaptive closed loop",
         "score_deltas": {
           "agent_difficulty_prior": 1,
           "anti_shortcut": 1,
-          "runtime_fit": -1
+          "runtime_fit": -1,
+          "verifier_feasibility": -1
         }
       },
       "source_ids": [
         "dynamic-equivalence",
         "dynamic-circuits",
+        "tensorcircuit-ng-paper",
         "tensorcircuit-docs"
       ],
-      "tensorcircuit_path": "Execute every declared measurement branch as a TensorCircuit instrument and compare conditional output maps; support code may perform independent Choi linear algebra.",
+      "source_roles": {
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "dynamic-equivalence",
+          "dynamic-circuits"
+        ]
+      },
+      "source_snapshot_hash": "2983b4525ef1de43a5e36f119aee7f5ece9a391cba4927350a6d04e155fa7053",
+      "tensorcircuit_path": "Explicitly enumerate postselected/Kraus branches in TensorCircuit and compare their conditional output maps; support code may perform independent Choi linear algebra.",
       "title": "Dynamic-circuit branch equivalence certificate",
       "why_plausibly_hard": "Ordinary unitary equivalence is insufficient: the solver must preserve measurement probabilities, normalized conditional states, reset semantics, and later feed-forward across all reachable branches."
     },
     {
-      "candidate_hash": "e4d41b9a070e90b2",
+      "candidate_hash": "684ddb0b1711485be21b185a5e1ffcd467833ba8faac273d2d165e4424864f72",
       "current_task_overlap": [
         "05"
       ],
@@ -366,6 +438,7 @@
         "tensorcircuit_path_confidence": 4,
         "verifier_feasibility": 5
       },
+      "screen_candidate_hash": "3acd54c7e2efc7ad36047f701c9b8e7fcea21613be5548a01f6363e4cd94d5b2",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.",
@@ -379,15 +452,29 @@
       },
       "source_ids": [
         "quantum-krylov-conditioning",
+        "variational-imaginary-time",
         "qite",
+        "tensorcircuit-ng-paper",
         "tensorcircuit-docs"
       ],
+      "source_roles": {
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "quantum-krylov-conditioning",
+          "variational-imaginary-time",
+          "qite"
+        ]
+      },
+      "source_snapshot_hash": "0730537b59c536ff3245436833ac57c7ecb565e46191edf25ec4bb474d58cc6b",
       "tensorcircuit_path": "Use TensorCircuit state preparation/overlaps and framework AD for variational imaginary time.",
       "title": "Quantum Lanczos excited-state spectrum",
       "why_plausibly_hard": "A correct solution must build overlap and Hamiltonian matrices from quantum states, diagnose near-linear dependence, regularize without deleting the physical subspace, and report residual-certified excited energies."
     },
     {
-      "candidate_hash": "93e955e196e1bca6",
+      "candidate_hash": "e314b459f2436fe5725b191875c5be552a44c3c3e05a59a567080379bb587840",
       "current_task_overlap": [
         "04"
       ],
@@ -431,6 +518,7 @@
         "tensorcircuit_path_confidence": 4,
         "verifier_feasibility": 4
       },
+      "screen_candidate_hash": "af8708b47849ad9c98a8aa68de359f06cb8db4bfbce9518119f9410dcba2e16a",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Infer hidden parameters from seeded observations and validate on held-out interventions.",
@@ -443,26 +531,40 @@
       },
       "source_ids": [
         "process-tomography",
+        "quantum-process-identification",
         "oqupy",
+        "tensorcircuit-ng-paper",
         "tensorcircuit-docs"
       ],
+      "source_roles": {
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "process-tomography",
+          "quantum-process-identification",
+          "oqupy"
+        ]
+      },
+      "source_snapshot_hash": "75ebb2dbcce9172db053c9f335736ee6ac189309ff15a664e1974a0a6f91690f",
       "tensorcircuit_path": "Represent the system plus compact memory as a recurrent TensorCircuit/DMCircuit and differentiate held-out intervention losses.",
       "title": "Non-Markovian memory-channel system identification",
       "why_plausibly_hard": "Requires recognizing a non-Markovian latent memory model, building recurrent interventions, and avoiding parameter-gauge traps."
     },
     {
-      "candidate_hash": "de0543455ef7a503",
+      "candidate_hash": "d6eddc62baedc740d27db395f09dec808161f4adc087f96f3e5e9f8151ae4952",
       "current_task_overlap": [
         "08"
       ],
-      "design_score": 94.4,
+      "design_score": 91.6,
       "domain": "distributed_quantum",
       "empirical_pass_rate": null,
       "empirical_status": "untested",
       "evidence_class": "survey_inference",
       "falsification_check": "Require an exact reconstruction identity before enabling finite-shot scoring and reject cuts whose sampling overhead exceeds the resource envelope.",
       "family_id": "f43_circuit_cutting_reconstruction",
-      "id": "f43_circuit_cutting_reconstruction--benchmark--robust_ensemble",
+      "id": "f43_circuit_cutting_reconstruction--benchmark--finite_shot_noise",
       "mechanism": "subcircuit_quasiprobability_recombination",
       "novelty_note": "Adds distributed/cut execution and classical recombination.",
       "objective": "Cut a structured circuit at fixed wires, execute TensorCircuit subcircuits, and reconstruct selected observables with a bounded sampling overhead.",
@@ -475,9 +577,9 @@
       ],
       "risk_flags": {
         "framework_obstruction": 1,
-        "oracle_weakness": 1,
-        "runtime_overflow": 3,
-        "stochastic_flake": 2
+        "oracle_weakness": 2,
+        "runtime_overflow": 2,
+        "stochastic_flake": 3
       },
       "scale": {
         "description": "Use the intended production regime with a target expert p95 runtime below 180 seconds.",
@@ -488,35 +590,51 @@
       "scores": {
         "agent_difficulty_prior": 5,
         "anti_shortcut": 5,
-        "determinism": 4,
+        "determinism": 3,
         "novelty": 5,
-        "runtime_fit": 3,
+        "runtime_fit": 4,
         "scientific_value": 5,
         "tensorcircuit_path_confidence": 5,
-        "verifier_feasibility": 5
+        "verifier_feasibility": 4
       },
+      "screen_candidate_hash": "80057a1fd2464e11e76cb5cb97d54fbaf63399f31059feada0ca792ee88926e1",
       "screen_status": "shortlist_eligible",
       "situation": {
-        "description": "Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.",
-        "id": "robust_ensemble",
-        "label": "robust ensemble",
+        "description": "Operate under an explicit seeded noise and shot budget with a precomputed variance margin.",
+        "id": "finite_shot_noise",
+        "label": "finite-shot noisy",
         "score_deltas": {
           "agent_difficulty_prior": 1,
           "anti_shortcut": 1,
-          "runtime_fit": -1
+          "determinism": -1,
+          "verifier_feasibility": -1
         }
       },
       "source_ids": [
-        "circuit-cutting",
-        "qedc-benchmarks",
+        "circuit-cutting-clusters",
+        "circuit-cutting-partition",
+        "circuit-cutting-shotqc",
+        "tensorcircuit-ng-paper",
         "tensorcircuit-docs"
       ],
+      "source_roles": {
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "circuit-cutting-clusters",
+          "circuit-cutting-partition",
+          "circuit-cutting-shotqc"
+        ]
+      },
+      "source_snapshot_hash": "ecfb26b9fed3711e15dfa5b72d9768cfc1e49b4791fba760af93bce0b243d6dd",
       "tensorcircuit_path": "Use TensorCircuit for every subcircuit and measurement basis; NumPy may perform declared classical recombination.",
       "title": "Variance-aware circuit cutting reconstruction",
       "why_plausibly_hard": "The task couples quantum subcircuit construction to signed quasiprobability recombination and variance allocation; local correctness does not guarantee an unbiased global estimate."
     },
     {
-      "candidate_hash": "998a859f87067348",
+      "candidate_hash": "fb1880db3d041ae7414b7ccdb97dee9546ff080b1dedef05ce6c53050ceabdf7",
       "current_task_overlap": [
         "06",
         "11"
@@ -561,6 +679,7 @@
         "tensorcircuit_path_confidence": 4,
         "verifier_feasibility": 4
       },
+      "screen_candidate_hash": "0b0fae1dfbeed9ab9d3d7eabaa5ce3fe9480678c08a18980588ec56a8057dde9",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.",
@@ -574,14 +693,29 @@
       },
       "source_ids": [
         "grape-scaling",
+        "leaking-qubit-control",
+        "risk-sensitive-control",
+        "tensorcircuit-ng-paper",
         "tensorcircuit-docs"
       ],
+      "source_roles": {
+        "framework_evidence": [
+          "tensorcircuit-ng-paper",
+          "tensorcircuit-docs"
+        ],
+        "scientific_basis": [
+          "grape-scaling",
+          "leaking-qubit-control",
+          "risk-sensitive-control"
+        ]
+      },
+      "source_snapshot_hash": "b4e813beeed2b3acbb9aed95fab005b51e906c51f49f518aa5dabfeeaa785d92",
       "tensorcircuit_path": "Use TensorCircuit qudit/custom-gate primitives with Diffrax/JAX evolution and automatic differentiation.",
       "title": "Leakage-aware robust GRAPE control",
       "why_plausibly_hard": "The solver must reconcile qutrit leakage, differentiable time evolution, control constraints, and worst-case ensemble performance; a pulse that works only at the nominal Hamiltonian is insufficient."
     },
     {
-      "candidate_hash": "3d13f511047791d9",
+      "candidate_hash": "09d873ad318aa815cd242ef317f0574e4b0060383d670b475119ce1c063b2610",
       "current_task_overlap": [],
       "design_score": 91.6,
       "domain": "simulation",
@@ -589,8 +723,8 @@
       "empirical_status": "untested",
       "evidence_class": "survey_inference",
       "falsification_check": "Reject instances whose graph structure makes every contraction exponential under the cap or whose reference plan relies on an unpinned private optimizer.",
-      "family_id": "f50_hardware_metric_cross_benchmark",
-      "id": "f50_hardware_metric_cross_benchmark--representation_stress--forward",
+      "family_id": "f50_memory_constrained_contraction",
+      "id": "f50_memory_constrained_contraction--representation_stress--forward",
       "mechanism": "contraction_planning_under_memory_budget",
       "novelty_note": "Turns scalable simulation into a constructive planning problem with a checkable scientific output, complementing representation-only tasks 08-10.",
       "objective": "Plan and execute a tensor-network contraction for a structured nonlocal circuit under an explicit peak-memory budget, returning selected amplitudes and contraction-cost evidence.",
@@ -627,6 +761,7 @@
         "tensorcircuit_path_confidence": 5,
         "verifier_feasibility": 5
       },
+      "screen_candidate_hash": "0b384af370df3603eb647a56beabdb36043521cd28537b78316e957c46ec98eb",
       "screen_status": "shortlist_eligible",
       "situation": {
         "description": "Compute a physically meaningful observable or state diagnostic from fixed inputs.",
@@ -640,9 +775,22 @@
       "source_ids": [
         "contraction-planning",
         "tn-treewidth",
-        "tensorcircuit-paper",
+        "tensorcircuit-ng-paper",
         "supermarq"
       ],
+      "source_roles": {
+        "benchmark_context": [
+          "supermarq"
+        ],
+        "framework_evidence": [
+          "tensorcircuit-ng-paper"
+        ],
+        "scientific_basis": [
+          "contraction-planning",
+          "tn-treewidth"
+        ]
+      },
+      "source_snapshot_hash": "8dd5a7b7aed305baf878274fcc4c9026bd5856f6c7b05e2d1523f97bae2e6f38",
       "tensorcircuit_path": "Build the circuit and execute the accepted contraction plan through TensorCircuit/TensorNetwork; dense statevector materialization is infeasible at the production scale.",
       "title": "Memory-constrained contraction plan and selected amplitudes",
       "why_plausibly_hard": "The solver must translate circuit structure into an executable contraction strategy, respect an operational memory cap, and obtain correct amplitudes without an exponential intermediate."
