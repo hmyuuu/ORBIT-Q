@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "problem_id": 116,
+  "numeric_id": 116,
+  "slug": "coherent-toric-recovery-portfolio",
+  "candidate_id": "r116_coherent_toric_recovery_portfolio--post_shortlist_reserve--robust_selection",
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "mapping_decision": "Do not remap this reserve to frozen f03 or f11. Candidate f03 synthesizes fault-tolerant CSS preparation under enumerated circuit faults, while f11 reconstructs stochastic correlated surface-code coset likelihoods. Problem 116 instead selects a shared-budget physical recovery portfolio against multiple coherent-noise scenarios and scores the worst-case conditional logical fidelity.",
+    "source_evidence": [
+      {
+        "id": "degenerate-surface-code-tn",
+        "title": "Efficient Algorithms for Maximum Likelihood Decoding in the Surface Code",
+        "url": "https://arxiv.org/abs/1405.4883",
+        "role": "primary basis for stabilizer-degenerate surface-code coset sums and local tensor-network contraction"
+      },
+      {
+        "id": "coherent-surface-code-errors",
+        "title": "Correcting coherent errors with surface codes",
+        "url": "https://arxiv.org/abs/1710.02270",
+        "role": "primary basis for retaining coherent physical-error amplitudes in surface-code recovery analysis"
+      },
+      {
+        "id": "realistic-non-pauli-tn",
+        "title": "Tensor-network simulations of the surface code under realistic noise",
+        "url": "https://arxiv.org/abs/1607.06460",
+        "role": "primary basis for tensor-network evaluation of non-Pauli surface-code noise"
+      },
+      {
+        "id": "qec-decoheres-noise",
+        "title": "Quantum Error Correction Decoheres Noise",
+        "url": "https://doi.org/10.1103/PhysRevLett.121.190501",
+        "role": "primary basis for syndrome-conditioned effective logical channels under coherent noise"
+      },
+      {
+        "id": "correlated-noise-stat-mech",
+        "title": "Statistical mechanical models for quantum codes with correlated noise",
+        "url": "https://arxiv.org/abs/1809.10704",
+        "role": "primary basis for degenerate decoding objectives under correlated noise ensembles"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for tensor-network and quantum-circuit contractions"
+      },
+      {
+        "id": "tensorcircuit-circuit-api",
+        "title": "TensorCircuit Circuit API",
+        "url": "https://tensorcircuit-ng.readthedocs.io/en/latest/api/circuit.html",
+        "role": "official API evidence for Circuit.unitary and Circuit.matrix"
+      }
+    ]
+  },
+  "title": "Robust coherent toric recovery-portfolio selection",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_116.py",
+  "expert_solution": "expert/solution_116.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 18,
+  "tags": [
+    "quantum-error-correction",
+    "toric-css-code",
+    "coherent-noise",
+    "degenerate-decoding",
+    "robust-recovery-selection",
+    "resource-constrained-portfolio",
+    "tensor-network"
+  ],
+  "difficulty_explanation": "Each case contains a 98-data-qubit periodic CSS memory and five syndrome-conditioned recovery decisions. Every logical sector coherently sums 2^48 stabilizer-degenerate errors, and three noise scenarios can disagree about the best homology class under one active cost budget. The eight listed artifacts comprise four logical-quality classes with two stabilizer-related physical representatives per class; the intended challenge is therefore the phase-sensitive transfer plus coupled robust portfolio selection, not an eight-way independent quality search.",
+  "solution_explanation": "The constructive expert represents each coherent homology-sector sum as a seven-virtual-qubit TensorCircuit transfer circuit, obtains the four complex amplitudes from Circuit.matrix, reconstructs each scenario's conditional logical process, classifies candidate recoveries relative to the public anchor, and exhaustively searches the coupled recovery portfolio under the exact shared budget.",
+  "verification_explanation": "The evaluator never imports TensorCircuit. It independently forms complex128 NumPy row-transfer matrices for the periodic plaquette sum, validates that implementation against direct enumeration of every plaquette configuration on a separate three-by-three canary, checks all physical recovery and homology identities, and derives the exact constrained robust optimum.",
+  "relevant_experience": "This reserve combines periodic CSS syndrome geometry, stabilizer degeneracy, coherent logical channels, robust decoder design, constrained discrete optimization, and framework-native nonunitary transfer contractions.",
+  "status": "reserve_prototype_numpy_oracle_validated_tc_runtime_unverified",
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_numpy": "2.2.6",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "Circuit",
+      "Circuit.unitary",
+      "Circuit.matrix",
+      "gates.Gate"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_116.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "Exact cases are bound by the pinned image/runtime and evaluator-emitted full case_digest; the integer seed alone is not a cross-NumPy identity.",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_COHERENT_TORIC_SEED fallback, or evaluator --seed for local canaries",
+    "hidden_holdout_status": "pending; local host digests are non-binding development canaries and no pinned-image private holdout has been frozen or authorized",
+    "anti_hardcoding": "The seed changes both cases, all syndrome/recovery masks and opaque IDs, recovery costs and active budgets, shuffled homology-frame IDs, syndrome weights, three two-branch coherent-noise scenarios, every edge angle, mixture weight, and nonce. Exact physical artifacts, costs, and continuous robust fidelities are all scored.",
+    "oracle": "Independent complex128 NumPy periodic row transfer, a separately implemented exhaustive three-by-three plaquette canary, exact artifact validation, and exact constrained portfolio search",
+    "pass_signal": "Overall: PASS"
+  },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_COHERENT_TORIC_SEED",
+    "local_default": 1162026,
+    "base_seed_mapping": "One NumPy Generator stream emits two ordered cases and deterministically retries a case until its probability, coherence, and fidelity-cost-conflict admission margins are active.",
+    "determinism_scope": "Exact public case bytes are deterministic only under the bound runtime and are identified by the emitted digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, allow_nan false, over the two ordered exact cases before case_digest is added; stdout emits the full case_digest and protocol_seed in exactly one structured orbit_q_case_identity JSON line.",
+    "seed_scrub": "The evaluator removes both seed environment variables immediately after emitting case identity and before submitted-solution import.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6. Trial manifests must bind the full case_digest and image/runtime; local host digests are not authorized trial records."
+  },
+  "difficulty_levers": [
+    "98 physical data qubits rule out a dense statevector while each logical sector contains 2^48 stabilizer-equivalent error representatives",
+    "signed inhomogeneous coherent rotations make amplitude interference, complex phase, and periodic orientation observable",
+    "three classical latent-noise scenarios produce a robust max-min objective instead of one expected-noise decoder",
+    "five syndrome decisions share one deliberately active integer recovery budget, so locally preferred decisions need not form the optimal portfolio",
+    "four homology-quality classes per syndrome are each represented by two stabilizer-related physical artifacts with explicit costs, exposing syndrome, seam, affine-origin, and artifact-validation mistakes",
+    "opaque candidate, syndrome, case, and shuffled frame IDs prevent positional frame assumptions",
+    "two sequential verifier-seeded cases must share one implementation under the 160-line ceiling"
+  ],
+  "claim_boundary": "This is a deterministic synthetic perfect-syndrome memory diagnostic with Z-only coherent rotations and a finite verifier-supplied recovery library. It does not model faulty extraction, measurement error, a full circuit-level decoder, or a threshold. Local NumPy validation establishes mathematical self-consistency only. The TensorCircuit expert has not run in the pinned image, Harbor has not run, no solver-model trial has run, and no model-hardness claim is made.",
+  "local_static_validation": {
+    "host_numpy": "2.4.4",
+    "binding_status": "non-binding local design canaries only; no listed digest is authorized for a solver trial",
+    "seeds_checked": [
+      1162026,
+      1162037,
+      1162116,
+      9876543
+    ],
+    "host_case_digests": {
+      "1162026": "606c34720f5f053522ba798d0fa00969829322c1eab23972b9619b5ebd642a0c",
+      "1162037": "10941be910a7b404b99303adb845c53273284a5e68913058e5997d6f7bd8d9cd",
+      "1162116": "7e3cb06c9d1bcdee9cc42e544c181a458478e79619582a222e4799de6a0a5298",
+      "9876543": "e7a263071f02991ace6311b08034bf9e7870d864a3d84a157e3dea61b3c05921"
+    },
+    "transfer_bruteforce_canary_passed": true,
+    "tiny_canary_maximum_error": 2.082e-17,
+    "minimum_tiny_canary_tolerance": 2e-11,
+    "all_checked_case_invariants_passed": true,
+    "all_checked_tradeoffs_active": true,
+    "minimum_cheapest_to_selected_fidelity_margin": 0.0118,
+    "minimum_selected_to_unconstrained_fidelity_margin": 0.010553,
+    "minimum_syndrome_probability": 4.143e-17,
+    "minimum_maximum_coherence": 0.413812,
+    "host_oracle_build_runtime_range_sec": [
+      1.415,
+      4.185
+    ],
+    "expert_algorithm_api_semantic_proxy_parity_passed": true,
+    "proxy_default_seed_maximum_metric_error": 0.0,
+    "expert_effective_lines": 149,
+    "ruff_passed": true,
+    "tensorcircuit_expert_executed": false
+  },
+  "admission_blockers": [
+    "Candidate 116 is a post-snapshot reserve and intentionally has no discovery binding in the frozen candidates.jsonl/shortlist. The safe runner must continue rejecting it until human review creates a separately hashed post-snapshot reserve binding; do not append or remap it into the frozen 1,000-contract snapshot.",
+    "Run the expert in the pinned TensorCircuit image and verify nonunitary custom-gate acceptance, arbitrary periodic two-site ordering, Circuit.matrix orientation, complex128 trace accuracy at approximately 1e-17 syndrome probabilities, runtime, and memory.",
+    "Prequalify at least 25 exact pinned-image records with protocol_seed, full case_digest, expert pass logs, positive probability/coherence/tradeoff/optimum margins, and explicit admission status before authorizing any schedule.",
+    "Freeze independent verifier-only holdouts only after human review; do not promote any local host digest in this blueprint into a trial manifest.",
+    "Complete authenticated expert-only functional, static-policy, and LLM-policy audits before any solver trial.",
+    "Human reviewers must sign the toric edge/star convention, plaquette redundancy factor, seam-homology definition, recovery-relative process orientation, robust max-min objective, and finite-library claim boundary.",
+    "Before a hardness pilot, either strengthen the physical model so stabilizer-related recovery artifacts can have distinct implementation-dependent performance or explicitly accept that each syndrome has only four quality-distinct homology choices. A pinned expert pass alone would establish feasibility, not likely model hardness."
+  ],
+  "exploitability_risks": [
+    "Once all candidate fidelities are known, the five-decision portfolio can be enumerated cheaply; intended difficulty rests on correctly obtaining phase-sensitive degenerate amplitudes, so source audit must reject a standalone replacement for the TensorCircuit contraction.",
+    "The recovery library is finite and public at execution time. This probes robust selection and convention handling, not discovery over every possible recovery chain.",
+    "Published evaluator, expert, and local canary seeds become contaminated development evidence and cannot establish private model hardness."
+  ],
+  "numerical_statistical_risks": [
+    "Individual syndrome probabilities are naturally around 1e-17 because the code has 48 independent plaquette-syndrome degrees of freedom; normalized fidelities can amplify absolute contraction errors and require pinned-image parity tests.",
+    "Strong coherent angles are used to activate competing homology sectors and do not represent a claimed below-threshold operating point.",
+    "The exact deterministic scenarios have no sampling uncertainty; robust here means max-min over the declared finite scenario set, not a confidence guarantee for an unknown experimental distribution.",
+    "NumPy Generator bytes can drift across versions, so exact case_digest and the pinned NumPy version are mandatory trial identity."
+  ],
+  "api_risks": [
+    "Circuit.unitary must accept nonunitary rank-two and rank-four custom Gate tensors even though the method name says unitary.",
+    "Circuit.matrix must preserve gate application order and return the complete linear operator rather than a normalized state-dependent map.",
+    "The periodic two-site gate on qubits L-1 and 0 must preserve the supplied site order; the gate is symmetric in this prototype, but routing and shape acceptance still need a canary.",
+    "TensorCircuit backend and dtype settings are process global, and complex128 is required for the small unnormalized traces."
+  ],
+  "commands": {
+    "default_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/coherent-toric-recovery-portfolio:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_116.py --solution solution_116'",
+    "alternate_seed_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/coherent-toric-recovery-portfolio:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_116.py --solution solution_116 --seed 1162037'"
+  }
+}

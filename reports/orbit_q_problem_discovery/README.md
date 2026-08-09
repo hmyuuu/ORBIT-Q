@@ -342,6 +342,8 @@ explicit human decision.
 - `candidates.jsonl`: all 1,000 candidate contracts and screening decisions;
 - `shortlist.json`: machine-readable ten-candidate review set;
 - `shortlist.md`: human review report with scientific rationale and sources;
+- `NEXT_CYCLE_REVIEW.md`: empirical-lesson-adjusted priorities for the next
+  human review without mutating the frozen shortlist;
 - `summary.json`: deterministic counts, score weights, and snapshot hash;
 - `review_state.json`: empty-by-default human decisions and evidence ledger;
 - `empirical_evidence.json`: deterministic, sanitized expert/model run ledger;
