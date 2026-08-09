@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "problem_id": 106,
+  "numeric_id": 106,
+  "slug": "css-state-verification",
+  "candidate_id": "f03_fault_tolerant_css_state_preparation--benchmark--robust_ensemble",
+  "title": "Seeded CSS encoder and propagated-fault verification synthesis",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_106.py",
+  "expert_solution": "expert/solution_106.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 180,
+  "expert_time_estimate_hours": 12,
+  "tags": [
+    "quantum-error-correction",
+    "css-state-preparation",
+    "fault-propagation",
+    "verification-synthesis",
+    "robust-ensemble"
+  ],
+  "difficulty_explanation": "A solution must synthesize compact H/CNOT encoders from scrambled CSS generators, enumerate the complete declared circuit-level Pauli fault model, quotient final errors by the target-state stabilizer, reproduce TensorCircuit fault syndromes, and solve a seeded lexicographic minimum set-cover problem for both 7- and 15-qubit instances.",
+  "solution_explanation": "The reference implementation row-reduces the hidden X space, executes the encoder and every dangerous final Pauli representative with TensorCircuit, obtains candidate-check expectations with Circuit.expectation_ps, and selects the exact minimum verification cover.",
+  "verification_explanation": "The evaluator never imports TensorCircuit. It independently propagates binary symplectic stabilizers and Pauli faults, computes target-state coset distance, reconstructs every candidate syndrome, and exhaustively proves the lexicographic optimum.",
+  "relevant_experience": "The prototype is based on CSS logical-zero preparation, Clifford fault propagation, and stabilizer-check verification under a fully enumerated encoder-fault model.",
+  "status": "prototype_untested_by_model",
+  "framework": {
+    "required": "tensorcircuit",
+    "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "tested_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "Circuit",
+      "Circuit.expectation_ps"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_106.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 180,
+    "deterministic": true,
+    "hidden_case_source": "runtime seed ORBIT_CSS_SEED or evaluator --seed",
+    "anti_hardcoding": "The seed changes the 7- and 15-qubit permutations, generator bases, candidate stabilizers, candidate identifiers, and pool order. The submitted encoder determines the fault ensemble checked by the independent oracle.",
+    "oracle": "Independent GF(2) row-space checks, an exact 2^15-amplitude sign canary, binary symplectic Clifford propagation, target-state stabilizer coset distance, and exhaustive set-cover optimization",
+    "pass_signal": "Overall: PASS"
+  },
+  "difficulty_levers": [
+    "scrambled CSS generator bases instead of a named-code circuit",
+    "both 7-qubit and 15-qubit quantum Hamming logical-zero states",
+    "all nonidentity Pauli faults after every encoder H and CNOT",
+    "state-stabilizer quotient before classifying a fault as dangerous",
+    "TensorCircuit check expectations for every dangerous error",
+    "seeded exact lexicographic minimum stabilizer-check cover"
+  ],
+  "claim_boundary": "The declared model covers preparation X faults and all Pauli faults on encoder gates, with ideal nondestructive verification checks. It does not claim fault tolerance of the check-measurement gadgets themselves. No solver-model trial has been run.",
+  "api_risks": [
+    "Circuit.expectation_ps uses ps codes 0=I, 1=X, 2=Y, 3=Z in the pinned image; a convention change corrupts the syndrome matrix.",
+    "TensorCircuit qubit indices follow the state tensor-axis order used by Circuit gates, while the independent oracle treats index zero as the first symplectic coordinate.",
+    "TensorCircuit backend and dtype setters are process-global, so the expert sets NumPy/complex128 explicitly.",
+    "expectation_ps contraction reuse and floating-point signs should be canaried after TensorCircuit upgrades; the prototype thresholds signs at -0.5 with ideal values near plus or minus one."
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "problem_id": 107,
+  "numeric_id": 107,
+  "slug": "memory-bounded-iqp",
+  "candidate_id": "f50_memory_constrained_contraction--representation_stress--forward",
+  "title": "Memory-bounded IQP amplitude contraction",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_107.py",
+  "expert_solution": "expert/solution_107.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 10,
+  "tags": [
+    "tensor-network",
+    "contraction-tree",
+    "treewidth",
+    "iqp",
+    "selected-amplitudes"
+  ],
+  "difficulty_explanation": "The solver must recognize a shuffled low-treewidth IQP factor graph, produce a checkable bounded-width elimination certificate, and execute selected 72-qubit amplitudes with a custom TensorCircuit contraction instead of a dense statevector.",
+  "status": "prototype_untested_by_model",
+  "framework": {
+    "required": "tensorcircuit",
+    "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "tested_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "Circuit.amplitude_before",
+      "set_contractor"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_107.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "hidden_case_source": "runtime seed ORBIT_CONTRACTION_SEED or evaluator --seed",
+    "anti_hardcoding": "The seed changes graph relabelings, all circuit angles, and selected output strings; oracle amplitudes and planted elimination orders are not passed to the solution.",
+    "oracle": "Independent complex128 NumPy variable elimination on the IQP Ising factor graph, with a separate tiny dense-sum identity canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "difficulty_levers": [
+    "72 qubits, ruling out dense statevector materialization",
+    "shuffled cylindrical-grid labels that conceal the planted sweep order",
+    "full induced-width certificate checked independently",
+    "twelve selected complex amplitudes per hidden case, making contraction-path reuse operationally necessary",
+    "TensorCircuit custom-contractor execution with reusable paths"
+  ],
+  "claim_boundary": "The expert and evaluator are validated prototypes. No solver-model trial has been run and no model-hardness claim is made.",
+  "api_risks": [
+    "Circuit.rzz follows exp(-i theta Z tensor Z / 2); a convention drift changes every factor phase.",
+    "Circuit.amplitude_before returns copied TensorNetwork nodes whose ordering is reused by an explicit path only for identical circuit topology.",
+    "TensorCircuit's OMECo adapter is an installed API but remains an optional dependency; the pinned image currently supplies omeco==0.2.0.",
+    "OMECo TreeSA path search is stochastic; only independently checked amplitudes and logical-width certificates are scored, with complex tolerances validated across hidden seeds.",
+    "TensorCircuit backend, dtype, and global contractor state are process-global; the expert uses a local contractor and complex128."
+  ]
+}
