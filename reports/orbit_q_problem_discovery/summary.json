@@ -1,0 +1,51 @@
+{
+  "candidate_count": 1000,
+  "claim_boundary": "Scores are design priors, not measured GPT-5.6-sol outcomes. No real solver trials were run during discovery.",
+  "domains": {
+    "algorithms": 60,
+    "control": 40,
+    "distributed_quantum": 20,
+    "dynamic_circuits": 20,
+    "error_mitigation": 60,
+    "fermions": 20,
+    "many_body": 60,
+    "many_body_dynamics": 100,
+    "measurement": 60,
+    "metrology": 40,
+    "open_systems": 100,
+    "optimization": 40,
+    "qec": 120,
+    "qml": 40,
+    "quantum_chemistry": 100,
+    "quantum_information": 40,
+    "simulation": 20,
+    "topology": 20,
+    "verification": 40
+  },
+  "empirically_tested_count": 0,
+  "evidence_classes": [
+    "official",
+    "literature",
+    "survey_inference"
+  ],
+  "family_count": 50,
+  "schema_version": 1,
+  "score_weights": {
+    "agent_difficulty_prior": 0.22,
+    "anti_shortcut": 0.06,
+    "determinism": 0.08,
+    "novelty": 0.1,
+    "runtime_fit": 0.1,
+    "scientific_value": 0.12,
+    "tensorcircuit_path_confidence": 0.16,
+    "verifier_feasibility": 0.16
+  },
+  "screen_statuses": {
+    "hold_feasibility": 394,
+    "sampled": 67,
+    "shortlist_eligible": 539
+  },
+  "shortlist_count": 10,
+  "shortlist_snapshot": "c4d2ce2bc6df05f1c0accb60",
+  "source_count": 40
+}

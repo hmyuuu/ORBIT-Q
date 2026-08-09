@@ -1,0 +1,1146 @@
+{
+  "schema_version": 1,
+  "source_snapshot_date": "2026-08-09",
+  "claim_boundary": "This catalog enumerates source-grounded design candidates. Scores estimate benchmark promise; they do not report model trials.",
+  "sampling_design": {
+    "description": "Fifty scientific problem families are crossed with four resource scales and five operational situations, yielding exactly 1,000 auditable candidate concepts.",
+    "unit_of_sampling": "A candidate is a benchmark-design contract, not yet a materialized Harbor task.",
+    "strategies": [
+      "landscape_mapping",
+      "cross_vocabulary",
+      "cross_method",
+      "negative_results",
+      "benchmarks_and_datasets"
+    ]
+  },
+  "scale_regimes": [
+    {
+      "id": "tiny_exact",
+      "label": "tiny exact oracle",
+      "description": "Use a small instance with an independent dense or analytic oracle.",
+      "score_deltas": {
+        "agent_difficulty_prior": -1,
+        "verifier_feasibility": 1,
+        "runtime_fit": 1,
+        "novelty": -1
+      }
+    },
+    {
+      "id": "benchmark",
+      "label": "balanced benchmark",
+      "description": "Use the intended production regime with a target expert p95 runtime below 180 seconds.",
+      "score_deltas": {}
+    },
+    {
+      "id": "representation_stress",
+      "label": "representation stress",
+      "description": "Scale past naive dense simulation so the documented TensorCircuit representation is essential.",
+      "score_deltas": {
+        "agent_difficulty_prior": 1,
+        "runtime_fit": -1,
+        "anti_shortcut": 1
+      }
+    },
+    {
+      "id": "runtime_edge",
+      "label": "runtime edge",
+      "description": "Push close to the 300-second submission ceiling; retain only if the expert implementation keeps large headroom.",
+      "score_deltas": {
+        "agent_difficulty_prior": 1,
+        "verifier_feasibility": -1,
+        "runtime_fit": -2,
+        "determinism": -1
+      }
+    }
+  ],
+  "situations": [
+    {
+      "id": "forward",
+      "label": "forward observable",
+      "description": "Compute a physically meaningful observable or state diagnostic from fixed inputs.",
+      "score_deltas": {
+        "agent_difficulty_prior": -1,
+        "verifier_feasibility": 1
+      }
+    },
+    {
+      "id": "inverse",
+      "label": "inverse identification",
+      "description": "Infer hidden parameters from seeded observations and validate on held-out interventions.",
+      "score_deltas": {
+        "agent_difficulty_prior": 1,
+        "verifier_feasibility": -1
+      }
+    },
+    {
+      "id": "finite_shot_noise",
+      "label": "finite-shot noisy",
+      "description": "Operate under an explicit seeded noise and shot budget with a precomputed variance margin.",
+      "score_deltas": {
+        "agent_difficulty_prior": 1,
+        "verifier_feasibility": -1,
+        "determinism": -1,
+        "anti_shortcut": 1
+      }
+    },
+    {
+      "id": "adaptive",
+      "label": "adaptive closed loop",
+      "description": "Use intermediate results to choose later circuit operations or experiments.",
+      "score_deltas": {
+        "agent_difficulty_prior": 1,
+        "verifier_feasibility": -1,
+        "runtime_fit": -1,
+        "anti_shortcut": 1
+      }
+    },
+    {
+      "id": "robust_ensemble",
+      "label": "robust ensemble",
+      "description": "Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.",
+      "score_deltas": {
+        "agent_difficulty_prior": 1,
+        "runtime_fit": -1,
+        "anti_shortcut": 1
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "orbitq-paper",
+      "title": "ORBIT-Q: Dual-axis benchmarking of autonomous agents in scientific quantum programming",
+      "url": "https://arxiv.org/abs/2607.03105",
+      "arxiv_id": "2607.03105",
+      "year": 2026,
+      "evidence_class": "official"
+    },
+    {
+      "id": "orbitq-repository",
+      "title": "ORBIT-Q repository and current 12-task suite",
+      "url": "https://github.com/sxzgroup/ORBIT-Q",
+      "year": 2026,
+      "evidence_class": "official"
+    },
+    {
+      "id": "tensorcircuit-paper",
+      "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+      "url": "https://arxiv.org/abs/2205.10091",
+      "arxiv_id": "2205.10091",
+      "doi": "10.22331/q-2023-02-02-912",
+      "year": 2022,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "tensorcircuit-docs",
+      "title": "TensorCircuit documentation",
+      "url": "https://tensorcircuit.readthedocs.io/en/latest/",
+      "year": 2026,
+      "evidence_class": "official"
+    },
+    {
+      "id": "tensorcircuit-fgs",
+      "title": "TensorCircuit fermionic Gaussian state API",
+      "url": "https://tensorcircuit.readthedocs.io/en/latest/api/fgs.html",
+      "year": 2026,
+      "evidence_class": "official"
+    },
+    {
+      "id": "qcircuitbench",
+      "title": "QCircuitBench: A Large-Scale Dataset for Benchmarking Quantum Algorithm Design",
+      "url": "https://arxiv.org/abs/2410.07961",
+      "arxiv_id": "2410.07961",
+      "year": 2024,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "supermarq",
+      "title": "SupermarQ: A Scalable Quantum Benchmark Suite",
+      "url": "https://arxiv.org/abs/2202.11045",
+      "arxiv_id": "2202.11045",
+      "year": 2022,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "qedc-benchmarks",
+      "title": "Application-Oriented Performance Benchmarks for Quantum Computing",
+      "url": "https://arxiv.org/abs/2110.03137",
+      "arxiv_id": "2110.03137",
+      "year": 2021,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "mqt-bench",
+      "title": "MQT Bench: Benchmarking Software and Design Automation Tools for Quantum Computing",
+      "url": "https://arxiv.org/abs/2204.13719",
+      "arxiv_id": "2204.13719",
+      "year": 2022,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "qasmbench",
+      "title": "QASMBench: A Low-level QASM Benchmark Suite for NISQ Evaluation and Simulation",
+      "url": "https://arxiv.org/abs/2005.13018",
+      "arxiv_id": "2005.13018",
+      "year": 2020,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "grape-scaling",
+      "title": "Optimal control of large quantum systems: assessing memory and runtime performance of GRAPE",
+      "url": "https://arxiv.org/abs/2304.06200",
+      "arxiv_id": "2304.06200",
+      "year": 2023,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "classical-shadows",
+      "title": "Predicting Many Properties of a Quantum System from Very Few Measurements",
+      "url": "https://arxiv.org/abs/2002.08953",
+      "arxiv_id": "2002.08953",
+      "year": 2020,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "cshorebench",
+      "title": "Practical Benchmarking of Randomized Measurement Methods for Quantum Chemistry Hamiltonians",
+      "url": "https://arxiv.org/abs/2312.07497",
+      "arxiv_id": "2312.07497",
+      "year": 2023,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "process-tomography",
+      "title": "Non-Markovian Quantum Process Tomography",
+      "url": "https://arxiv.org/abs/2106.11722",
+      "arxiv_id": "2106.11722",
+      "doi": "10.1103/PRXQuantum.3.020344",
+      "year": 2021,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "oqupy",
+      "title": "OQuPy: A Python package to efficiently simulate non-Markovian open quantum systems with process tensors",
+      "url": "https://arxiv.org/abs/2406.16650",
+      "arxiv_id": "2406.16650",
+      "year": 2024,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "qec-correlated",
+      "title": "Statistical mechanical models for quantum codes with correlated noise",
+      "url": "https://arxiv.org/abs/1809.10704",
+      "arxiv_id": "1809.10704",
+      "year": 2018,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "xzzx-code",
+      "title": "The XZZX surface code",
+      "url": "https://arxiv.org/abs/2009.07851",
+      "arxiv_id": "2009.07851",
+      "year": 2020,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "strategic-qec",
+      "title": "Tensor-network decoders for process tensor descriptions of non-Markovian noise",
+      "url": "https://arxiv.org/abs/2412.13739",
+      "arxiv_id": "2412.13739",
+      "year": 2024,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "logical-rb",
+      "title": "Logical Randomized Benchmarking",
+      "url": "https://arxiv.org/abs/1702.03688",
+      "arxiv_id": "1702.03688",
+      "year": 2017,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "digital-zne",
+      "title": "Digital zero noise extrapolation for quantum error mitigation",
+      "url": "https://arxiv.org/abs/2005.10921",
+      "arxiv_id": "2005.10921",
+      "year": 2020,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "vqd",
+      "title": "Variational Quantum Computation of Excited States",
+      "url": "https://arxiv.org/abs/1805.08138",
+      "arxiv_id": "1805.08138",
+      "year": 2018,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "fermionic-gaussian",
+      "title": "Fermionic Gaussian states: an introduction to numerical approaches",
+      "url": "https://arxiv.org/abs/2111.08343",
+      "arxiv_id": "2111.08343",
+      "year": 2021,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "circuit-cutting",
+      "title": "Approximate Quantum Circuit Cutting",
+      "url": "https://arxiv.org/abs/2212.01270",
+      "arxiv_id": "2212.01270",
+      "year": 2022,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "peps-simulation",
+      "title": "General-purpose quantum circuit simulator with Projected Entangled-Pair States and the quantum supremacy frontier",
+      "url": "https://arxiv.org/abs/1905.08394",
+      "arxiv_id": "1905.08394",
+      "year": 2019,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "qite",
+      "title": "Determining eigenstates and thermal states on a quantum computer using quantum imaginary time evolution",
+      "url": "https://arxiv.org/abs/1901.07653",
+      "arxiv_id": "1901.07653",
+      "year": 2019,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "qfim-review",
+      "title": "Quantum Fisher information matrix and multiparameter estimation",
+      "url": "https://arxiv.org/abs/1907.08037",
+      "arxiv_id": "1907.08037",
+      "year": 2019,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "hamiltonian-learning",
+      "title": "Scalable Bayesian Hamiltonian Learning",
+      "url": "https://arxiv.org/abs/1912.07636",
+      "arxiv_id": "1912.07636",
+      "year": 2019,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "direct-fidelity",
+      "title": "Direct Fidelity Estimation from Few Pauli Measurements",
+      "url": "https://arxiv.org/abs/1104.4695",
+      "arxiv_id": "1104.4695",
+      "year": 2011,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "dynamic-circuits",
+      "title": "Characterizing and Benchmarking Dynamic Quantum Circuits",
+      "url": "https://arxiv.org/abs/2604.03360",
+      "arxiv_id": "2604.03360",
+      "year": 2026,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "barren-plateau",
+      "title": "Barren plateaus in quantum neural network training landscapes",
+      "url": "https://arxiv.org/abs/1803.11173",
+      "arxiv_id": "1803.11173",
+      "year": 2018,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "vqa-np-hard",
+      "title": "Training variational quantum algorithms is NP-hard",
+      "url": "https://arxiv.org/abs/2101.07267",
+      "arxiv_id": "2101.07267",
+      "year": 2021,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "tn-treewidth",
+      "title": "Simulating quantum computation by contracting tensor networks",
+      "url": "https://arxiv.org/abs/quant-ph/0511069",
+      "arxiv_id": "quant-ph/0511069",
+      "year": 2005,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "qsp-phases",
+      "title": "Finding Angles for Quantum Signal Processing with Machine Precision",
+      "url": "https://arxiv.org/abs/2003.02831",
+      "arxiv_id": "2003.02831",
+      "year": 2020,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "petz-recovery",
+      "title": "Decoding quantum information via the Petz recovery map",
+      "url": "https://arxiv.org/abs/1504.04449",
+      "arxiv_id": "1504.04449",
+      "year": 2015,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "randomized-measurements",
+      "title": "The randomized measurement toolbox",
+      "url": "https://arxiv.org/abs/2203.11374",
+      "arxiv_id": "2203.11374",
+      "year": 2022,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "stabilizerbench",
+      "title": "StabilizerBench: Evaluating LLM Agents on Quantum Code Synthesis",
+      "url": "https://arxiv.org/abs/2604.21287",
+      "arxiv_id": "2604.21287",
+      "year": 2026,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "flagged-css-preparation",
+      "title": "Fault-tolerant flagged CSS state preparation",
+      "url": "https://arxiv.org/abs/2408.11894",
+      "arxiv_id": "2408.11894",
+      "year": 2024,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "dynamic-equivalence",
+      "title": "Equivalence checking of dynamic quantum circuits",
+      "url": "https://arxiv.org/abs/2106.01658",
+      "arxiv_id": "2106.01658",
+      "year": 2021,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "quantum-krylov-conditioning",
+      "title": "Noise and ill-conditioning in quantum Krylov subspace diagonalization",
+      "url": "https://arxiv.org/abs/2407.14431",
+      "arxiv_id": "2407.14431",
+      "year": 2024,
+      "evidence_class": "literature"
+    },
+    {
+      "id": "contraction-planning",
+      "title": "Tensor-network contraction path planning for quantum circuits",
+      "url": "https://arxiv.org/abs/2209.02895",
+      "arxiv_id": "2209.02895",
+      "year": 2022,
+      "evidence_class": "literature"
+    }
+  ],
+  "families": [
+    {
+      "id": "f01_fermionic_gaussian_conditioned_quench",
+      "title": "Conditioned fermionic-Gaussian Kitaev quench",
+      "domain": "fermions",
+      "mechanism": "specialized_representation_plus_postselection",
+      "objective": "Evolve a Kitaev-chain Gaussian state, condition on occupation outcomes, and recover parity correlators or hidden quench parameters.",
+      "source_ids": ["fermionic-gaussian", "tensorcircuit-fgs", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use TensorCircuit's FGS covariance engine for Bogoliubov evolution, measurement conditioning, and parity observables; forbid dense Jordan-Wigner statevectors at production scale.",
+      "oracle_design": "Exact Jordan-Wigner simulation on tiny instances plus an independent covariance-matrix implementation on production instances.",
+      "novelty_note": "Adds specialized fermionic simulation and conditional Gaussian measurement, absent from tasks 01-12.",
+      "current_task_overlap": [],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 2,
+      "recommended_scale": "representation_stress",
+      "recommended_situation": "inverse",
+      "why_plausibly_hard": "Requires translating BdG/covariance conventions into an unfamiliar specialized API, then composing measurement conditioning with inverse validation.",
+      "falsification_check": "Reject if the pinned FGS API cannot reproduce exact small-system correlators and gradients with fixed ordering conventions.",
+      "review_questions": ["Is the FGS API stable in the pinned image?", "Can parity and occupation ordering be specified without ambiguity?", "Does the dense oracle remain independent?"]
+    },
+    {
+      "id": "f02_mixed_state_sld_qfim_probe",
+      "title": "Mixed-state multiparameter SLD-QFIM probe design",
+      "domain": "metrology",
+      "mechanism": "density_matrix_ad_plus_spectral_geometry",
+      "objective": "Optimize a noisy probe circuit using the symmetric-logarithmic-derivative quantum Fisher information matrix under explicit rank and conditioning bounds.",
+      "source_ids": ["qfim-review", "tensorcircuit-docs", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use DMCircuit for parameterized noisy channels and backend Jacobians; compute the stable spectral SLD formula as support code.",
+      "oracle_design": "Finite-difference density derivatives and an independent eigenbasis SLD implementation with hidden parameter points.",
+      "novelty_note": "Adds multiparameter information geometry and rank-aware mixed-state optimization, unlike current energy/fidelity objectives.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 3,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "robust_ensemble",
+      "why_plausibly_hard": "Combines noisy circuit AD, complex-valued Jacobian conventions, rank-deficient spectral formulas, and a non-scalar design objective.",
+      "falsification_check": "Require a lower eigenvalue bound and agreement between AD and finite-difference QFIMs before any solver trial.",
+      "review_questions": ["Is the state rank safely bounded?", "Are SLD and parameter-order conventions explicit?", "Is the target reachable without optimizer luck?"]
+    },
+    {
+      "id": "f03_five_qubit_coherent_logical_channel",
+      "title": "Fault-tolerant flagged CSS state preparation",
+      "domain": "qec",
+      "mechanism": "stabilizer_synthesis_plus_fault_enumeration",
+      "objective": "Synthesize a flagged CSS logical-state preparation circuit that preserves the target stabilizers and detects every declared low-weight propagated fault.",
+      "source_ids": ["stabilizerbench", "flagged-css-preparation", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Construct and execute the candidate encoder, flag checks, and injected Pauli faults as TensorCircuit circuits; use tableau logic only as an independent verifier.",
+      "oracle_design": "Polynomial stabilizer/isometry checks plus exhaustive single-fault propagation and exact small-code state verification.",
+      "novelty_note": "Directly fills the QEC/fault-tolerant-synthesis roadmap gap; StabilizerBench reports that advanced fault-tolerant synthesis remains largely unsuccessful for frontier agents.",
+      "current_task_overlap": [],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 5, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 1,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "robust_ensemble",
+      "why_plausibly_hard": "Requires constructive stabilizer reasoning, flag placement, propagation analysis, and exact fault-tolerance semantics; this is supported by direct agent-benchmark evidence rather than size alone.",
+      "falsification_check": "Reject if the held-out CSS family lacks a short expert construction, if any fault class is underspecified, or if the TensorCircuit execution is only a wrapper around a classical tableau answer.",
+      "review_questions": ["Which held-out CSS codes have short expert circuits?", "Are all injected fault locations and acceptance rules explicit?", "Does exhaustive fault enumeration remain below the verifier budget?"]
+    },
+    {
+      "id": "f04_nonmarkovian_memory_identification",
+      "title": "Non-Markovian memory-channel system identification",
+      "domain": "open_systems",
+      "mechanism": "recurrent_system_environment_inverse_problem",
+      "objective": "Identify a recurrent system-memory interaction from intervention sequences and predict held-out multitime observables.",
+      "source_ids": ["process-tomography", "oqupy", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Represent the system plus compact memory as a recurrent TensorCircuit/DMCircuit and differentiate held-out intervention losses.",
+      "oracle_design": "Generate data from a sealed parameter set and score held-out process predictions, with small Choi/process-tensor cross-checks.",
+      "novelty_note": "Adds temporal memory and predictive process identification beyond the Markovian channel calibration in task 04.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 7,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "inverse",
+      "why_plausibly_hard": "Requires recognizing a non-Markovian latent memory model, building recurrent interventions, and avoiding parameter-gauge traps.",
+      "falsification_check": "Require Fisher/identifiability rank and score predictions rather than raw parameters to eliminate gauge ambiguity.",
+      "review_questions": ["Is the hidden model identifiable up to a declared gauge?", "Are interventions informationally complete?", "Can held-out predictions be verified deterministically?"]
+    },
+    {
+      "id": "f05_symmetry_resolved_renyi",
+      "title": "Symmetry-resolved Rényi entropy from charged moments",
+      "domain": "quantum_information",
+      "mechanism": "replica_contraction_plus_fourier_sectors",
+      "objective": "Evaluate charged replica moments and reconstruct U(1)-resolved second Rényi entropies for a structured many-body circuit state.",
+      "source_ids": ["randomized-measurements", "tensorcircuit-paper", "tn-treewidth"],
+      "tensorcircuit_path": "Build two circuit replicas, insert swap and charge operators, and contract sector moments with TensorCircuit's tensor-network engine.",
+      "oracle_design": "Direct reduced density matrices on small instances and an independent MPS calculation on the production scale.",
+      "novelty_note": "Adds replica observables and symmetry-sector reconstruction; task 11 checks string order but not entanglement resolution.",
+      "current_task_overlap": ["11"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "reserve_note": "Strong reserve after contraction-path profiling; replica width currently raises more feasibility risk than the selected ten."
+    },
+    {
+      "id": "f06_replica_partial_transpose_moment",
+      "title": "Mixed-state negativity witness through replica moments",
+      "domain": "measurement",
+      "mechanism": "purification_plus_opposite_permutations",
+      "objective": "Apply local noise through a purification and evaluate a third partial-transpose moment using opposite cyclic permutations on three replicas.",
+      "source_ids": ["randomized-measurements", "tensorcircuit-docs", "tn-treewidth"],
+      "tensorcircuit_path": "Use TensorCircuit channels/purification and a three-replica tensor-network contraction with explicit permutation gates.",
+      "oracle_design": "Direct partial transpose and eigendecomposition on tiny density matrices plus a separately constructed replica contraction.",
+      "novelty_note": "Adds nonlinear mixed-state entanglement witnesses and replica structure absent from the current suite.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "reserve_note": "Strong reserve after a three-replica memory and numerical-margin canary."
+    },
+    {
+      "id": "f07_floquet_cptp_spectral_mode",
+      "title": "Floquet CPTP steady state and subleading mode",
+      "domain": "open_systems",
+      "mechanism": "matrix_free_nonnormal_channel_spectrum",
+      "objective": "Find a noisy Floquet channel's fixed point, subleading eigenvalue, and corresponding decay-mode observable without materializing the full superoperator.",
+      "source_ids": ["tensorcircuit-docs", "process-tomography", "qedc-benchmarks"],
+      "tensorcircuit_path": "Apply a DMCircuit-defined channel to arbitrary density inputs and wrap it as a matrix-free map for a non-Hermitian eigensolver.",
+      "oracle_design": "Explicit superoperator diagonalization at n=4 and residual/biorthogonality checks at production scale.",
+      "novelty_note": "Adds channel fixed points and mixing spectra rather than state or energy optimization.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "reserve_note": "Strong reserve once a public arbitrary-density-input canary and spectral-separation certificate pass."
+    },
+    {
+      "id": "f08_otoc_backward_lightcone",
+      "title": "OTOC profile by backward light-cone extraction",
+      "domain": "many_body_dynamics",
+      "mechanism": "forward_backward_folding_plus_causal_cone",
+      "objective": "Compute an out-of-time-order correlator profile for a large local Floquet circuit by folding forward/backward evolution and pruning exact causal cones.",
+      "source_ids": ["tensorcircuit-paper", "tn-treewidth", "supermarq"],
+      "tensorcircuit_path": "Construct the folded TensorCircuit evolution only on each observable's causal cone and reuse compiled contraction structure.",
+      "oracle_design": "Full-circuit statevector checks on small systems plus an independent Heisenberg-operator/light-cone implementation.",
+      "novelty_note": "Extends task 09 from local forward observables to non-time-ordered forward/backward dynamics and operator spreading.",
+      "current_task_overlap": ["09"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 4, "anti_shortcut": 5},
+      "reserve_note": "Scientifically strong reserve, but novelty versus challenge 09 must be demonstrated first."
+    },
+    {
+      "id": "f09_qsp_phase_synthesis",
+      "title": "Quantum signal-processing phase synthesis",
+      "domain": "algorithms",
+      "mechanism": "polynomial_to_phase_translation",
+      "objective": "Recover parity-constrained phase factors for a hidden target polynomial and verify the resulting TensorCircuit QSP response on an independent grid.",
+      "source_ids": ["qsp-phases", "tensorcircuit-docs", "qcircuitbench"],
+      "tensorcircuit_path": "Implement the QSP SU(2) sequence as a parameterized TensorCircuit and use backend AD to fit phase factors under fixed gauge conventions.",
+      "oracle_design": "Independent polynomial evaluation, unitarity/parity identities, and dense response checks on hidden grid points.",
+      "novelty_note": "Adds constructive fault-tolerant-era algorithm synthesis instead of NISQ variational physics.",
+      "current_task_overlap": [],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 5, "determinism": 5, "novelty": 5, "anti_shortcut": 4},
+      "shortlist_priority": 4,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "inverse",
+      "why_plausibly_hard": "Requires mapping polynomial parity and gauge constraints to a numerically stable phase parameterization, not merely composing familiar gates.",
+      "falsification_check": "Reject targets whose phase solution is unreachable, ill-conditioned, or dominated by an external classical package.",
+      "review_questions": ["Does TensorCircuit remain central rather than a final wrapper?", "Is the phase gauge fixed?", "Do hidden grid checks prevent polynomial hard-coding?"]
+    },
+    {
+      "id": "f10_petz_correlated_recovery",
+      "title": "Petz recovery for a nonunital correlated channel",
+      "domain": "quantum_information",
+      "mechanism": "channel_adjoint_plus_matrix_functions",
+      "objective": "Construct a transpose-channel recovery from a reference code state and evaluate hidden-state entanglement fidelity after a correlated nonunital channel.",
+      "source_ids": ["petz-recovery", "tensorcircuit-docs", "qec-correlated"],
+      "tensorcircuit_path": "Use DMCircuit/Kraus evolution for the channel and recovered states; support code may compute stable matrix square roots and channel adjoints.",
+      "oracle_design": "Independent dense Choi/Kraus construction, trace-preservation checks, and hidden-state entanglement fidelities.",
+      "novelty_note": "Adds information-theoretic channel recovery rather than decoding a sampled Pauli syndrome.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 5, "determinism": 5, "novelty": 5, "anti_shortcut": 4},
+      "reserve_note": "High-reasoning reserve; promote only if TensorCircuit remains central rather than a thin wrapper around dense linear algebra."
+    },
+    {
+      "id": "f11_surface_code_tn_decoder",
+      "title": "Correlated surface-code tensor-network decoder",
+      "domain": "qec",
+      "mechanism": "code_to_partition_function_contraction",
+      "objective": "Evaluate logical coset likelihoods for a seeded correlated-noise surface-code syndrome using a bounded-bond tensor network.",
+      "source_ids": ["qec-correlated", "xzzx-code", "strategic-qec"],
+      "tensorcircuit_path": "Use TensorCircuit/TensorNetwork contraction infrastructure for the likelihood network and expose convergence in bond dimension.",
+      "oracle_design": "Exact enumeration on small distances and a separately implemented boundary-MPS decoder at production distance.",
+      "novelty_note": "Directly fills the QEC/decoding roadmap gap.",
+      "current_task_overlap": ["08"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 3, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 3, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f12_logical_randomized_benchmarking",
+      "title": "Logical randomized-benchmarking inference",
+      "domain": "qec",
+      "mechanism": "hierarchical_channel_statistics",
+      "objective": "Simulate seeded logical Clifford sequences under a recovery channel and fit logical decay with uncertainty calibration.",
+      "source_ids": ["logical-rb", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit noisy circuits for physical and logical sequence execution with vectorized seeds.",
+      "oracle_design": "Analytic depolarizing cases plus independent maximum-likelihood fit and coverage checks.",
+      "novelty_note": "Adds logical performance characterization and statistical inference.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 4, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f13_process_tensor_qec_decoder",
+      "title": "Process-tensor decoder for temporally correlated noise",
+      "domain": "qec",
+      "mechanism": "temporal_tensor_network_decoding",
+      "objective": "Decode a small stabilizer code under spatiotemporally correlated process-tensor noise.",
+      "source_ids": ["strategic-qec", "process-tomography"],
+      "tensorcircuit_path": "Use recurrent TensorCircuit system-environment circuits and contract decoder likelihoods across time.",
+      "oracle_design": "Exact joint system-environment evolution on small rounds and likelihood residual checks.",
+      "novelty_note": "Combines the two absent areas of QEC and non-Markovianity.",
+      "current_task_overlap": [],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 3, "scientific_value": 5, "verifier_feasibility": 3, "runtime_fit": 3, "determinism": 5, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f14_channel_adapted_recovery",
+      "title": "Channel-adapted approximate QEC recovery",
+      "domain": "qec",
+      "mechanism": "recovery_optimization",
+      "objective": "Optimize a compact recovery circuit for amplitude damping and coherent crosstalk on a fixed code.",
+      "source_ids": ["petz-recovery", "qec-correlated", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use DMCircuit channels and differentiable recovery circuits.",
+      "oracle_design": "Semidefinite or dense channel optimum on tiny codes with hidden-state fidelity tests.",
+      "novelty_note": "Adds code-aware noisy optimization rather than ordinary VQE.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f15_magic_state_distillation_channel",
+      "title": "Noisy magic-state distillation channel",
+      "domain": "qec",
+      "mechanism": "postselected_logical_protocol",
+      "objective": "Simulate a compact magic-state distillation circuit with correlated noise and report yield, output Bloch vector, and logical infidelity.",
+      "source_ids": ["qasmbench", "logical-rb", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit postselection/noisy channels and explicit stabilizer measurements.",
+      "oracle_design": "Exact density-matrix propagation and analytic ideal-protocol identities.",
+      "novelty_note": "Adds fault-tolerant resource-state processing.",
+      "current_task_overlap": ["03"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 5, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f16_robust_leakage_grape",
+      "title": "Leakage-aware robust GRAPE control",
+      "domain": "control",
+      "mechanism": "ensemble_ode_control",
+      "objective": "Optimize a qutrit-aware control pulse across detuning and amplitude-error ensembles while penalizing leakage.",
+      "source_ids": ["grape-scaling", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit qudit/custom-gate primitives with Diffrax/JAX evolution and automatic differentiation.",
+      "oracle_design": "Independent matrix-exponential propagation and gradient finite differences on hidden ensemble members.",
+      "novelty_note": "Extends task 06 to robust pulse-level control and leakage rather than variational analog blocks.",
+      "current_task_overlap": ["06", "11"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 9,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "robust_ensemble",
+      "why_plausibly_hard": "The solver must reconcile qutrit leakage, differentiable time evolution, control constraints, and worst-case ensemble performance; a pulse that works only at the nominal Hamiltonian is insufficient.",
+      "falsification_check": "Reject if the pinned image lacks a stable differentiable propagator, the expert cannot meet the runtime gate, or random restarts dominate the outcome.",
+      "review_questions": ["Are amplitude, bandwidth, and leakage conventions complete?", "Can hidden ensemble members test robustness without optimizer lottery?", "Does the independent propagator agree at every gate boundary?"]
+    },
+    {
+      "id": "f17_dynamical_decoupling_design",
+      "title": "Noise-spectrum-aware dynamical-decoupling design",
+      "domain": "control",
+      "mechanism": "filter_function_to_circuit",
+      "objective": "Choose pulse timings that suppress a seeded colored dephasing spectrum while preserving a target gate.",
+      "source_ids": ["digital-zne", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Simulate noisy pulse sequences with TensorCircuit and differentiate timing parameters.",
+      "oracle_design": "Independent filter-function integral plus direct small-system propagation.",
+      "novelty_note": "Adds spectral noise control and timing synthesis.",
+      "current_task_overlap": ["06"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 4, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f18_lindbladian_parameter_learning",
+      "title": "Sparse Lindbladian parameter learning",
+      "domain": "open_systems",
+      "mechanism": "physical_generator_inverse_problem",
+      "objective": "Infer Hamiltonian and jump-operator rates from seeded multitime observables with complete-positivity constraints.",
+      "source_ids": ["hamiltonian-learning", "process-tomography", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use differentiable DMCircuit or ODE evolution for the parameterized generator.",
+      "oracle_design": "Held-out time predictions and independent Liouvillian exponentiation.",
+      "novelty_note": "Adds generator learning beyond fixed Kraus calibration.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f19_collision_model_nonmarkovianity",
+      "title": "Collision-model non-Markovianity witness",
+      "domain": "open_systems",
+      "mechanism": "repeated_ancilla_memory",
+      "objective": "Simulate repeated system-ancilla collisions with memory and compute information-backflow and divisibility witnesses.",
+      "source_ids": ["process-tomography", "oqupy", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Build repeated ancilla circuits with partial resets and reduced-state diagnostics.",
+      "oracle_design": "Independent dense maps and analytic Markovian limit cases.",
+      "novelty_note": "Adds operational non-Markovianity diagnostics.",
+      "current_task_overlap": ["04", "07"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f20_quantum_trajectory_feedback_control",
+      "title": "Quantum-trajectory feedback stabilization",
+      "domain": "open_systems",
+      "mechanism": "stochastic_measurement_feedback",
+      "objective": "Stabilize a target state using seeded weak-measurement trajectories and branch-dependent feedback.",
+      "source_ids": ["dynamic-circuits", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit trajectory channels, measurements, vmap, and feedback gates.",
+      "oracle_design": "Master-equation ensemble average and fixed-seed trajectory statistics.",
+      "novelty_note": "Deepens task 07 from projective VQE feedback to continuous stabilization.",
+      "current_task_overlap": ["07"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 3, "runtime_fit": 3, "determinism": 3, "novelty": 4, "anti_shortcut": 5}
+    },
+    {
+      "id": "f21_kibble_zurek_ramp",
+      "title": "Kibble-Zurek ramp and defect scaling",
+      "domain": "many_body_dynamics",
+      "mechanism": "time_dependent_dynamics_plus_scaling",
+      "objective": "Simulate a parameter ramp through an Ising critical point and fit the defect-density scaling exponent across sizes and ramp times.",
+      "source_ids": ["tensorcircuit-paper", "qedc-benchmarks"],
+      "tensorcircuit_path": "Use TensorCircuit Trotter or ODE evolution with vectorized scale instances.",
+      "oracle_design": "Free-fermion solution and small dense propagation.",
+      "novelty_note": "Adds dynamical critical scaling rather than fixed-state optimization.",
+      "current_task_overlap": ["06"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f22_loschmidt_echo_dqpt",
+      "title": "Loschmidt echo and dynamical phase transitions",
+      "domain": "many_body_dynamics",
+      "mechanism": "complex_overlap_dynamics",
+      "objective": "Compute return-rate cusps after a many-body quench and identify hidden critical times.",
+      "source_ids": ["tensorcircuit-paper", "qedc-benchmarks"],
+      "tensorcircuit_path": "Contract TensorCircuit forward evolution against the initial state across a time grid.",
+      "oracle_design": "Exact free-fermion or diagonalization reference with cusp residuals.",
+      "novelty_note": "Adds nonequilibrium phase diagnostics.",
+      "current_task_overlap": ["12"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f23_floquet_time_crystal",
+      "title": "Noisy Floquet time-crystal response",
+      "domain": "many_body_dynamics",
+      "mechanism": "long_time_subharmonic_order",
+      "objective": "Measure subharmonic response and lifetime under a disordered Floquet circuit with seeded local noise.",
+      "source_ids": ["supermarq", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use repeated TensorCircuit layers, local observables, and noisy trajectories or DMCircuit at controlled size.",
+      "oracle_design": "Small exact dynamics and independent transfer-matrix extrapolation.",
+      "novelty_note": "Adds long-time disorder-robust dynamics.",
+      "current_task_overlap": ["09"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 3, "determinism": 4, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f24_thermal_purification_observables",
+      "title": "Thermofield purification and thermal correlators",
+      "domain": "many_body",
+      "mechanism": "purification_plus_imaginary_time",
+      "objective": "Prepare a thermofield double approximation and compute thermal energy and correlation functions across temperatures.",
+      "source_ids": ["qite", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use doubled TensorCircuit states with variational imaginary-time updates.",
+      "oracle_design": "Exact Gibbs observables on small systems and independent MPO purification.",
+      "novelty_note": "Adds finite-temperature physics and purification.",
+      "current_task_overlap": ["05"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 3, "determinism": 4, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f25_greens_function_spectrum",
+      "title": "Real-time Green's function and spectral reconstruction",
+      "domain": "many_body_dynamics",
+      "mechanism": "complex_time_signal_plus_inverse_spectrum",
+      "objective": "Evaluate a retarded correlator after local insertion and reconstruct stable spectral peaks under a fixed window.",
+      "source_ids": ["qedc-benchmarks", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use TensorCircuit real-time evolution, overlaps, and vectorized time points.",
+      "oracle_design": "Lehmann representation from exact diagonalization on small systems.",
+      "novelty_note": "Adds frequency-domain reconstruction.",
+      "current_task_overlap": ["12"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f26_berry_curvature_chern",
+      "title": "Berry curvature and many-body Chern number",
+      "domain": "topology",
+      "mechanism": "gauge_invariant_parameter_loop",
+      "objective": "Prepare parameterized ground states on a twist-angle grid and compute a gauge-invariant discrete Chern number.",
+      "source_ids": ["tensorcircuit-paper", "vqd"],
+      "tensorcircuit_path": "Use TensorCircuit variational states and overlap plaquettes across boundary twists.",
+      "oracle_design": "Exact diagonalization and integer-quantization checks away from gap closure.",
+      "novelty_note": "Adds topological response; task 11 only checks one string-order phase.",
+      "current_task_overlap": ["11"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f27_peps_boundary_observable",
+      "title": "PEPS boundary contraction for 2D observables",
+      "domain": "many_body",
+      "mechanism": "two_dimensional_boundary_contraction",
+      "objective": "Contract selected local and string observables of a structured 2D circuit/PEPS without a full statevector.",
+      "source_ids": ["peps-simulation", "tn-treewidth", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use TensorCircuit tensor networks and an explicit bounded boundary-MPS contraction.",
+      "oracle_design": "Exact small lattices and independent quimb boundary contraction.",
+      "novelty_note": "Related to task 08 but focuses deterministic PEPS observables and convergence rather than sampling.",
+      "current_task_overlap": ["08"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 3, "determinism": 5, "novelty": 4, "anti_shortcut": 5}
+    },
+    {
+      "id": "f28_quantum_lanczos_excited_states",
+      "title": "Quantum Lanczos excited-state spectrum",
+      "domain": "many_body",
+      "mechanism": "nonorthogonal_krylov_generalized_eigenproblem",
+      "objective": "Generate imaginary-time Krylov states and solve a stabilized generalized eigenproblem for low excitations.",
+      "source_ids": ["quantum-krylov-conditioning", "qite", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit state preparation/overlaps and framework AD for variational imaginary time.",
+      "oracle_design": "Exact eigenspectrum and subspace residual checks.",
+      "novelty_note": "Adds Krylov subspace conditioning and excited states.",
+      "current_task_overlap": ["05"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 4},
+      "shortlist_priority": 6,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "robust_ensemble",
+      "why_plausibly_hard": "A correct solution must build overlap and Hamiltonian matrices from quantum states, diagnose near-linear dependence, regularize without deleting the physical subspace, and report residual-certified excited energies.",
+      "falsification_check": "Plant a known spectral gap and reject instances whose target eigenpairs are not stable across a declared regularization interval.",
+      "review_questions": ["Is the conditioning range difficult but numerically identifiable?", "Are basis gauge and truncation rules explicit?", "Do residual checks prevent simply returning exact reference energies?"]
+    },
+    {
+      "id": "f29_vqd_degenerate_transitions",
+      "title": "Degeneracy-aware VQD and transition amplitudes",
+      "domain": "quantum_chemistry",
+      "mechanism": "multi_state_overlap_constraints",
+      "objective": "Find a low-energy degenerate manifold and compute symmetry-resolved transition amplitudes without controlled-unitary tests.",
+      "source_ids": ["vqd", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use TensorCircuit batched state overlaps, Hamiltonian expectations, and constrained optimization.",
+      "oracle_design": "Exact spectrum/projectors and basis-invariant subspace fidelity.",
+      "novelty_note": "Adds excited states, degeneracy, and transitions.",
+      "current_task_overlap": ["02"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f30_ucc_active_space_vqe",
+      "title": "Active-space UCC circuit with symmetry checks",
+      "domain": "quantum_chemistry",
+      "mechanism": "fermionic_excitation_mapping",
+      "objective": "Construct and optimize a seeded active-space UCC ansatz while preserving particle number and spin parity.",
+      "source_ids": ["tensorcircuit-paper", "qasmbench"],
+      "tensorcircuit_path": "Use TensorCircuit Pauli rotations and sparse Hamiltonian expectations.",
+      "oracle_design": "FCI energy on small active spaces and symmetry/gradient checks.",
+      "novelty_note": "Adds chemistry mapping and symmetries, though the optimization pattern resembles VQE tasks.",
+      "current_task_overlap": ["02"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 4, "novelty": 4, "anti_shortcut": 4}
+    },
+    {
+      "id": "f31_adapt_vqe_operator_selection",
+      "title": "ADAPT-VQE operator-pool selection",
+      "domain": "quantum_chemistry",
+      "mechanism": "adaptive_ansatz_growth",
+      "objective": "Grow a symmetry-preserving ansatz by exact gradient ranking and optimize after each selected operator.",
+      "source_ids": ["vqa-np-hard", "barren-plateau", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit AD/vmap to score an explicit Pauli excitation pool.",
+      "oracle_design": "Independent commutator gradients and exact energy references.",
+      "novelty_note": "Adds discrete adaptive architecture decisions.",
+      "current_task_overlap": ["02"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 3, "determinism": 5, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f32_molecular_force_hessian",
+      "title": "Molecular energy gradient and Hessian response",
+      "domain": "quantum_chemistry",
+      "mechanism": "nested_derivatives",
+      "objective": "Differentiate a variational molecular energy with respect to circuit and Hamiltonian geometry parameters, including a mixed Hessian block.",
+      "source_ids": ["tensorcircuit-paper", "qfim-review"],
+      "tensorcircuit_path": "Use TensorCircuit/JAX nested AD with sparse parameterized Hamiltonian terms.",
+      "oracle_design": "High-order finite differences and analytic Hellmann-Feynman limits.",
+      "novelty_note": "Adds response properties and second derivatives.",
+      "current_task_overlap": ["02", "04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 3, "determinism": 5, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f33_fermionic_greens_function",
+      "title": "Fermionic Green's function with particle/hole sectors",
+      "domain": "quantum_chemistry",
+      "mechanism": "sector_resolved_time_correlation",
+      "objective": "Compute particle and hole Green's functions with correct Jordan-Wigner signs and reconstruct spectral weights.",
+      "source_ids": ["fermionic-gaussian", "tensorcircuit-fgs"],
+      "tensorcircuit_path": "Use FGS when applicable and TensorCircuit circuits for a seeded weak interaction impurity.",
+      "oracle_design": "Lehmann representation and exact diagonalization on small systems.",
+      "novelty_note": "Adds fermionic sign conventions and spectroscopy.",
+      "current_task_overlap": [],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f34_shadow_high_weight_hamiltonian",
+      "title": "Variance-certified shadows for high-weight Hamiltonians",
+      "domain": "measurement",
+      "mechanism": "measurement_design_plus_statistics",
+      "objective": "Design a seeded locally biased or derandomized shadow schedule for a fermionic Hamiltonian under a fixed variance budget.",
+      "source_ids": ["classical-shadows", "cshorebench", "randomized-measurements"],
+      "tensorcircuit_path": "Use TensorCircuit shadow/sampling infrastructure for state preparation and measurements.",
+      "oracle_design": "Exact expectations plus repeated fixed-seed coverage and analytic variance bounds.",
+      "novelty_note": "Adds measurement resource optimization rather than exact expectation evaluation.",
+      "current_task_overlap": ["08"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 3, "runtime_fit": 4, "determinism": 3, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f35_direct_fidelity_estimation",
+      "title": "Importance-sampled direct fidelity estimation",
+      "domain": "measurement",
+      "mechanism": "importance_sampling_certification",
+      "objective": "Certify a non-stabilizer target using importance-weighted Pauli measurements and calibrated confidence intervals.",
+      "source_ids": ["direct-fidelity", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit state preparation and batched Pauli sampling.",
+      "oracle_design": "Exact fidelity and repeated confidence-interval coverage.",
+      "novelty_note": "Adds statistical certification.",
+      "current_task_overlap": ["12"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 4, "runtime_fit": 5, "determinism": 3, "novelty": 4, "anti_shortcut": 4}
+    },
+    {
+      "id": "f36_adaptive_phase_estimation",
+      "title": "Bayesian adaptive phase estimation",
+      "domain": "metrology",
+      "mechanism": "sequential_experiment_design",
+      "objective": "Estimate an eigenphase by choosing interrogation times and feedback phases from a seeded posterior update loop.",
+      "source_ids": ["dynamic-circuits", "qedc-benchmarks", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit controlled evolutions, measurements, and branch-dependent feedback.",
+      "oracle_design": "Closed-form likelihoods and posterior calibration across hidden phases.",
+      "novelty_note": "Adds sequential Bayesian control and phase inference.",
+      "current_task_overlap": ["07"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f37_quantum_kernel_alignment",
+      "title": "Quantum-kernel alignment with PSD constraints",
+      "domain": "qml",
+      "mechanism": "batched_overlap_kernel",
+      "objective": "Train a feature-map circuit to improve a seeded kernel-target alignment while preserving a numerically PSD Gram matrix.",
+      "source_ids": ["qcircuitbench", "tensorcircuit-paper", "barren-plateau"],
+      "tensorcircuit_path": "Use TensorCircuit batched overlaps, vmap, and AD over feature-map parameters.",
+      "oracle_design": "Independent overlap calculation and PSD/alignment checks on held-out points.",
+      "novelty_note": "Adds quantum machine learning and dataset batching.",
+      "current_task_overlap": ["12"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f38_qaoa_nae3sat_constraints",
+      "title": "Constraint-preserving NAE3SAT QAOA",
+      "domain": "optimization",
+      "mechanism": "problem_hamiltonian_plus_custom_mixer",
+      "objective": "Optimize a seeded NAE3SAT instance with a feasibility-preserving mixer and verify approximation quality across hidden clauses.",
+      "source_ids": ["qasmbench", "qedc-benchmarks", "vqa-np-hard"],
+      "tensorcircuit_path": "Use TensorCircuit Pauli-phase layers and exact expectation/sampling.",
+      "oracle_design": "Classical exhaustive optimum at controlled size and exact circuit simulation.",
+      "novelty_note": "Adds combinatorial constraints but risks being a conventional QAOA task.",
+      "current_task_overlap": ["02"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 4, "novelty": 4, "anti_shortcut": 4}
+    },
+    {
+      "id": "f39_spin_glass_qaoa_transfer",
+      "title": "QAOA parameter transfer across spin-glass instances",
+      "domain": "optimization",
+      "mechanism": "robust_multi_instance_optimization",
+      "objective": "Learn one parameter schedule that transfers across a seeded ensemble of weighted spin-glass graphs.",
+      "source_ids": ["qedc-benchmarks", "vqa-np-hard", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use TensorCircuit vmap over graph instances and batched expectations.",
+      "oracle_design": "Exact costs and fixed-seed baselines on every graph.",
+      "novelty_note": "Adds robust generalization across instances.",
+      "current_task_overlap": ["02"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f40_variational_linear_solver",
+      "title": "Variational quantum linear solver with local cost",
+      "domain": "algorithms",
+      "mechanism": "overlap_based_residual_minimization",
+      "objective": "Prepare the normalized solution of a structured sparse linear system and certify local and global residuals.",
+      "source_ids": ["qasmbench", "mqt-bench", "barren-plateau"],
+      "tensorcircuit_path": "Use TensorCircuit parameterized states and Pauli-decomposed local costs.",
+      "oracle_design": "Classical sparse solve and hidden-vector residual checks.",
+      "novelty_note": "Adds linear algebra but must avoid a classical-solve shortcut.",
+      "current_task_overlap": ["02"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 4, "novelty": 4, "anti_shortcut": 3}
+    },
+    {
+      "id": "f41_quantum_walk_hitting",
+      "title": "Continuous-time quantum-walk hitting profile",
+      "domain": "algorithms",
+      "mechanism": "graph_hamiltonian_dynamics",
+      "objective": "Simulate a sparse graph quantum walk and identify hitting-time resonances under marked-vertex perturbations.",
+      "source_ids": ["qasmbench", "qedc-benchmarks"],
+      "tensorcircuit_path": "Encode graph-Hamiltonian evolution in TensorCircuit and measure marked-set probabilities.",
+      "oracle_design": "Sparse matrix exponentiation and graph symmetry checks.",
+      "novelty_note": "Adds graph dynamics rather than variational optimization.",
+      "current_task_overlap": ["06"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 4, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 3}
+    },
+    {
+      "id": "f42_quantum_architecture_search",
+      "title": "Resource-constrained quantum architecture search",
+      "domain": "qml",
+      "mechanism": "discrete_continuous_bilevel_search",
+      "objective": "Select gates and parameters under a two-qubit budget to reach a hidden-state fidelity target across instances.",
+      "source_ids": ["qcircuitbench", "barren-plateau", "tensorcircuit-paper"],
+      "tensorcircuit_path": "Use TensorCircuit batched differentiable candidate circuits with a fixed gate library.",
+      "oracle_design": "Known teacher circuits and exact fidelity/resource checks.",
+      "novelty_note": "Adds circuit design and discrete search.",
+      "current_task_overlap": ["01", "12"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 4, "verifier_feasibility": 4, "runtime_fit": 3, "determinism": 3, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f43_circuit_cutting_reconstruction",
+      "title": "Variance-aware circuit cutting reconstruction",
+      "domain": "distributed_quantum",
+      "mechanism": "subcircuit_quasiprobability_recombination",
+      "objective": "Cut a structured circuit at fixed wires, execute TensorCircuit subcircuits, and reconstruct selected observables with a bounded sampling overhead.",
+      "source_ids": ["circuit-cutting", "qedc-benchmarks", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit for every subcircuit and measurement basis; NumPy may perform declared classical recombination.",
+      "oracle_design": "Uncut small circuits and exact quasiprobability reconstruction identities.",
+      "novelty_note": "Adds distributed/cut execution and classical recombination.",
+      "current_task_overlap": ["08"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 8,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "robust_ensemble",
+      "why_plausibly_hard": "The task couples quantum subcircuit construction to signed quasiprobability recombination and variance allocation; local correctness does not guarantee an unbiased global estimate.",
+      "falsification_check": "Require an exact reconstruction identity before enabling finite-shot scoring and reject cuts whose sampling overhead exceeds the resource envelope.",
+      "review_questions": ["Are basis conventions at each cut fully specified?", "Is the shot budget statistically powerful?", "Can hidden observables expose sign or normalization mistakes?"]
+    },
+    {
+      "id": "f44_shallow_circuit_identity",
+      "title": "Shallow circuit identity and diamond-distance bounds",
+      "domain": "verification",
+      "mechanism": "local_witness_identity_check",
+      "objective": "Bound the distance of a hidden shallow local circuit from identity using local witness circuits and compare to an exactly solvable family.",
+      "source_ids": ["mqt-bench", "qasmbench", "tn-treewidth"],
+      "tensorcircuit_path": "Use TensorCircuit local witness contractions over light-cone partitions.",
+      "oracle_design": "Exact operator distances for free-fermion or tiny circuits.",
+      "novelty_note": "Adds formal circuit verification rather than state generation.",
+      "current_task_overlap": ["09"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f45_semantics_preserving_routing",
+      "title": "Dynamic-circuit branch equivalence certificate",
+      "domain": "verification",
+      "mechanism": "midcircuit_instrument_equivalence",
+      "objective": "Given two measurement-conditioned circuits with resets and feed-forward, construct a branch-sensitive certificate or counterexample showing whether their induced quantum instruments agree.",
+      "source_ids": ["dynamic-equivalence", "dynamic-circuits", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Execute every declared measurement branch as a TensorCircuit instrument and compare conditional output maps; support code may perform independent Choi linear algebra.",
+      "oracle_design": "Independent branchwise Choi matrices, trace-preservation identities, and planted inequivalent mutations with exact witnesses.",
+      "novelty_note": "Adds semantic verification of adaptive circuits rather than another feedback-control objective.",
+      "current_task_overlap": ["07"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 5, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 5,
+      "recommended_scale": "benchmark",
+      "recommended_situation": "robust_ensemble",
+      "why_plausibly_hard": "Ordinary unitary equivalence is insufficient: the solver must preserve measurement probabilities, normalized conditional states, reset semantics, and later feed-forward across all reachable branches.",
+      "falsification_check": "Reject if the pinned TensorCircuit API cannot express every branch directly or if the verifier silently averages away branch-specific errors.",
+      "review_questions": ["Are zero-probability branches handled explicitly?", "Can mutations isolate each dynamic semantic failure?", "Is TensorCircuit doing substantive instrument execution?"]
+    },
+    {
+      "id": "f46_dynamic_teleportation_feedforward",
+      "title": "Multi-stage teleportation with noisy feed-forward",
+      "domain": "dynamic_circuits",
+      "mechanism": "measurement_conditioned_protocol",
+      "objective": "Execute chained teleportation/reset stages with calibrated mid-circuit readout errors and mitigation.",
+      "source_ids": ["dynamic-circuits", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit measurement trajectories, classical conditions, reset, and noisy channels.",
+      "oracle_design": "Exact branch enumeration and ideal teleportation identities.",
+      "novelty_note": "Adds communication-style dynamic circuits, though it overlaps task 07 feedback.",
+      "current_task_overlap": ["07"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 4, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 4, "novelty": 4, "anti_shortcut": 4}
+    },
+    {
+      "id": "f47_symmetry_verified_zne",
+      "title": "Symmetry-verified zero-noise extrapolation",
+      "domain": "error_mitigation",
+      "mechanism": "noise_scaling_plus_symmetry_postprocessing",
+      "objective": "Combine local gate folding, symmetry verification, and stable extrapolation for a seeded noisy many-body observable.",
+      "source_ids": ["digital-zne", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit noisy circuits for every folded scale and symmetry-resolved measurement.",
+      "oracle_design": "Known zero-noise expectation, independent folding checks, and bias/variance decomposition.",
+      "novelty_note": "Adds an end-to-end error-mitigation pipeline.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 4, "runtime_fit": 4, "determinism": 4, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f48_probabilistic_error_cancellation",
+      "title": "Variance-budgeted probabilistic error cancellation",
+      "domain": "error_mitigation",
+      "mechanism": "quasiprobability_sampling",
+      "objective": "Decompose a calibrated local noise inverse into implementable operations and estimate a hidden observable within a fixed overhead budget.",
+      "source_ids": ["digital-zne", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit for calibrated noisy operation samples and batched seeded trajectories.",
+      "oracle_design": "Exact channel inverse at tiny size plus bias/coverage tests over many fixed seeds.",
+      "novelty_note": "Adds quasi-probability mitigation and statistical overhead.",
+      "current_task_overlap": ["04"],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 4, "scientific_value": 5, "verifier_feasibility": 3, "runtime_fit": 3, "determinism": 2, "novelty": 5, "anti_shortcut": 5}
+    },
+    {
+      "id": "f49_readout_mitigation_correlated",
+      "title": "Correlated readout-error mitigation",
+      "domain": "error_mitigation",
+      "mechanism": "structured_confusion_inverse",
+      "objective": "Calibrate a sparse correlated readout model and mitigate hidden high-weight parity observables without a dense confusion matrix.",
+      "source_ids": ["randomized-measurements", "tensorcircuit-docs"],
+      "tensorcircuit_path": "Use TensorCircuit sampling and readout-error primitives with structured classical inversion.",
+      "oracle_design": "Known planted confusion model and exact small-system matrix inverse.",
+      "novelty_note": "Adds scalable measurement calibration.",
+      "current_task_overlap": ["08"],
+      "scores": {"agent_difficulty_prior": 4, "tensorcircuit_path_confidence": 4, "scientific_value": 4, "verifier_feasibility": 4, "runtime_fit": 5, "determinism": 4, "novelty": 5, "anti_shortcut": 4}
+    },
+    {
+      "id": "f50_hardware_metric_cross_benchmark",
+      "title": "Memory-constrained contraction plan and selected amplitudes",
+      "domain": "simulation",
+      "mechanism": "contraction_planning_under_memory_budget",
+      "objective": "Plan and execute a tensor-network contraction for a structured nonlocal circuit under an explicit peak-memory budget, returning selected amplitudes and contraction-cost evidence.",
+      "source_ids": ["contraction-planning", "tn-treewidth", "tensorcircuit-paper", "supermarq"],
+      "tensorcircuit_path": "Build the circuit and execute the accepted contraction plan through TensorCircuit/TensorNetwork; dense statevector materialization is infeasible at the production scale.",
+      "oracle_design": "Exact amplitudes on reduced circuits, independently contracted production amplitudes, and measured peak-memory/cost checks for the submitted plan.",
+      "novelty_note": "Turns scalable simulation into a constructive planning problem with a checkable scientific output, complementing representation-only tasks 08-10.",
+      "current_task_overlap": [],
+      "scores": {"agent_difficulty_prior": 5, "tensorcircuit_path_confidence": 5, "scientific_value": 5, "verifier_feasibility": 5, "runtime_fit": 4, "determinism": 5, "novelty": 5, "anti_shortcut": 5},
+      "shortlist_priority": 10,
+      "recommended_scale": "representation_stress",
+      "recommended_situation": "forward",
+      "why_plausibly_hard": "The solver must translate circuit structure into an executable contraction strategy, respect an operational memory cap, and obtain correct amplitudes without an exponential intermediate.",
+      "falsification_check": "Reject instances whose graph structure makes every contraction exponential under the cap or whose reference plan relies on an unpinned private optimizer.",
+      "review_questions": ["Is the accepted plan feasible on the actual Docker memory limit?", "Can peak memory be measured reproducibly?", "Do hidden amplitudes prevent hard-coded outputs while remaining independently checkable?"]
+    }
+  ]
+}
