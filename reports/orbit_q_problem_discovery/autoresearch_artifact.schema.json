@@ -1,0 +1,156 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit-q.local/schemas/autoresearch-artifact-v1.json",
+  "title": "ORBIT-Q content-addressed autoresearch artifact envelope",
+  "type": "object",
+  "required": [
+    "artifact_schema_version",
+    "stage",
+    "stage_version"
+  ],
+  "properties": {
+    "artifact_schema_version": {
+      "const": 1
+    },
+    "stage": {
+      "enum": [
+        "search-plan",
+        "raw-manifest",
+        "raw-ingest",
+        "normalized-record",
+        "normalize",
+        "dedupe",
+        "coverage-sample"
+      ]
+    },
+    "stage_version": {
+      "const": "orbit-q-autoresearch-discovery/1"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "search-plan"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "execution_status",
+          "input_sha256",
+          "pipeline_executed_web_search",
+          "plan"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "raw-manifest"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "execution_evidence_verification",
+          "input_sha256",
+          "manifest",
+          "pipeline_executed_web_search",
+          "search_plan"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "raw-ingest"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "input_custody",
+          "pipeline_executed_web_search",
+          "raw_manifests",
+          "search_plan"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "normalized-record"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "record"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "normalize"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "ingest",
+          "record_count",
+          "records",
+          "search_plan"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "dedupe"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "exact_groups",
+          "near_duplicate_edges",
+          "near_duplicate_threshold_percent",
+          "near_groups",
+          "normalize",
+          "search_plan"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "stage": {
+            "const": "coverage-sample"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "coverage_method",
+          "covered_targets",
+          "dedupe",
+          "normalize",
+          "requested_sample_size",
+          "search_plan",
+          "selected",
+          "selected_count",
+          "unmet_targets"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "problem_id": 115,
+  "numeric_id": 115,
+  "slug": "noisy-ppt3-replica",
+  "candidate_id": "f06_replica_partial_transpose_moment--representation_stress--robust_ensemble",
+  "provenance": {
+    "catalog_membership": "frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "candidate_hash": "2c887567b44d43d7290cd531be55b8349ec95092439c6ddb45fa5b1c0619e6b1",
+    "mapping_decision": "Direct implementation of frozen family f06 at its representation-stress/robust-ensemble contract, developed only after the ten-item shortlist was frozen. Interleaved Stinespring environments realize the local noise, and opposite three-cycles on A and B realize the third partial-transpose moment without a dense state. This mapping does not retroactively add the prototype to the frozen shortlist.",
+    "source_evidence": [
+      {
+        "id": "mixed-state-entanglement-randomized",
+        "title": "Mixed-State Entanglement from Local Randomized Measurements",
+        "url": "https://arxiv.org/abs/2007.06305",
+        "role": "primary basis for partial-transpose moments and the p3-PPT inequality"
+      },
+      {
+        "id": "optimal-pt-moments",
+        "title": "Optimal Entanglement Certification from Moments of the Partial Transpose",
+        "url": "https://arxiv.org/abs/2103.06897",
+        "role": "basis for the moment-problem interpretation and limits of the p3-PPT certificate"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for tensor-network quantum-circuit simulation"
+      },
+      {
+        "id": "tensorcircuit-mps-docs",
+        "title": "TensorCircuit Advanced Usage: MPS Simulator",
+        "url": "https://tensorcircuit.readthedocs.io/en/stable/advance.html#mps-simulator",
+        "role": "official API evidence for MPSCircuit and exposed MPS tensors"
+      }
+    ]
+  },
+  "title": "Noisy p3-PPT certification by purified replicas",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_115.py",
+  "expert_solution": "expert/solution_115.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 16,
+  "tags": [
+    "mixed-state-entanglement",
+    "partial-transpose-moments",
+    "p3-PPT",
+    "stinespring-purification",
+    "three-replica-permutation",
+    "matrix-product-state",
+    "representation-stress",
+    "robust-ensemble"
+  ],
+  "difficulty_explanation": "Each case is a 64-qubit purified state, so dense purification and density-matrix routes are impossible. The solver must preserve logical-neighbor semantics in an interleaved system/environment MPS, apply seeded local Stinespring noise, contract two replicas for p2, contract three replicas with opposite cycles on scrambled A/B sites for p3, and distinguish positive from nonpositive p2^2-p3 margins across coupled and PPT-control cases.",
+  "solution_explanation": "The expert uses TensorCircuit MPSCircuit with exact adjacent SWAP shuttles for the logical system gates, applies one environment-qubit Stinespring dilation per system site, reads the public MPS tensors, and evaluates gauge-invariant two- and three-replica transfers using TensorCircuit backend einsum.",
+  "verification_explanation": "The evaluator never imports TensorCircuit. It independently implements complex128 canonical NumPy MPS evolution, the same unitary Stinespring dilation, and explicit two-/three-replica transfers. A separately evolved dense eight-qubit canary traces the environments, forms the partial transpose, and compares direct matrix powers against both replica contractions.",
+  "relevant_experience": "This reserve combines exact MPS gauge motion, Stinespring purification of local channels, partial-transpose moment identities, opposite replica permutations, and one-sided entanglement certification.",
+  "status": "reserve_prototype_local_static_only",
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_numpy": "2.2.6",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "MPSCircuit",
+      "MPSCircuit.apply_adjacent_double_gate",
+      "MPSCircuit.normalize",
+      "MPSCircuit.get_tensors",
+      "backend.einsum"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_115.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "Exact case bytes are bound by the pinned image/runtime and evaluator-emitted case_digest; a seed alone is not a cross-NumPy case identity.",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED or evaluator --seed for local canaries",
+    "hidden_holdout_status": "pending; local host digests are non-binding canaries and no pinned-image private holdout has been frozen",
+    "anti_hardcoding": "The seed changes the ordered mix of coupled and PPT-control cases, initial excitations, A/B partitions, complex circuit gates, local damping rates, opaque case IDs, and nonces. Exact p2, p3, gaps, and classifications are all scored.",
+    "oracle": "Independent NumPy canonical MPS/TEBD plus explicit two-/three-replica transfers and a separate dense partial-transpose canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": null,
+    "local_default": 1152026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits the ordered three-case robust ensemble, including two coupled cases and one factorized PPT control.",
+    "determinism_scope": "Exact public case bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, and no NaN over the exact public configuration before case_digest is added; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "seed_scrub": "The evaluator removes ORBIT_Q_CANDIDATE_SEED immediately after emitting case identity and before oracle construction or submitted-solution import.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind case_digest and the pinned NumPy version."
+  },
+  "difficulty_levers": [
+    "32 system plus 32 environment qubits rule out a dense purification, while an explicit three-copy state would contain 192 qubits",
+    "random balanced A/B labels create many switches between forward and inverse replica cycles",
+    "interleaved environments require exact logical-neighbor routing before the local Stinespring gates",
+    "complex hopping phases and |11> phases expose gate-index and conjugation mistakes",
+    "two coupled NPT cases and one rigorously factorized PPT control prevent a constant certificate",
+    "the same implementation must match p2, p3, their nonlinear gap identity, and the thresholded certificate",
+    "the 160-line ceiling discourages a redundant simulator and leaves little room for permutation-convention errors"
+  ],
+  "claim_boundary": "This is a deterministic synthetic exact-moment diagnostic, not a finite-shot randomized-measurement experiment. A positive gap certifies NPT entanglement; a nonpositive gap does not prove separability in general, although the generated control is PPT by construction. No pinned-image, Harbor, or solver-model trial has run, so no model-hardness claim is made.",
+  "local_static_validation": {
+    "host_numpy": "2.4.4",
+    "binding_status": "non-binding local design canaries only; do not use these digests in a trial manifest",
+    "seeds_checked": [1152026, 1152037, 1152115, 9876543],
+    "host_case_digests": {
+      "1152026": "322bfac8a826af87ea583b635d0286c9b617b2727cc2f9bbcb161352b8837c46",
+      "1152037": "a8dc6a31bb108b7b80d0e0d9fd4d3b3fe0330826b1bf02c0b7101fb5aed62c8e",
+      "1152115": "0a935416fd53b08ff00773cdeac83d3624ab3f7490ff5ec786b25d3c693ccb7d",
+      "9876543": "d9c5362568f8d32da3c57408a2ec910fe6417220813048f172636272fac6b633"
+    },
+    "dense_partial_transpose_canary_passed": true,
+    "random_dense_canary_cases": 12,
+    "random_dense_canary_maximum_purity_error": 2.109e-15,
+    "random_dense_canary_maximum_ppt_moment_error": 1.166e-15,
+    "numpy_replica_oracle_passed": true,
+    "expert_algorithm_numpy_proxy_parity_passed": true,
+    "all_checked_class_patterns_valid": true,
+    "minimum_absolute_ppt_gap": 0.024939,
+    "coupled_npt_gap_range": [0.323207, 0.407362],
+    "factorized_control_gap_range": [-0.029779, -0.024939],
+    "maximum_oracle_imaginary_residual": 7.316e-17,
+    "maximum_oracle_bond_dimension": 16,
+    "host_oracle_runtime_range_sec": [0.242, 6.131],
+    "expert_effective_lines": 95,
+    "static_policy_score": 1.0,
+    "ruff_passed": true,
+    "tensorcircuit_expert_executed": false
+  },
+  "admission_blockers": [
+    "Promote this post-shortlist reserve through explicit human review; it is a direct frozen-f06 implementation but was not one of the frozen ten review candidates.",
+    "Run the expert in the pinned TensorCircuit image and verify custom-gate orientation, exact no-truncation behavior, interleaved SWAP routing, exposed-tensor ordering, and six-index backend einsum support.",
+    "Measure expert p50/p95 runtime and peak memory on several public canary seeds under the frozen CPU/memory envelope; require p95 below 180 seconds.",
+    "Prequalify and independently freeze at least 25 private verifier-only seeds with exact pinned case_digest values, mixed certificate classes, absolute gap floors, imaginary-residual margins, bond dimensions, and oracle/expert parity before any solver trial.",
+    "Complete an authenticated expert-only Harbor functional, static-policy, and LLM-policy audit.",
+    "Human reviewers must sign the Stinespring basis convention, partial-transpose subsystem, opposite-cycle identity, p3-PPT inequality direction, one-sided certificate wording, and framework-native contraction path before promotion."
+  ],
+  "exploitability_risks": [
+    "The shallow MPS is classically tractable even though dense simulation is impossible; static checks alone cannot distinguish the required TensorCircuit MPS path from a standalone implementation, so source audit remains essential.",
+    "The factorized control can be recognized from the public gate list, but exact continuous p2, p3, and gap outputs for all cases prevent a constant-classification shortcut.",
+    "Published evaluator, expert, and local canary seeds are public development evidence and cannot serve as uncontaminated private hardness evidence."
+  ],
+  "numerical_statistical_risks": [
+    "Three-replica environments scale as the sixth power of MPS bond dimension; deeper circuits can abruptly exceed memory even when the qubit count is unchanged.",
+    "SVD null-rank decisions, contraction order, and floating-point roundoff can vary across NumPy/LAPACK builds; manifests must bind image, NumPy version, case_digest, and admission margins.",
+    "The p3-PPT test is sufficient but not necessary for NPT detection; benchmark labels must say certified_npt rather than entangled or separable.",
+    "This exact deterministic task has no sampling uncertainty and must not be presented as evidence for finite-shot experimental robustness."
+  ],
+  "api_risks": [
+    "MPSCircuit.apply_adjacent_double_gate must preserve the rank-4 custom gate's output/input convention through both SWAP routing and damping dilation.",
+    "MPSCircuit.get_tensors may expose arbitrary gauges and center positions; both replica observables must remain gauge invariant.",
+    "The TensorCircuit backend einsum implementation must accept a rank-6 environment and six rank-3 MPS tensors without an unsupported implicit-output or contraction-path limit.",
+    "TensorCircuit backend/dtype settings are process global, and complex128 is required for the small imaginary cancellations.",
+    "NumPy Generator byte-level cases can change across versions; trial manifests must bind exact case_digest rather than treating the integer seed as complete identity."
+  ],
+  "commands": {
+    "default_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/noisy-ppt3-replica:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_115.py --solution solution_115'",
+    "alternate_seed_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/noisy-ppt3-replica:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_115.py --solution solution_115 --seed 1152037'"
+  }
+}

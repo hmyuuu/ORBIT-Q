@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit-q.local/schemas/autoresearch-query-plan-v1.json",
+  "title": "ORBIT-Q offline autoresearch query plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "purpose",
+    "search_execution",
+    "queries",
+    "deduplication",
+    "coverage"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "plan_id": {
+      "$ref": "#/$defs/category"
+    },
+    "purpose": {
+      "$ref": "#/$defs/nonblank"
+    },
+    "search_execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pipeline_mode",
+        "intended_result_custody"
+      ],
+      "properties": {
+        "pipeline_mode": {
+          "const": "planning_only_no_network"
+        },
+        "intended_result_custody": {
+          "const": "operator_provided_raw_manifest"
+        }
+      }
+    },
+    "queries": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "query_id",
+          "query_text",
+          "provider_hint",
+          "requested_limit",
+          "source_types",
+          "facets"
+        ],
+        "properties": {
+          "query_id": {
+            "$ref": "#/$defs/category"
+          },
+          "query_text": {
+            "$ref": "#/$defs/nonblank"
+          },
+          "provider_hint": {
+            "$ref": "#/$defs/category"
+          },
+          "requested_limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000
+          },
+          "source_types": {
+            "$ref": "#/$defs/categoryArray"
+          },
+          "facets": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "quantum_domains",
+              "situations",
+              "evidence_roles"
+            ],
+            "properties": {
+              "quantum_domains": {
+                "$ref": "#/$defs/categoryArray"
+              },
+              "situations": {
+                "$ref": "#/$defs/categoryArray"
+              },
+              "evidence_roles": {
+                "$ref": "#/$defs/categoryArray"
+              }
+            }
+          }
+        }
+      }
+    },
+    "deduplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "near_duplicate_threshold_percent"
+      ],
+      "properties": {
+        "near_duplicate_threshold_percent": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100
+        }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sample_size",
+        "targets"
+      ],
+      "properties": {
+        "sample_size": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1000
+        },
+        "targets": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": false,
+          "properties": {
+            "quantum_domain": {
+              "$ref": "#/$defs/categoryArray"
+            },
+            "situation": {
+              "$ref": "#/$defs/categoryArray"
+            },
+            "task_archetype": {
+              "$ref": "#/$defs/categoryArray"
+            },
+            "evidence_role": {
+              "$ref": "#/$defs/categoryArray"
+            },
+            "source_type": {
+              "$ref": "#/$defs/categoryArray"
+            },
+            "license_status": {
+              "$ref": "#/$defs/categoryArray"
+            },
+            "search_execution_claim": {
+              "$ref": "#/$defs/categoryArray"
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "nonblank": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$"
+    },
+    "categoryArray": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 64,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/category"
+      }
+    }
+  }
+}

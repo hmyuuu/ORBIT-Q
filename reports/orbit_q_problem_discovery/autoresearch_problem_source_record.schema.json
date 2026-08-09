@@ -1,0 +1,309 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit-q.local/schemas/autoresearch-problem-source-record-v1.json",
+  "title": "Normalized ORBIT-Q quantum problem-source record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "record_id",
+    "source",
+    "version",
+    "license",
+    "provenance",
+    "problem"
+  ],
+  "properties": {
+    "record_id": {
+      "$ref": "#/$defs/sha256"
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "canonical_url",
+        "source_type",
+        "authors",
+        "publisher",
+        "identifiers",
+        "identity_keys"
+      ],
+      "properties": {
+        "title": {
+          "$ref": "#/$defs/nonblank"
+        },
+        "canonical_url": {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "source_type": {
+          "$ref": "#/$defs/category"
+        },
+        "authors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/nonblank"
+          }
+        },
+        "publisher": {
+          "$ref": "#/$defs/nonblank"
+        },
+        "identifiers": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "doi": {
+              "$ref": "#/$defs/nonblank"
+            },
+            "arxiv": {
+              "$ref": "#/$defs/nonblank"
+            },
+            "pmid": {
+              "$ref": "#/$defs/nonblank"
+            }
+          }
+        },
+        "identity_keys": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/nonblank"
+          }
+        }
+      }
+    },
+    "version": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "version_type",
+        "version_label",
+        "version_locator",
+        "observed_at",
+        "content_sha256"
+      ],
+      "properties": {
+        "version_type": {
+          "$ref": "#/$defs/category"
+        },
+        "version_label": {
+          "$ref": "#/$defs/nonblank"
+        },
+        "version_locator": {
+          "$ref": "#/$defs/httpsUrl"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "content_sha256": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "spdx_id",
+        "evidence_url",
+        "redistribution_allowed"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "known",
+            "unknown",
+            "restricted"
+          ]
+        },
+        "spdx_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evidence_url": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^https://"
+        },
+        "redistribution_allowed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "adapter_version",
+        "collection_method",
+        "execution_attestation",
+        "execution_evidence_verification",
+        "hit_id",
+        "input_custody",
+        "manifest_id",
+        "observed_at",
+        "pipeline_executed_web_search",
+        "provider_name",
+        "provider_version",
+        "query_id",
+        "rank",
+        "raw_manifest",
+        "search_execution_claim",
+        "search_plan"
+      ],
+      "properties": {
+        "adapter_version": {
+          "$ref": "#/$defs/nonblank"
+        },
+        "collection_method": {
+          "enum": [
+            "manual_curation",
+            "provider_export",
+            "external_adapter_export"
+          ]
+        },
+        "execution_attestation": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "execution_evidence_verification": {
+          "const": "not_performed_operator_attestation_only"
+        },
+        "hit_id": {
+          "$ref": "#/$defs/category"
+        },
+        "input_custody": {
+          "const": "operator_provided"
+        },
+        "manifest_id": {
+          "$ref": "#/$defs/category"
+        },
+        "observed_at": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "pipeline_executed_web_search": {
+          "const": false
+        },
+        "provider_name": {
+          "$ref": "#/$defs/category"
+        },
+        "provider_version": {
+          "$ref": "#/$defs/nonblank"
+        },
+        "query_id": {
+          "$ref": "#/$defs/category"
+        },
+        "rank": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "raw_manifest": {
+          "$ref": "#/$defs/artifactRef"
+        },
+        "search_execution_claim": {
+          "enum": [
+            "not_claimed",
+            "operator_attested_external_execution"
+          ]
+        },
+        "search_plan": {
+          "$ref": "#/$defs/artifactRef"
+        }
+      }
+    },
+    "problem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quantum_domain",
+        "situation",
+        "task_archetype",
+        "objective",
+        "tensorcircuit_path",
+        "evidence_role",
+        "keywords"
+      ],
+      "properties": {
+        "quantum_domain": {
+          "$ref": "#/$defs/category"
+        },
+        "situation": {
+          "$ref": "#/$defs/category"
+        },
+        "task_archetype": {
+          "$ref": "#/$defs/category"
+        },
+        "objective": {
+          "$ref": "#/$defs/nonblank"
+        },
+        "tensorcircuit_path": {
+          "$ref": "#/$defs/nonblank"
+        },
+        "evidence_role": {
+          "$ref": "#/$defs/category"
+        },
+        "keywords": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/category"
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "nonblank": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,79}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "httpsUrl": {
+      "type": "string",
+      "pattern": "^https://"
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$"
+    },
+    "artifactRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "stage",
+        "sha256"
+      ],
+      "properties": {
+        "stage": {
+          "type": "string"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    }
+  }
+}
