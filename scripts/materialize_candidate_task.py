@@ -116,6 +116,16 @@ def _read_metadata(path: Path) -> dict[str, Any]:
         framework = framework_block.get("required")
     if framework is not None and str(framework).strip().lower() != "tensorcircuit":
         raise CandidateTaskError("candidate metadata must target TensorCircuit")
+    status = value.get("status")
+    if status is not None:
+        if not isinstance(status, str) or not status.strip():
+            raise CandidateTaskError(
+                "candidate metadata status must be a non-empty string"
+            )
+        if "rejected" in status.strip().lower():
+            raise CandidateTaskError(
+                "rejected candidate blueprints cannot be materialized for model trials"
+            )
     return value
 
 

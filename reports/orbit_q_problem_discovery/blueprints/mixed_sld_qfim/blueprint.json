@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "problem_id": 101,
+  "slug": "mixed-sld-qfim",
+  "title": "Robust mixed-state SLD-QFIM probe design",
+  "candidate_id": "f02_mixed_state_sld_qfim_probe--benchmark--robust_ensemble",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_101.py",
+  "expert_solution": "expert/solution_101.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 12,
+  "tags": ["qfim", "mixed-state", "robust-design", "quantum-metrology"],
+  "difficulty_explanation": "The solver must differentiate a noisy mixed-state circuit, form stable three-parameter SLD-QFIMs on fixed support, and optimize a robust log-determinant objective across an ensemble.",
+  "status": "prototype_rejected",
+  "claim_boundary": "No GPT-5.6-sol trial has been run; difficulty remains a hypothesis.",
+  "scientific_contract": {
+    "artifact": "six two-qubit probe-circuit parameters",
+    "estimated_parameters": 3,
+    "training_ensemble_size": 12,
+    "hidden_ensemble_size": 35,
+    "fixed_support_floor": 2e-5,
+    "objective": "worst-case logdet(F + 0.04 I) with a minimum-eigenvalue gate"
+  },
+  "tensorcircuit_central_path": [
+    "TensorCircuit DMCircuit for every noisy sensing state",
+    "DMCircuit parameterized unitary gates",
+    "DMCircuit.depolarizing channels",
+    "JAX derivatives through DMCircuit density matrices",
+    "differentiable SLD optimization"
+  ],
+  "independent_oracle": "NumPy/SciPy density propagation, finite differences, spectral SLD formula, and a separate vectorized SLD equation",
+  "hardcoding_resistance": [
+    "three default generated generator ensembles",
+    "arbitrary --seeds evaluation",
+    "35 held-out members per instance",
+    "only circuit parameters accepted",
+    "scores and QFIMs recomputed independently"
+  ],
+  "resource_gates": {
+    "effective_solution_lines_max": 160,
+    "expert_runtime_target_sec": 180,
+    "timed_execution_limit_sec": 300
+  },
+  "validation": {
+    "image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "image_digest": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
+    "tensorcircuit_version": "1.7.0.dev20260618",
+    "command": "PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101",
+    "default_seeds": [101021, 101033, 101051],
+    "overall": "FAIL",
+    "timed_solution_seconds": 103.17,
+    "passing_seed_gains": [1.053185, 0.518008],
+    "rejected_seed": 101051,
+    "rejected_seed_gain": 0.160336,
+    "required_gain": 0.32,
+    "rejection_reason": "The expert misses the frozen held-out robust-score gain on one default seed. Physics, support, SLD identity, and minimum-QFIM checks pass, but this blueprint is not eligible for a model trial.",
+    "model_trials_run": 0
+  },
+  "api_risks": [
+    "DMCircuit.depolarizing(px, py, pz) and densitymatrix() are required and were canaried only against tensorcircuit-nightly 1.7.0.dev20260618.",
+    "The expert requests JAX x64 and TensorCircuit complex128; a build that disables x64 can lose SLD stability.",
+    "The independent oracle assumes TensorCircuit's RXX/RYY/RZZ convention exp(-i theta P/2) and leftmost qubit-0 tensor ordering.",
+    "Differentiating through a 16x16 complex linear solve exercises higher-order JAX autodiff and is the primary compilation risk."
+  ],
+  "commands": {
+    "quick": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101 --seeds 101021'",
+    "default": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101'"
+  }
+}

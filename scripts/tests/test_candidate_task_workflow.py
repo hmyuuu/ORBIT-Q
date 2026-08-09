@@ -172,6 +172,19 @@ def test_materializer_accepts_blueprint_json_metadata(tmp_path: Path) -> None:
     assert copied["candidate_id"] == "f09_qsp_phase_synthesis--benchmark--inverse"
 
 
+def test_materializer_rejects_scientifically_rejected_blueprint(tmp_path: Path) -> None:
+    blueprint = make_blueprint(tmp_path, metadata_name="blueprint.json")
+    metadata_path = blueprint / "blueprint.json"
+    metadata = json.loads(metadata_path.read_text())
+    metadata["status"] = "prototype_rejected"
+    metadata_path.write_text(json.dumps(metadata))
+
+    with pytest.raises(
+        materializer.CandidateTaskError, match="rejected candidate blueprints"
+    ):
+        materializer.inspect_blueprint(blueprint)
+
+
 @pytest.mark.parametrize("name", ["tasks", "templates", "prompts", "adapters"])
 def test_all_user_paths_reject_shared_or_canonical_trees(name: str) -> None:
     forbidden = ROOT / name / "candidate-anything"

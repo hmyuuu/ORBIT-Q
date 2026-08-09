@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "problem_id": 102,
+  "slug": "qsp-phase-synthesis",
+  "title": "Gauge-fixed quantum signal-processing phase synthesis",
+  "candidate_id": "f09_qsp_phase_synthesis--benchmark--inverse",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_102.py",
+  "expert_solution": "expert/solution_102.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 12,
+  "tags": ["qsp", "inverse-synthesis", "chebyshev-polynomials", "quantum-algorithms"],
+  "difficulty_explanation": "The solver must reconcile a precise SU(2) convention, a reflection gauge, complex parity-polynomial constraints, and a non-convex phase-factor inverse problem; polynomial fitting alone does not produce the required circuit artifact.",
+  "status": "expert_validated_no_model_trial",
+  "claim_boundary": "No GPT-5.6-sol trial has been run; difficulty remains a hypothesis.",
+  "scientific_contract": {
+    "artifact": "reflection-symmetric QSP phase vector",
+    "degree": 8,
+    "default_instance_count": 3,
+    "target_representation": "complex Chebyshev coefficients",
+    "sequence_convention": "Z(phi_0) product_{k=1}^d [W(x) Z(phi_k)]",
+    "hidden_checks": [
+      "448 held-out x values per instance",
+      "independent 2x2 NumPy response",
+      "unitarity identity",
+      "parity identity",
+      "reflection gauge"
+    ]
+  },
+  "tensorcircuit_central_path": [
+    "TensorCircuit Circuit for every QSP sequence evaluation",
+    "Circuit.any custom signal unitary",
+    "Circuit.rz phase gates",
+    "JAX differentiation through TensorCircuit matrices"
+  ],
+  "independent_oracle": "NumPy complex 2x2 products plus Chebyshev and QSP identities; no TensorCircuit import",
+  "hardcoding_resistance": [
+    "three default generated targets",
+    "arbitrary --seeds evaluation",
+    "only phase artifacts accepted",
+    "held-out response grid",
+    "exact result-key restriction"
+  ],
+  "resource_gates": {
+    "effective_solution_lines_max": 160,
+    "expert_runtime_target_sec": 180,
+    "timed_execution_limit_sec": 300
+  },
+  "validation": {
+    "image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "image_digest": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
+    "tensorcircuit_version": "1.7.0.dev20260618",
+    "command": "PYTHONPATH=/work/expert python evaluate_102.py --solution solution_102",
+    "default_seeds": [102031, 102043, 102059],
+    "overall": "PASS",
+    "timed_solution_seconds": 14.38,
+    "response_rmse": [1.220e-7, 7.658e-8, 8.601e-8],
+    "response_max_error": [3.369e-7, 1.292e-7, 2.371e-7],
+    "alternate_seed": 102071,
+    "alternate_seed_seconds": 6.19,
+    "alternate_seed_rmse": 1.804e-7,
+    "alternate_seed_max_error": 3.246e-7,
+    "model_trials_run": 0
+  },
+  "api_risks": [
+    "Circuit.any(unitary=...) is required and was canaried only against tensorcircuit-nightly 1.7.0.dev20260618.",
+    "The expert assumes TensorCircuit RZ(theta)=exp(-i theta Z/2); the evaluator convention therefore uses theta=-2*phi.",
+    "complex64 JAX differentiation can stall near machine precision; evaluator thresholds intentionally remain above 1e-4."
+  ],
+  "commands": {
+    "quick": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/qsp_phase_synthesis:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_102.py --solution solution_102 --seeds 102031'",
+    "default": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/qsp_phase_synthesis:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_102.py --solution solution_102'"
+  }
+}
