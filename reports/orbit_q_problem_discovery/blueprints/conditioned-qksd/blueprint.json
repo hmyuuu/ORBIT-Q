@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "problem_id": 108,
+  "numeric_id": 108,
+  "slug": "conditioned-qksd",
+  "candidate_id": "f14_quantum_krylov_sampling_conditioning--representation_stress--forward",
+  "title": "Readout-calibrated conditioned fermionic QKSD",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_108.py",
+  "expert_solution": "expert/solution_108.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 12,
+  "tags": [
+    "quantum-krylov",
+    "qksd",
+    "fermionic-gaussian",
+    "shot-noise",
+    "readout-mitigation",
+    "generalized-eigenproblem",
+    "canonical-orthogonalization"
+  ],
+  "difficulty_explanation": "The solver must calibrate four asymmetric finite-shot Hadamard-test channels, reconstruct complex Hermitian Toeplitz QKSD matrices, filter an indefinite near-singular overlap before whitening, and reproduce phase-sensitive 56/60-mode Slater control moments through TensorCircuit's fermionic-Gaussian representation.",
+  "solution_explanation": "The reference parses the raw calibration and signal counts, performs a prescribed noise-aware canonical orthogonalization, and uses TensorCircuit FGSSimulator evolution plus phase-preserving occupied-orbital determinants and transition-density linear solves for hidden control lags.",
+  "verification_explanation": "The evaluator does not import TensorCircuit. It independently diagonalizes each hidden one-particle Hamiltonian, derives Slater determinants and Hamiltonian transition moments, generates seeded asymmetric-readout counts, repeats the complete conditioned QKSD pipeline, and checks a separate dense Jordan-Wigner Fock-space canary.",
+  "relevant_experience": "The prototype combines quantum subspace diagonalization under finite sampling, measurement-error calibration, canonical orthogonalization of noisy overlap matrices, and phase-sensitive fermionic-Gaussian transition formulas.",
+  "status": "prototype_untested_by_model",
+  "framework": {
+    "required": "tensorcircuit",
+    "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "tested_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "FGSSimulator",
+      "FGSSimulator.evol_hamiltonian",
+      "FGSSimulator.get_alpha"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_108.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "hidden_case_source": "runtime seed ORBIT_QKSD_SEED or evaluator --seed",
+    "anti_hardcoding": "The seed changes mode count, hidden relabeling, onsite disorder, complex Peierls phases, occupied modes, readout responses, calibration counts, all signal counts, and nonces; exact control moments and final Ritz values are never included in the configuration.",
+    "oracle": "Independent complex128 one-particle evolution and Slater transition determinants, seeded binomial readout channels, full QKSD reconstruction, and a separate 16-dimensional Jordan-Wigner Fock-space canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "difficulty_levers": [
+    "56- and 60-mode production cases rule out dense qubit statevectors",
+    "complex hopping phases make magnitude-only Gaussian overlaps fail",
+    "four independently calibrated asymmetric binary readout channels",
+    "shot noise deliberately makes the sampled overlap indefinite",
+    "canonical filtering and whitening at a seed-stable noise cutoff",
+    "both sampled Ritz outputs and noiseless extrapolation controls are scored"
+  ],
+  "claim_boundary": "This is a deterministic synthetic finite-shot QKSD benchmark with a declared sector-normalized Hadamard-test model. It does not model coherent gate error or claim hardware-level performance. No solver-model trial has been run and no model-hardness claim is made.",
+  "pinned_image_validation": {
+    "seeds": [
+      1082026,
+      1082037,
+      1082111,
+      9876543
+    ],
+    "all_passed": true,
+    "expert_runtime_range_sec": [
+      1.34,
+      3.35
+    ],
+    "retained_rank_per_case": 3,
+    "minimum_kept_eigenvalue_margin_above_cutoff": 0.0081,
+    "maximum_control_moment_error": 5.3e-15,
+    "materialized_oracle_layout_passed": true,
+    "static_policy_effective_lines": 112
+  },
+  "numerical_statistical_risks": [
+    "Finite calibration counts perturb both the readout slope and offset; calibration noise is intentionally propagated rather than treated as known exactly.",
+    "Independent quadrature sampling breaks Toeplitz positive semidefiniteness before explicit Hermitization and filtering.",
+    "An overlap eigenvalue close to the cutoff could make retained rank seed-sensitive; validation therefore checks multiple seeds and requires a visible cutoff margin.",
+    "Slater transition determinants can be small, so Hamiltonian transition moments use complex128 linear solves instead of explicit inverses.",
+    "Shot-derived Ritz energies are estimators and need not be variational upper bounds after overlap filtering."
+  ],
+  "api_risks": [
+    "FGSSimulator.evol_hamiltonian applies exp(-i h) to the 2L by L alpha representation; the number-conserving particle/hole block and time-step convention must be canaried after upgrades.",
+    "FGSSimulator.overlap returns a nonnegative magnitude in the pinned release and cannot supply the U(1) phase required here.",
+    "The occupied orbitals are recovered from the lower alpha block under the pinned particle-hole convention; a representation change would alter control phases.",
+    "TensorCircuit backend and dtype setters are process-global, so the expert explicitly selects NumPy and complex128."
+  ],
+  "commands": {
+    "default": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/conditioned-qksd:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_108.py --solution solution_108'",
+    "alternate_seed": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/conditioned-qksd:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_108.py --solution solution_108 --seed 1082037'"
+  }
+}
