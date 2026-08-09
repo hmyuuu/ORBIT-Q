@@ -56,63 +56,84 @@ def qfim(probe, theta, weights, noise):
     return 0.5 * (fisher + fisher.T)
 
 
+def design_ensemble(config):
+    theta = 0.51 * jnp.asarray(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 0.0, 0.0],
+            [-1.0, 0.0, 0.0],
+            [0.0, 1.0, 0.0],
+            [0.0, -1.0, 0.0],
+            [0.0, 0.0, 1.0],
+            [0.0, 0.0, -1.0],
+            [0.72, 0.72, 0.72],
+            [0.72, -0.72, -0.72],
+            [-0.72, 0.72, -0.72],
+            [-0.72, -0.72, 0.72],
+        ]
+    )
+    signs = jnp.asarray(
+        [
+            [[0, 0, 0], [0, 0, 0]],
+            [[1, -1, 1], [-1, 1, -1]],
+            [[-1, 1, -1], [1, -1, 1]],
+        ],
+        dtype=float,
+    )
+    center = jnp.mean(jnp.asarray(config["training_noise"]), axis=0)
+    return theta, jnp.clip(center + 0.0048 * signs, 0.008, 0.052)
+
+
 def robust_objective(probe, theta_points, noise_points, weights, regularizer):
-    scores = []
-    eigenvalue_rewards = []
+    scores, eigenvalues = [], []
     for theta in theta_points:
         for noise in noise_points:
             fisher = qfim(probe, theta, weights, noise)
             scores.append(jnp.linalg.slogdet(fisher + regularizer * jnp.eye(3))[1])
-            eigenvalue_rewards.append(jnp.linalg.eigvalsh(fisher)[0])
-    scores = jnp.stack(scores)
-    eigenvalue_rewards = jnp.stack(eigenvalue_rewards)
-    soft_min = -jax.nn.logsumexp(-10.0 * scores) / 10.0
-    eigen_soft_min = -jax.nn.logsumexp(-14.0 * eigenvalue_rewards) / 14.0
-    return soft_min + 0.35 * eigen_soft_min
+            eigenvalues.append(jnp.linalg.eigvalsh(fisher)[0])
+    scores, eigenvalues = jnp.stack(scores), jnp.stack(eigenvalues)
+    return -jax.nn.logsumexp(-10.0 * scores) / 10.0 + 0.22 * (
+        -jax.nn.logsumexp(-12.0 * eigenvalues) / 12.0
+    )
 
 
 def optimize(config, starts):
     weights = jnp.asarray(config["generator_weights"])
-    theta = jnp.asarray(config["training_theta"])
-    noise = jnp.asarray(config["training_noise"])
+    theta, noise = design_ensemble(config)
     regularizer = float(config["score_regularizer"])
-    optimizer = optax.adam(float(config["learning_rate"]))
+    optimizer = optax.adam(0.04)
     state = optimizer.init(starts)
 
-    def loss_fn(probe):
-        return -robust_objective(probe, theta, noise, weights, regularizer)
-
-    def batch_losses(probes):
-        return jax.vmap(loss_fn)(probes)
+    def batch_loss(probes):
+        return -jnp.sum(
+            jax.vmap(
+                lambda probe: robust_objective(
+                    probe, theta, noise, weights, regularizer
+                )
+            )(probes)
+        )
 
     @jax.jit
     def step(probes, opt_state):
-        losses, gradient = jax.value_and_grad(
-            lambda values: jnp.sum(batch_losses(values))
-        )(probes)
+        _, gradient = jax.value_and_grad(batch_loss)(probes)
         updates, opt_state = optimizer.update(gradient, opt_state, probes)
-        return optax.apply_updates(probes, updates), opt_state, losses
+        return optax.apply_updates(probes, updates), opt_state
 
     probes = starts
-    for _ in range(int(config["max_steps"])):
-        probes, state, _ = step(probes, state)
-    return probes, batch_losses(probes)
+    for _ in range(160):
+        probes, state = step(probes, state)
 
-
-def training_minimum_eigenvalues(config, probes):
-    weights = jnp.asarray(config["generator_weights"])
-    theta_points = jnp.asarray(config["training_theta"])
-    noise_points = jnp.asarray(config["training_noise"])
-
-    def score(probe):
+    def hard_score(probe):
         values = [
-            jnp.linalg.eigvalsh(qfim(probe, theta, weights, noise))[0]
-            for theta in theta_points
-            for noise in noise_points
+            jnp.linalg.slogdet(
+                qfim(probe, point, weights, channel) + regularizer * jnp.eye(3)
+            )[1]
+            for point in theta
+            for channel in noise
         ]
         return jnp.min(jnp.stack(values))
 
-    return jax.jit(jax.vmap(score))(probes)
+    return probes, jax.jit(jax.vmap(hard_score))(probes)
 
 
 def run_solution(config):
@@ -121,15 +142,12 @@ def run_solution(config):
     starts = jnp.asarray(
         [
             np.zeros(6),
-            rng.normal(0.0, 0.45, 6),
-            rng.uniform(-1.2, 1.2, 6),
-            rng.uniform(-np.pi, np.pi, 6),
-            rng.uniform(-np.pi, np.pi, 6),
+            rng.normal(0.0, 0.55, 6),
+            *rng.uniform(-1.6, 1.6, size=(3, 6)),
+            *rng.uniform(-np.pi, np.pi, size=(3, 6)),
         ]
     )
-    probes, losses = optimize(config, starts)
-    del losses
-    selection_scores = training_minimum_eigenvalues(config, probes)
-    best_probe = probes[int(jnp.argmax(selection_scores))]
+    probes, scores = optimize(config, starts)
+    best_probe = probes[int(jnp.argmax(scores))]
     result = (np.asarray(best_probe) + np.pi) % (2.0 * np.pi) - np.pi
     return {"probe_parameters": result}

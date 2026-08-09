@@ -1,0 +1,198 @@
+{
+  "schema_version": 1,
+  "problem_id": 117,
+  "numeric_id": 117,
+  "slug": "replica-transfer-program-synthesis",
+  "candidate_id": "r117_replica_transfer_program_synthesis--post_shortlist_reserve--shared_contraction_dag",
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "mapping_decision": "Problem 117 is a deliberately strengthened successor to held reserve 115, not a retroactive replacement in the frozen shortlist and not a second frozen-f06 implementation. Reserve 115 directly requested one p2/p3 diagnostic per state and exposed its replica-index contractions. Problem 117 instead asks for seeded banks of p2/p3/p4 reduced-state partial-transpose moments and an exactly certified shared contraction program; the prompt gives only the mathematical replica permutations.",
+    "source_evidence": [
+      {
+        "id": "mixed-state-entanglement-randomized",
+        "title": "Mixed-State Entanglement from Local Randomized Measurements",
+        "url": "https://arxiv.org/abs/2007.06305",
+        "role": "primary basis for partial-transpose moments as mixed-state entanglement observables"
+      },
+      {
+        "id": "optimal-pt-moments",
+        "title": "Optimal Entanglement Certification from Moments of the Partial Transpose",
+        "url": "https://arxiv.org/abs/2103.06897",
+        "role": "basis for treating multiple partial-transpose moment orders as a coupled diagnostic family"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for quantum-circuit tensor-network simulation and backend contraction"
+      },
+      {
+        "id": "tensorcircuit-mps-docs",
+        "title": "TensorCircuit Advanced Usage: MPS Simulator",
+        "url": "https://tensorcircuit.readthedocs.io/en/stable/advance.html#mps-simulator",
+        "role": "official API evidence for MPSCircuit and exposed MPS tensors"
+      }
+    ]
+  },
+  "title": "Mixed-state replica-transfer program synthesis",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_117.py",
+  "expert_solution": "expert/solution_117.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 20,
+  "tags": [
+    "mixed-state-entanglement",
+    "partial-transpose-moments",
+    "replica-permutations",
+    "contraction-program-synthesis",
+    "prefix-trie-reuse",
+    "matrix-product-state",
+    "operation-certificate",
+    "memory-certificate"
+  ],
+  "difficulty_explanation": "Each seeded trial contains two independent 64-qubit purifications and 96 total overlapping p2/p3/p4 queries. Dense purifications, density matrices, and explicit fourth replicas are impossible. A valid submission must derive one generic cyclic-permutation compiler, recover the exact unique prefix-trie program, traverse it with depth-first liveness, match continuous moments, and return exact graph, operation, memory, and digest certificates. Across four host seeds the canonical programs require only 23.6% to 29.9% of the local transfers in disjoint per-query paths, so a separately transcribed path program is structurally rejected.",
+  "solution_explanation": "The expert prepares each purified state as an exact bond-four TensorCircuit MPS, derives einsum labels generically from the requested permutation order and exponent, compiles all query selector strings into one canonical order-separated trie, and evaluates that trie depth first while retaining only the active ancestor path. It returns the moments and a canonical JSON digest of the same graph.",
+  "verification_explanation": "The evaluator never imports TensorCircuit. It independently evolves a complex128 NumPy MPS, constructs local replica transfers with NumPy's integer-subscript einsum API rather than the expert's string compiler, rebuilds the unique trie, and recomputes both certificates. A separate two-system/two-environment dense canary compares matrix powers of explicitly partial-transposed reduced states, an explicit k-copy permutation of the dense purification, and the generic transfer for k=2,3,4.",
+  "relevant_experience": "This reserve combines Stinespring purification, exact MPS routing, reduced-state partial-transpose moments, generic permutation-network compilation, multi-query common-subexpression elimination, canonical graph serialization, and liveness-aware memory certification.",
+  "status": "reserve_hold_graph_reuse_validated_execution_adherence_tc_runtime_and_hardness_unverified",
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_numpy": "2.2.6",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "MPSCircuit",
+      "MPSCircuit.apply_adjacent_double_gate",
+      "MPSCircuit.normalize",
+      "MPSCircuit.get_tensors",
+      "backend.einsum"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_117.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "Exact public case bytes are bound by the pinned image/runtime and evaluator-emitted full case_digest; the integer seed alone is not a cross-NumPy case identity.",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED or evaluator --seed for local canaries",
+    "hidden_holdout_status": "pending; all listed host seeds are contaminated development canaries and no private holdout has been frozen or authorized",
+    "anti_hardcoding": "The seed changes both purified circuits, basis excitations, every complex gate and damping rate, segment lengths, shuffled query order, opaque query/case IDs, nonces, canonical trie shape, operation limit, exact moment vector, and full case_digest.",
+    "oracle": "Independent complex128 NumPy MPS with integer-subscript generic replica transfers, canonical trie execution, exact graph certificates, and a separate dense plus explicit-replica-permutation canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": null,
+    "local_default": 1172026,
+    "base_seed_mapping": "One NumPy Generator stream emits two ordered 32-system/32-environment cases, each with two complex brickwork layers, local damping, five seeded tail segments, and a shuffled bank of sixteen queries at each of orders two, three, and four.",
+    "determinism_scope": "Exact public cases are deterministic only under the bound runtime and are identified by the full evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, and allow_nan false over the exact two-case public config before case_digest is added; stdout emits protocol_seed and the full digest in exactly one orbit_q_case_identity JSON record.",
+    "seed_scrub": "The evaluator removes ORBIT_Q_CANDIDATE_SEED and all parsed evaluator CLI arguments immediately after emitting case identity and before constructing the independent oracle or importing the submitted module.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6. Trial manifests must bind the full case_digest and image/runtime; local host digests are not authorized trial records."
+  },
+  "difficulty_levers": [
+    "each trial has two 64-qubit purifications, so neither dense state nor density-matrix shortcuts are viable",
+    "sixteen second-, sixteen third-, and sixteen fourth-order queries per case require one order-generic replica-permutation compiler",
+    "forward, reverse, and identity local permutations vary across seeded shared segments without publishing an einsum or index map",
+    "the exact canonical prefix trie rejects duplicate per-query contraction paths and compresses transfer count by more than threefold on all checked seeds",
+    "a depth-first live-environment certificate forces a bounded-memory schedule rather than retaining every graph node",
+    "opaque identities, shuffled query order, continuous moments, graph terminals, exact certificates, and a program digest are all scored",
+    "the 160-line expert ceiling makes three separately hard-coded replica networks and redundant query evaluators unattractive"
+  ],
+  "claim_boundary": "This is a deterministic synthetic exact-moment and contraction-program diagnostic, not a finite-shot randomized-measurement experiment. Graph validation proves that the returned program is the minimal shared prefix trie, but functional output alone cannot prove that an implementation used that graph to compute moments; source audit and runtime/memory telemetry remain necessary. Local validation does not establish TensorCircuit feasibility or model hardness. No Docker, Harbor, canonical-task, verifier-policy, or solver-model trial has run.",
+  "local_static_validation": {
+    "host_numpy": "2.4.4",
+    "binding_status": "non-binding local design canaries only; no listed digest is authorized for a solver trial",
+    "seeds_checked": [
+      1172026,
+      1172037,
+      1172117,
+      9876543
+    ],
+    "host_case_digests": {
+      "1172026": "50aa6f7a2ca17f8fe160424bc949e6c7394e55df5329b354917ea139c160a1d3",
+      "1172037": "19a9d7f57f34c4ace9bd6e7926b0bf08c3f9fdf9d6a1b7f03954f0ae71b6cce0",
+      "1172117": "068094218c9898d8ff26a12286411c6a2236e8395fef86eaab218aeff5dc7ac4",
+      "9876543": "e5a3ee9ede97fa48bc857338f7d2b627fb60eb29fe088805d5a3a17697ad314d"
+    },
+    "dense_partial_transpose_canary_passed": true,
+    "explicit_replica_permutation_canary_passed": true,
+    "maximum_dense_canary_error": 8.882e-16,
+    "numpy_integer_subscript_oracle_passed": true,
+    "expert_string_compiler_numpy_proxy_parity_passed": true,
+    "full_expert_api_semantic_proxy_parity_passed": true,
+    "full_expert_proxy_seeds_checked": 4,
+    "proxy_maximum_metric_error": 0.0,
+    "semantic_mutations_rejected": 5,
+    "semantic_mutations_attempted": 5,
+    "untrusted_module_seed_scrub_probe_passed": true,
+    "maximum_oracle_imaginary_residual": 6.681e-17,
+    "maximum_oracle_bond_dimension": 4,
+    "bond_capacity_stress_seed_range": [
+      1172000,
+      1172099
+    ],
+    "bond_capacity_stress_cases": 200,
+    "bond_capacity_stress_maximum_intermediate_rank": 4,
+    "canonical_transfer_operation_range": [
+      726,
+      918
+    ],
+    "canonical_to_naive_operation_ratio_range": [
+      0.236328125,
+      0.298828125
+    ],
+    "certified_peak_live_complex_elements": 4128770,
+    "host_oracle_runtime_range_sec": [
+      0.321,
+      0.401
+    ],
+    "observed_moment_range": [
+      0.00036515,
+      0.56631336
+    ],
+    "expert_effective_lines": 139,
+    "expert_logical_statement_count": 97,
+    "static_policy_score": 1.0,
+    "ruff_passed": true,
+    "tensorcircuit_expert_executed": false
+  },
+  "admission_blockers": [
+    "Candidate 117 intentionally has no entry in the frozen candidates.jsonl/shortlist and now has an exact-byte post-snapshot design_only registry binding. The safe runner rejects that lifecycle before both expert and model paths; only a future separately hashed, human-reviewed executable-promotion contract may authorize a run. Do not append or remap it into the frozen 1,000-contract snapshot.",
+    "Run the expert in the pinned TensorCircuit image and verify exact bond-four capping, custom-gate orientation, exposed tensor order, generic eight-replica-index backend.einsum support, graph certificate parity, runtime below the 180-second expert target, and measured peak RSS below the frozen envelope.",
+    "Independently verify that no nonzero Schmidt value is discarded by the four-bond cap for every prequalification case; a cap-induced approximation invalidates the exact-moment contract.",
+    "Prequalify at least 25 exact pinned-image records with protocol_seed, full case_digest, expert output, program digest, operation ratio, live-memory certificate, bond profile, moment margins, runtime, peak memory, and explicit admission status before any solver schedule.",
+    "Complete authenticated expert-only functional, static-policy, and LLM-policy audits, including evidence that the moments were computed by traversing the returned shared program rather than by separate paths followed by a fabricated certificate.",
+    "Human reviewers must sign the replica-cycle convention, partial-transpose subsystem, canonical trie ordering, terminal mapping, conservative live-memory charge, exact bond-cap claim, oracle independence, and post-snapshot provenance before promotion.",
+    "Treat the candidate as HOLD for hardness until an independent prompt audit judges that deriving a generic permutation compiler plus shared traversal is materially non-recipe-exposed; a pinned expert pass would establish feasibility, not model hardness."
+  ],
+  "exploitability_risks": [
+    "The functional evaluator can prove that a returned graph is canonical but cannot prove that submitted moments were produced by executing it. Source audit, runtime comparison, and process telemetry must reject certificate fabrication after independent per-query contractions.",
+    "The shared layout segments are public execution inputs. Hardness must come from generic replica semantics and correct shared execution, not from hiding the existence of repeated prefixes.",
+    "The shallow exact bond-four MPS is classically tractable. Static policy must reject a standalone NumPy simulator even though such a simulator could fit the mathematical workload.",
+    "Published evaluator, expert, and host seeds are contaminated development evidence and cannot establish private model hardness."
+  ],
+  "numerical_statistical_risks": [
+    "Fourth-order transfers carry eight virtual indices, so a one-step bond increase changes environment size by a high power and can invalidate runtime or memory admission.",
+    "TensorCircuit and the NumPy oracle may make different numerical rank decisions; the explicit bond-four cap and pinned parity records are mandatory.",
+    "The graph live-memory certificate excludes backend einsum workspace and Python/TensorCircuit overhead; pinned peak RSS remains a separate admission measurement.",
+    "This exact deterministic task has no sampling uncertainty and must not be described as finite-shot robustness evidence."
+  ],
+  "api_risks": [
+    "MPSCircuit.apply_adjacent_double_gate with max_singular_values=4 must preserve the exact state rather than truncate a physical Schmidt component.",
+    "MPSCircuit.get_tensors may expose arbitrary gauges and center positions; all replica moments must remain gauge invariant.",
+    "The TensorCircuit NumPy backend einsum must accept dynamically compiled expressions with one rank-eight environment and eight rank-three MPS tensor operands.",
+    "TensorCircuit backend and dtype settings are process global, and complex128 is required for fourth-order cancellation accuracy.",
+    "NumPy Generator byte-level cases can drift across versions, so trial records must bind exact case_digest rather than treating the seed as complete identity."
+  ],
+  "commands": {
+    "local_self_test": "python3 reports/orbit_q_problem_discovery/blueprints/replica-transfer-program-synthesis/evaluate_117.py --self-test --seed 1172026",
+    "default_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/replica-transfer-program-synthesis:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_117.py --solution solution_117'",
+    "alternate_seed_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/replica-transfer-program-synthesis:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_117.py --solution solution_117 --seed 1172037'"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "registry_kind": "orbit_q_post_snapshot_reserve_design_registry",
+  "frozen_snapshot": {
+    "candidates.jsonl_sha256": "7cb0126157a40bab5c9c5aa5d7f0f923491c753430a91458b0896a53963afb90",
+    "shortlist.json_sha256": "e6d7fa8f9602d2fad5997ba2cd191f90a976a476784c8c96feaf5ccf5d74bdea",
+    "summary.json_sha256": "a31456652045b48b5dfb0d0fb4be4f43e1ad946ef2cd768f0eebb020f58eb3b9"
+  },
+  "reserves": [
+    {
+      "candidate_id": "r116_coherent_toric_recovery_portfolio--post_shortlist_reserve--robust_selection",
+      "slug": "coherent-toric-recovery-portfolio",
+      "problem_id": 116,
+      "lifecycle_status": "design_only",
+      "blueprint_path": "blueprints/coherent-toric-recovery-portfolio",
+      "artifacts": {
+        "blueprint_metadata": {
+          "path": "blueprint.json",
+          "sha256": "8d9edc31b04e6372646d16d31790789f68b53cd96b86ad812f81b12c2680c75a"
+        },
+        "instruction": {
+          "path": "instruction.md",
+          "sha256": "79169a2629979ea41828c541a08601baddf0a3ea151b253744a6ada3afb0b347"
+        },
+        "evaluator": {
+          "path": "evaluate_116.py",
+          "sha256": "6fb24139a8fc8d34869ad1a7d6e6b13326be6d1c61d78c2aefe3d5bdd8e443ef"
+        },
+        "expert_solution": {
+          "path": "expert/solution_116.py",
+          "sha256": "e1faf817f804fd0cbfb1a60a63d4e26520f08cccc433bb1f8c98ec40c1cdde2a"
+        }
+      },
+      "blueprint_bundle_sha256": "83bc7317ee791e9e95f9b851f3ec25519896ba323394c26e1ac2548e3ca34cbb",
+      "audit_status": {
+        "classification": "design_only",
+        "scientific_design_review": "completed_with_blockers",
+        "local_oracle_status": "validated_nonbinding",
+        "tensorcircuit_expert_status": "not_executed",
+        "pinned_image_status": "not_executed",
+        "harbor_status": "not_executed",
+        "solver_model_status": "not_executed",
+        "hardness_status": "no_claim",
+        "execution_authorized": false
+      },
+      "entry_hash": "f823df8a523b83494facdb8010379ee0eadad5d74f6a4954b94964f11df2f3b8"
+    },
+    {
+      "candidate_id": "r117_replica_transfer_program_synthesis--post_shortlist_reserve--shared_contraction_dag",
+      "slug": "replica-transfer-program-synthesis",
+      "problem_id": 117,
+      "lifecycle_status": "design_only",
+      "blueprint_path": "blueprints/replica-transfer-program-synthesis",
+      "artifacts": {
+        "blueprint_metadata": {
+          "path": "blueprint.json",
+          "sha256": "50a090d5f982e99347e387409bc6995e9e7db3dd1e3c8071a3968d595bf778f4"
+        },
+        "instruction": {
+          "path": "instruction.md",
+          "sha256": "bd5fdf98e1731ab5a23a31d0c41b61306c87b2e12671ba13a4a3b91f37356baf"
+        },
+        "evaluator": {
+          "path": "evaluate_117.py",
+          "sha256": "cd65938c88dae379053dcb6cb3a818383e6a26f6cc30b73ff77d20dd08372c70"
+        },
+        "expert_solution": {
+          "path": "expert/solution_117.py",
+          "sha256": "8907162e623fca2e447fe47d0b669f3f66700bb14866694d874d26ca8fca0ed6"
+        }
+      },
+      "blueprint_bundle_sha256": "44c1717d039fef6e9dd44d337cd229c7cbb70ca064749e83ecd9e1c017f11b93",
+      "audit_status": {
+        "classification": "design_only",
+        "scientific_design_review": "completed_with_blockers",
+        "local_oracle_status": "validated_nonbinding",
+        "tensorcircuit_expert_status": "not_executed",
+        "pinned_image_status": "not_executed",
+        "harbor_status": "not_executed",
+        "solver_model_status": "not_executed",
+        "hardness_status": "no_claim",
+        "execution_authorized": false
+      },
+      "entry_hash": "08cd23733d23147fc6f0e2d3428f0052ec5293143539ceca1cc19c64a743da1a"
+    },
+    {
+      "candidate_id": "r118_process_tensor_qec_policy--post_shortlist_reserve--robust_synthesis",
+      "slug": "process-tensor-qec-policy",
+      "problem_id": 118,
+      "lifecycle_status": "design_only",
+      "blueprint_path": "blueprints/process-tensor-qec-policy",
+      "artifacts": {
+        "blueprint_metadata": {
+          "path": "blueprint.json",
+          "sha256": "a4dbd1a8bbed0148fef8e9d40926b84d1a985c1bd51106359df3fdc1e43391e6"
+        },
+        "instruction": {
+          "path": "instruction.md",
+          "sha256": "3c145a4e5e249f42e822de6aca5deeb9baf7ddc2f0b18172e768d94a847d4e8d"
+        },
+        "evaluator": {
+          "path": "evaluate_118.py",
+          "sha256": "847ddd0d2b9fa7f7190a447c3e747b417dd879b7be805e3f68d6c6265baa22d2"
+        },
+        "expert_solution": {
+          "path": "expert/solution_118.py",
+          "sha256": "642347260af002553bc903d1722699ee2785c7243c08c87d366ea252f5c308ce"
+        }
+      },
+      "blueprint_bundle_sha256": "f356ea8347c25caf1b6632d7b5e98b43799b33cbac0bc2d571c4bfc082c58661",
+      "audit_status": {
+        "classification": "design_only",
+        "scientific_design_review": "completed_with_blockers",
+        "local_oracle_status": "validated_nonbinding",
+        "tensorcircuit_expert_status": "not_executed",
+        "pinned_image_status": "not_executed",
+        "harbor_status": "not_executed",
+        "solver_model_status": "not_executed",
+        "hardness_status": "no_claim",
+        "execution_authorized": false
+      },
+      "entry_hash": "f9bb22deffafecde05d9a3dee4a056ee3b327047d24aaa60bef977fef28eba50"
+    }
+  ],
+  "registry_hash": "d2b84f6f81c29113c67fe16d7ac92966d95b060a1a2c9087e6c788d71b9b5b54"
+}

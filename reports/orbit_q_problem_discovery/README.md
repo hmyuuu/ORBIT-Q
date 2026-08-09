@@ -214,6 +214,14 @@ python3 scripts/materialize_candidate_task.py \
   --output-root .artifacts/problem-discovery/candidate-tasks
 ```
 
+Post-snapshot reserve designs are tracked separately in
+`post_snapshot_reserve_registry.json`. The registry self-hashes each entry and
+the complete payload, pins the untouched discovery snapshot, and binds the
+exact blueprint files. Registered `design_only` reserves may be materialized
+for provenance inspection, but the candidate runner rejects both expert and
+model paths (including dry runs). Registration is not review, promotion, or
+execution authorization, and it never appends or remaps a frozen candidate.
+
 Then run one previously unused seed with the image digest resolved and reviewed
 out of band. A successful run is collected automatically into one immutable
 schema-compatible case item:
@@ -344,6 +352,12 @@ explicit human decision.
 - `shortlist.md`: human review report with scientific rationale and sources;
 - `NEXT_CYCLE_REVIEW.md`: empirical-lesson-adjusted priorities for the next
   human review without mutating the frozen shortlist;
+- `post_snapshot_reserve_registry.json`: separately hashed, non-executable
+  design bindings for post-snapshot reserve blueprints;
+- `post_snapshot_reserve_registry.schema.json`: machine-readable registry
+  shape and fail-closed `design_only` audit assertions;
+- `reserve_registry.py`: deterministic registry, frozen-snapshot, containment,
+  and exact-artifact verifier;
 - `summary.json`: deterministic counts, score weights, and snapshot hash;
 - `review_state.json`: empty-by-default human decisions and evidence ledger;
 - `empirical_evidence.json`: deterministic, sanitized expert/model run ledger;

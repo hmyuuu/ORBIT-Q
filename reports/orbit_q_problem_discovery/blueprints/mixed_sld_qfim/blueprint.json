@@ -13,8 +13,8 @@
   "expert_time_estimate_hours": 12,
   "tags": ["qfim", "mixed-state", "robust-design", "quantum-metrology"],
   "difficulty_explanation": "The solver must differentiate a noisy mixed-state circuit, form stable three-parameter SLD-QFIMs on fixed support, and optimize a robust log-determinant objective across an ensemble.",
-  "status": "prototype_rejected",
-  "claim_boundary": "No GPT-5.6-sol trial has been run; difficulty remains a hypothesis.",
+  "status": "prototype_pinned_direct_expert_validated_model_untested",
+  "claim_boundary": "The repaired expert passes the three frozen public evaluator seeds in the pinned image and an independent three-formula QFIM canary. The single 179.48-second observation has only 0.52 seconds of margin to the nominal 180-second expert target and does not establish p95 runtime. This is direct expert-canary evidence only: the evaluator still lacks the full single-seed case-identity/admission protocol, no authenticated Harbor or LLM-policy audit has run, no private holdout is frozen, no human promotion is recorded, and no GPT-5.6-sol trial has run. Difficulty remains a hypothesis.",
   "scientific_contract": {
     "artifact": "six two-qubit probe-circuit parameters",
     "estimated_parameters": 3,
@@ -22,6 +22,12 @@
     "hidden_ensemble_size": 35,
     "fixed_support_floor": 2e-5,
     "objective": "worst-case logdet(F + 0.04 I) with a minimum-eigenvalue gate"
+  },
+  "contract": {
+    "entrypoint": "solution_101.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true
   },
   "tensorcircuit_central_path": [
     "TensorCircuit DMCircuit for every noisy sensing state",
@@ -49,15 +55,40 @@
     "tensorcircuit_version": "1.7.0.dev20260618",
     "command": "PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101",
     "default_seeds": [101021, 101033, 101051],
-    "overall": "FAIL",
-    "timed_solution_seconds": 103.17,
-    "passing_seed_gains": [1.053185, 0.518008],
-    "rejected_seed": 101051,
-    "rejected_seed_gain": 0.160336,
+    "overall": "PASS",
+    "timed_solution_seconds": 179.48,
+    "expert_runtime_target_seconds": 180,
+    "expert_runtime_margin_seconds": 0.52,
+    "runtime_observations": 1,
+    "expert_runtime_p95_established": false,
+    "heldout_score_gains": [1.214079, 1.122106, 0.82744],
     "required_gain": 0.32,
-    "rejection_reason": "The expert misses the frozen held-out robust-score gain on one default seed. Physics, support, SLD identity, and minimum-QFIM checks pass, but this blueprint is not eligible for a model trial.",
+    "heldout_minimum_qfim_eigenvalues": [1.144806, 1.370845, 2.047831],
+    "required_minimum_qfim_eigenvalue": 0.025,
+    "heldout_minimum_support_eigenvalues": [0.003039, 0.003595, 0.01498],
+    "required_support_floor": 0.00002,
+    "expert_effective_lines": 134,
+    "expert_static_policy_score": 1.0,
+    "jax_vs_independent_spectral_qfim_max_error": 6.65601e-9,
+    "independent_spectral_vs_vectorized_sld_max_error": 4.4408921e-15,
+    "validation_scope": "direct pinned-image evaluator and formula canary; not authenticated prequalification",
+    "previous_rejected_expert": {
+      "timed_solution_seconds": 103.17,
+      "passing_seed_gains": [1.053185, 0.518008],
+      "rejected_seed": 101051,
+      "rejected_seed_gain": 0.160336,
+      "reason": "The original expert optimized only the four supplied theta points and selected by training minimum eigenvalue, overfitting seed 101051. The replacement uses a deterministic public-box design ensemble and hard robust-score selection without changing evaluator gates."
+    },
+    "admission_status": "expert_baseline_restored_but_protocol_upgrade_required_before_review_or_model",
     "model_trials_run": 0
   },
+  "admission_blockers": [
+    "Upgrade the evaluator to one verifier-only base seed, emit and flush one full 64-hex case identity before untrusted code, and scrub all seed variables before import.",
+    "Add candidate-specific expert-admission metrics, fixed threshold-policy hashing, and exact materialized-task bindings before the safe runner may collect prequalification evidence.",
+    "Prequalify at least 25 private seed/digest records in the pinned image with runtime, memory, fixed-support, robust-gain, minimum-QFIM, and formula-agreement margins.",
+    "Complete human physics/framework/independent review plus authenticated expert Harbor functional, static, and LLM-policy audit before any solver manifest.",
+    "One clean GPT-5.6-sol/high pass vetoes this frozen design; failures require two independent substantive-failure auditors."
+  ],
   "api_risks": [
     "DMCircuit.depolarizing(px, py, pz) and densitymatrix() are required and were canaried only against tensorcircuit-nightly 1.7.0.dev20260618.",
     "The expert requests JAX x64 and TensorCircuit complex128; a build that disables x64 can lose SLD stability.",

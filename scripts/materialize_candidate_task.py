@@ -172,7 +172,7 @@ def _read_metadata(path: Path) -> dict[str, Any]:
 def discovery_candidate_binding(
     metadata: dict[str, Any], workspace: Path = DEFAULT_DISCOVERY_WORKSPACE
 ) -> dict[str, Any]:
-    """Resolve the reviewed shortlist hash, or a reserve's verified screen hash."""
+    """Resolve a frozen discovery row or a non-executable reserve registry row."""
 
     from reports.orbit_q_problem_discovery.pipeline import (  # noqa: PLC0415
         _file_sha256,
@@ -182,6 +182,7 @@ def discovery_candidate_binding(
     )
 
     candidate_id = metadata["candidate_id"]
+    reserve_binding = registered_reserve_binding(metadata, workspace)
     shortlist_path = workspace / "shortlist.json"
     candidates_path = workspace / "candidates.jsonl"
     if not shortlist_path.is_file() or not candidates_path.is_file():
@@ -212,9 +213,12 @@ def discovery_candidate_binding(
             if line.strip()
         ]
         matches = [row for row in rows if row.get("id") == candidate_id]
+        if not matches and reserve_binding is not None:
+            return reserve_binding
         if len(matches) != 1:
             raise CandidateTaskError(
-                "reserve candidate must occur exactly once in candidates.jsonl"
+                "candidate must occur exactly once in frozen candidates.jsonl or "
+                "the verified post-snapshot reserve registry"
             )
         candidate = matches[0]
         try:
@@ -234,6 +238,57 @@ def discovery_candidate_binding(
         "contract": contract,
         "candidates_jsonl_sha256": _file_sha256(candidates_path),
         "shortlist_json_sha256": _file_sha256(shortlist_path),
+    }
+
+
+def registered_reserve_binding(
+    metadata: dict[str, Any], workspace: Path = DEFAULT_DISCOVERY_WORKSPACE
+) -> dict[str, Any] | None:
+    """Return an exact, explicitly non-executable post-snapshot reserve binding."""
+
+    from reports.orbit_q_problem_discovery.reserve_registry import (  # noqa: PLC0415
+        REGISTRY_FILENAME,
+        ReserveRegistryError,
+        file_sha256,
+        verified_reserve_entry,
+    )
+
+    workspace = workspace.resolve()
+    candidate_id = metadata["candidate_id"]
+    try:
+        resolved = verified_reserve_entry(workspace, candidate_id)
+    except ReserveRegistryError as exc:
+        raise CandidateTaskError(
+            f"post-snapshot reserve registry validation failed: {exc}"
+        ) from exc
+    if resolved is None:
+        return None
+    entry, document = resolved
+    declared_id = metadata.get("problem_id", metadata.get("numeric_id"))
+    if _candidate_slug(metadata) != entry["slug"] or declared_id != entry["problem_id"]:
+        raise CandidateTaskError(
+            "registered reserve identity differs from its blueprint metadata"
+        )
+    registry_path = workspace / REGISTRY_FILENAME
+    frozen = document["frozen_snapshot"]
+    return {
+        "schema_version": 1,
+        "candidate_id": candidate_id,
+        "candidate_hash": entry["entry_hash"],
+        "contract": "post_snapshot_reserve_design_contract",
+        "execution_status": "design_only",
+        "registry_entry_hash": entry["entry_hash"],
+        "registry_payload_sha256": document["registry_hash"],
+        "registry_file_sha256": file_sha256(registry_path),
+        "blueprint_path": entry["blueprint_path"],
+        "blueprint_bundle_sha256": entry["blueprint_bundle_sha256"],
+        "artifact_sha256": {
+            role: artifact["sha256"]
+            for role, artifact in sorted(entry["artifacts"].items())
+        },
+        "candidates_jsonl_sha256": frozen["candidates.jsonl_sha256"],
+        "shortlist_json_sha256": frozen["shortlist.json_sha256"],
+        "summary_json_sha256": frozen["summary.json_sha256"],
     }
 
 
@@ -564,6 +619,28 @@ def validate_materialized_task_contract(
     discovery_binding_value = metadata.get("discovery_binding")
     expected_metadata = dict(blueprint["metadata"])
     if discovery_binding_value is not None:
+        if not isinstance(discovery_binding_value, dict):
+            raise CandidateTaskError(
+                "materialized candidate discovery binding must be a JSON object"
+            )
+        if (
+            discovery_binding_value.get("contract")
+            == "post_snapshot_reserve_design_contract"
+        ):
+            current_binding = discovery_candidate_binding(
+                blueprint["metadata"], workspace.resolve()
+            )
+            if discovery_binding_value != current_binding:
+                raise CandidateTaskError(
+                    "materialized reserve discovery binding is stale"
+                )
+            registered_blueprint = (
+                workspace.resolve() / current_binding["blueprint_path"]
+            ).resolve()
+            if blueprint["blueprint_dir"] != registered_blueprint:
+                raise CandidateTaskError(
+                    "materialized reserve blueprint differs from the registered path"
+                )
         expected_metadata["discovery_binding"] = discovery_binding_value
     if metadata != expected_metadata:
         raise CandidateTaskError(
@@ -732,7 +809,20 @@ def materialize_candidate_task(
         )
         task_metadata = dict(blueprint["metadata"])
         evaluator_source = blueprint["evaluator"].read_text(encoding="utf-8")
-        if EXPERT_ADMISSION_METRICS_KEY in evaluator_source:
+        reserve_binding = registered_reserve_binding(
+            task_metadata, discovery_workspace.resolve()
+        )
+        if reserve_binding is not None:
+            registered_blueprint = (
+                discovery_workspace.resolve() / reserve_binding["blueprint_path"]
+            ).resolve()
+            if blueprint["blueprint_dir"] != registered_blueprint:
+                raise CandidateTaskError(
+                    "registered reserves must materialize from their exact tracked "
+                    "blueprint path"
+                )
+            task_metadata["discovery_binding"] = reserve_binding
+        elif EXPERT_ADMISSION_METRICS_KEY in evaluator_source:
             task_metadata["discovery_binding"] = discovery_candidate_binding(
                 task_metadata, discovery_workspace.resolve()
             )

@@ -84,8 +84,14 @@ The evaluator calls `run_solution(config)` for several deterministic instances:
 ```
 
 The Cartesian product of the four training sensing points and three training
-noise arrays is available for optimization.  Hidden sensing points and noise
-arrays are generated independently from the same declared ranges.
+noise arrays is available for optimization. Hidden sensing coordinates are
+drawn independently and uniformly from `[-0.53, 0.53]`. Each hidden channel
+entry is the corresponding mean supplied training-channel entry plus an
+independent zero-mean Gaussian perturbation with standard deviation `0.0045`,
+clipped to `[0.008, 0.052]`. Exact held-out draws remain hidden. A robust
+solution may construct its own deterministic design points inside this
+declared box; it must not assume that the four supplied sensing points exhaust
+the scored domain.
 
 ## Solution interface
 

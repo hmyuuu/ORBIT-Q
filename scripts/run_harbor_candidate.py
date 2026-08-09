@@ -25,6 +25,7 @@ from materialize_candidate_task import (
     EXPERT_ADMISSION_PROTOCOL_FILE,
     ROOT,
     discovery_candidate_binding,
+    registered_reserve_binding,
     reject_forbidden_user_path,
     validate_materialized_task_contract,
 )
@@ -883,6 +884,26 @@ def build_harbor_command(args: argparse.Namespace) -> tuple[list[str], Path]:
     """Build a single-task TensorCircuit Harbor invocation after safety checks."""
 
     task_dir = validate_candidate_task_dir(args.task_dir)
+    task_metadata = _read_json_object(
+        task_dir / "candidate_metadata.json", "candidate metadata"
+    )
+    stored_binding = task_metadata.get("discovery_binding")
+    current_reserve_binding = registered_reserve_binding(
+        task_metadata, args.workspace.resolve()
+    )
+    stored_design_only = (
+        isinstance(stored_binding, dict)
+        and stored_binding.get("contract") == "post_snapshot_reserve_design_contract"
+    )
+    if stored_design_only or current_reserve_binding is not None:
+        if current_reserve_binding is None or stored_binding != current_reserve_binding:
+            raise CandidateTaskError(
+                "post-snapshot reserve materialization binding is missing or stale"
+            )
+        raise CandidateTaskError(
+            "post-snapshot reserve is design_only: neither expert nor model "
+            "execution is authorized"
+        )
     jobs_root = validate_jobs_root(args.jobs_dir)
     if not TENSORCIRCUIT_PROMPT.is_file():
         raise CandidateTaskError(

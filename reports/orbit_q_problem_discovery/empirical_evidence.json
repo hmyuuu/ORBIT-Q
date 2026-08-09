@@ -2575,7 +2575,7 @@
     "protocol_qualified_hardness_claim": false,
     "statement": "These are sanitized records of local exploratory Harbor runs. They are bound to opaque local artifacts and automated trace scans, but have no hash-bound human trace review and are not signed raw-run attestations. They do not satisfy the precommitted multi-trial protocol needed for a model-hard benchmark claim."
   },
-  "evidence_payload_sha256": "a5fd92c4c8cc178ca698ed7f46ed46df47ef17a833f4d55133ed781ad33e6b85",
+  "evidence_payload_sha256": "94d0c4d40d18688587cb646cf3ce4d97216f782da19b7bd081c5dd9d9ecff726",
   "frozen_protocol_facts": {
     "audit_model": "gpt-5.6-sol",
     "codex_cli_version": "0.146.0",
@@ -2587,7 +2587,7 @@
       "selected_harbor_results_bind_digest": false,
       "sha256": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
       "source": "reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim/blueprint.json",
-      "source_record_sha256": "22765dfe0dd6e63ef71613eccd0258d319bde3c21431d7a180d6fc355afd4342"
+      "source_record_sha256": "eb8e6d9ca52f3556e795a48e102e28878f524bf36ba94eb6446ee3e22226c059"
     },
     "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
     "model_pilot_model": "gpt-5.6-sol",
@@ -2629,7 +2629,7 @@
     "raw_transcript_or_rollout_copied": false
   },
   "schema_version": 1,
-  "snapshot_id": "orbit-q-exploratory-harbor-sha256:c27ca4e36adb9fe256cfdc7f6c5a1c6a90ceb89aede304d78b3fef92a5c2ef48",
-  "source_artifact_set_sha256": "c27ca4e36adb9fe256cfdc7f6c5a1c6a90ceb89aede304d78b3fef92a5c2ef48",
+  "snapshot_id": "orbit-q-exploratory-harbor-sha256:eae54177fd3b7ad25aa9ce1ddbb381bc568de086cb7c65edb1202a3bc1171a5c",
+  "source_artifact_set_sha256": "eae54177fd3b7ad25aa9ce1ddbb381bc568de086cb7c65edb1202a3bc1171a5c",
   "source_cutoff_utc": "2026-08-09T19:03:20.023450Z"
 }

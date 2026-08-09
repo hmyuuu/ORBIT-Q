@@ -2,7 +2,7 @@
 
 > **Claim boundary:** These are exploratory local runs with automated trace scans and no hash-bound human trace review. They are not protocol-qualified model-hardness results and are not signed raw-run attestations.
 
-Snapshot: `orbit-q-exploratory-harbor-sha256:c27ca4e36adb9fe256cfdc7f6c5a1c6a90ceb89aede304d78b3fef92a5c2ef48`
+Snapshot: `orbit-q-exploratory-harbor-sha256:eae54177fd3b7ad25aa9ce1ddbb381bc568de086cb7c65edb1202a3bc1171a5c`
 Source cutoff: `2026-08-09T19:03:20.023450Z`
 
 ## Decision summary

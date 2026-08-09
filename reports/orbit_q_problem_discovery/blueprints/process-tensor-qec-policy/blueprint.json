@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "problem_id": 118,
+  "numeric_id": 118,
+  "slug": "process-tensor-qec-policy",
+  "candidate_id": "r118_process_tensor_qec_policy--post_shortlist_reserve--robust_synthesis",
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "mapping_decision": "Do not remap this reserve to frozen f04 or reserve 116. Frozen f04 identifies parameters of a supplied two-qubit collision model. Reserve 116 selects one recovery per independent syndrome under a memoryless coherent model. Problem 118 instead synthesizes five-round interventions whose action-dependent retained-memory back-action changes later syndrome-conditioned logical instruments, then couples all history policies through one resource budget.",
+    "source_evidence": [
+      {
+        "id": "process-tensor-qec-decoder",
+        "title": "Tensor-network decoders for process tensor descriptions of non-Markovian noise",
+        "url": "https://arxiv.org/abs/2412.13739",
+        "role": "primary basis for combining process-tensor descriptions of spatiotemporally correlated noise with tensor-network maximum-likelihood QEC decoding"
+      },
+      {
+        "id": "process-tensor-tn-contraction",
+        "title": "Open Quantum System Dynamics from Infinite Tensor Network Contraction",
+        "url": "https://arxiv.org/abs/2307.01802",
+        "role": "primary basis for bounded-memory tensor-network representations of non-Markovian open-system dynamics"
+      },
+      {
+        "id": "realistic-non-pauli-qec",
+        "title": "Tensor-network simulations of the surface code under realistic noise",
+        "url": "https://arxiv.org/abs/1607.06460",
+        "role": "primary basis for tensor-network evaluation of non-Pauli surface-code noise"
+      },
+      {
+        "id": "coherent-surface-code-errors",
+        "title": "Correcting coherent errors with surface codes",
+        "url": "https://arxiv.org/abs/1710.02270",
+        "role": "primary basis for retaining coherent error amplitudes rather than Pauli-twirled probabilities"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for quantum-circuit and tensor-network contractions"
+      },
+      {
+        "id": "tensorcircuit-circuit-api",
+        "title": "TensorCircuit Circuit API",
+        "url": "https://tensorcircuit-ng.readthedocs.io/en/latest/api/circuit.html",
+        "role": "official API evidence for Circuit.unitary and Circuit.matrix"
+      }
+    ]
+  },
+  "title": "Retained-memory QEC intervention-policy synthesis",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_118.py",
+  "expert_solution": "expert/solution_118.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 24,
+  "tags": [
+    "quantum-error-correction",
+    "process-tensor",
+    "non-markovian-noise",
+    "toric-css-code",
+    "coherent-noise",
+    "intervention-policy-synthesis",
+    "robust-optimization",
+    "resource-constrained-portfolio",
+    "tensor-network"
+  ],
+  "difficulty_explanation": "Each verifier call contains two 50-data-qubit toric memories, six five-round syndrome histories per case, and three retained-memory process scenarios. A round-sector amplitude coherently sums 2^24 stabilizer-degenerate errors, while action-dependent retained-memory kicks make roundwise greedy correction invalid. The solver must derive the spatial transfer, compose temporal logical-memory instruments, search 5^5 action schedules per history, and solve an exact coupled multiple-choice budget program.",
+  "solution_explanation": "The constructive expert starts from the cheapest schedule, performs two deterministic coordinate-refinement sweeps, computes every spatial sector amplitude as the trace of a five-virtual-qubit TensorCircuit transfer circuit, composes each retained-memory process instrument, enumerates the exact per-history cost frontier, and combines the frontiers by deterministic dynamic programming under the shared budget.",
+  "verification_explanation": "The evaluator never imports TensorCircuit. It independently contracts complex128 NumPy row transfers, checks those transfers against direct enumeration of all plaquette fields on an L=3 canary, checks the compact temporal fidelity formula against an explicitly propagated reference-logical-memory Choi state, validates every opaque action and declared metric, rejects schema and finite-value mutations, and derives the exact global optimum.",
+  "relevant_experience": "This reserve combines coherent stabilizer degeneracy, process-tensor memory, conditional logical channels, robust intervention design, resource-constrained dynamic programming, and framework-native nonunitary transfer contractions.",
+  "status": "reserve_design_hold_tc_expert_unexecuted_recipe_exposure_risk",
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_numpy": "2.2.6",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "Circuit",
+      "Circuit.unitary",
+      "Circuit.matrix",
+      "gates.Gate"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_118.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "Exact cases are bound by the pinned image/runtime and evaluator-emitted full case_digest; the integer seed alone is not a cross-NumPy identity.",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_PROCESS_TENSOR_QEC_SEED fallback, or evaluator --seed for local canaries",
+    "hidden_holdout_status": "pending; local host digests are non-binding development canaries and no pinned-image private holdout has been frozen or authorized",
+    "anti_hardcoding": "The seed changes both cases, all syndrome histories and anchor recoveries, history weights, three process scenarios, every memory-conditioned edge angle and temporal memory rotation, initial memory states, shuffled opaque action IDs, case/history/syndrome IDs, and active budgets. Exact action sequences and continuous objectives are scored.",
+    "oracle": "Independent complex128 NumPy toric row transfer, separate exhaustive L=3 plaquette enumeration, explicit dense reference-logical-memory Choi propagation, and exact sequence-frontier plus portfolio dynamic programming",
+    "pass_signal": "Overall: PASS"
+  },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_PROCESS_TENSOR_QEC_SEED",
+    "local_default": 1182026,
+    "base_seed_mapping": "One NumPy Generator stream emits two ordered cases and deterministically retries a case until both the cheapest-to-selected and selected-to-unconstrained objective margins are active.",
+    "determinism_scope": "Exact public case bytes are deterministic only under the bound runtime and are identified by the emitted digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, and allow_nan false over the two ordered exact cases; stdout emits the full case_digest and protocol_seed in exactly one structured orbit_q_case_identity JSON line.",
+    "seed_scrub": "The evaluator removes both seed environment variables and replaces sys.argv with the evaluator program name immediately after emitting case identity and before submitted-solution import.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6. Trial manifests must bind the full case_digest and image/runtime; local host digests are not authorized trial records."
+  },
+  "difficulty_levers": [
+    "50 physical data qubits and 2^24 coherent stabilizer representatives per round-sector prohibit dense physical-state or direct coset enumeration",
+    "five syndrome-conditioned rounds are linked by a coherent retained memory, so the intervention after one round changes the effective process seen later",
+    "three process scenarios produce a per-history worst-case objective rather than one expected-noise schedule",
+    "five actions across five rounds produce 3,125 schedules per history, with distinct logical frames, memory back-actions, and costs",
+    "six histories share one deliberately active intervention budget, requiring an exact coupled portfolio dynamic program",
+    "two sequential verifier-seeded cases, shuffled opaque identifiers, continuous objectives, and a 160-line ceiling discourage positional assumptions and one-off transcription"
+  ],
+  "claim_boundary": "This is a deterministic synthetic, perfect-syndrome, history-indexed intervention-portfolio diagnostic. The retained two-level mode and its calibrated action back-actions define an effective bounded-memory process instrument; they are not claimed as a complete microscopic bath. Histories are optimized offline after being supplied, so this is not an online causal decoder, a faulty syndrome-extraction circuit, or a threshold calculation. Local NumPy validation establishes mathematical self-consistency only. The TensorCircuit expert has not run in the pinned image, Harbor has not run, no solver-model trial has run, and no model-hardness claim is made.",
+  "local_static_validation": {
+    "host_numpy": "2.4.4",
+    "binding_status": "non-binding local design canaries only; no listed digest is authorized for a solver trial",
+    "seeds_checked": [
+      1182026,
+      1182037,
+      1182118,
+      9876543
+    ],
+    "host_case_digests": {
+      "1182026": "1c7cfe68f2de92646e606edadec555b38ebd4ca01baaea07bca99bab64eae5af",
+      "1182037": "b0597b386b2812d02239353a255deb7d0145dd19c9eef7451f63c7e6089b8c92",
+      "1182118": "dc6e132d65bd0b2b81b03ee2eea9d1c7e0e4c8e6692ef295d4f3202c7c0d3bd4",
+      "9876543": "87d49d0003f343d93da8f973a138bc78c6746e089eafffe9069dd38545a6e141"
+    },
+    "spatial_bruteforce_canary_passed": true,
+    "spatial_bruteforce_max_error": 3.123e-17,
+    "temporal_dense_choi_canary_passed": true,
+    "temporal_dense_choi_error": 5.552e-17,
+    "all_checked_case_invariants_passed": true,
+    "all_checked_tradeoffs_active": true,
+    "minimum_cheapest_to_selected_objective_margin": 0.1026098567,
+    "minimum_selected_to_unconstrained_objective_margin": 0.1144933281,
+    "minimum_reference_policy_probability": 2.026e-39,
+    "minimum_memory_conditioned_amplitude_contrast": 0.0007049186,
+    "strict_mutations_rejected_per_seed": 5,
+    "host_oracle_self_test_runtime_range_sec": [
+      2.48,
+      3.01
+    ],
+    "expert_api_semantic_proxy_passed": true,
+    "expert_proxy_default_seed_maximum_objective_error": 3.886e-16,
+    "expert_proxy_default_seed_maximum_history_error": 1.61e-15,
+    "expert_proxy_runtime_sec": 7.195,
+    "expert_proxy_scope": "in-memory dense gate embedding that checks the intended Circuit.unitary/Circuit.matrix algebra; not a TensorCircuit execution or runtime estimate",
+    "expert_effective_lines": 146,
+    "expert_python_compile_passed": true,
+    "ruff_passed": true,
+    "tensorcircuit_expert_executed": false
+  },
+  "independent_audit": {
+    "review_date": "2026-08-10",
+    "recommendation": "HOLD",
+    "mathematics": "Toric row transfer, plaquette redundancy, logical sectors, retained-memory operator order, Kraus-block probability, and conditional entanglement fidelity independently passed direct-enumeration and dense-Choi checks.",
+    "expert_evaluator_parity": "A conventional in-memory Circuit composition proxy and a NumPy substitution isolated to the expert spatial amplitude both matched the evaluator at production shape; this is not evidence about the pinned TensorCircuit API or runtime.",
+    "hardness_assessment": "The task contains genuine finite synthesis, but the prompt states the temporal operators, 5^5 schedule enumeration, and coupled budget dynamic program. Only the spatial row transfer must be derived, and the 146-line expert exhaustively enumerates after its warm start. GPT-5.6 hardness is therefore not plausible enough to authorize a pilot without redesign.",
+    "resolved_findings": [
+      "CLI seed and evaluator arguments are now scrubbed from sys.argv before untrusted import in addition to both seed environment variables.",
+      "The probability diagnostic now selects the actual minimum-cost opaque action rather than shuffled action index zero.",
+      "The submitted module now receives a deep copy of the exact case config, so in-call mutation cannot alter the verifier's validation inputs.",
+      "The advertised 300-second submission limit is now an explicit pass criterion rather than a reporting-only timer."
+    ]
+  },
+  "admission_blockers": [
+    "Candidate 118 intentionally has no entry in the frozen candidates.jsonl/shortlist and now has an exact-byte post-snapshot design_only registry binding. The safe runner rejects that lifecycle before both expert and model paths; only a future separately hashed, human-reviewed executable-promotion contract may authorize a run. Do not append or remap it into the frozen 1,000-contract snapshot.",
+    "Run the expert in the pinned TensorCircuit image and verify nonunitary custom-gate acceptance, arbitrary periodic two-site ordering, Circuit.matrix orientation, complex128 relative accuracy at approximately 1e-39 five-round conditional probabilities, runtime, and peak memory.",
+    "Prequalify at least 25 exact pinned-image records with protocol_seed, full case_digest, expert pass logs, positive probability/memory-contrast/tradeoff margins, runtime below 180 seconds, and explicit admission status before authorizing any schedule.",
+    "Freeze independent verifier-only holdouts only after human review; do not promote any local host digest in this blueprint into a trial manifest.",
+    "Complete authenticated expert-only functional, static-policy, and LLM-policy audits before any solver trial.",
+    "Human reviewers must sign the toric edge/star convention, plaquette redundancy factor, logical-sector basis, temporal operator order, action-back-action interpretation, conditional entanglement-fidelity normalization, robust objective, and offline-policy claim boundary.",
+    "Independent review has classified the fully stated temporal formulas plus finite 3,125-schedule search as too recipe-exposed for a GPT-5.6 pilot. Hold this version and redesign around an online causal prefix-sharing policy or synthesized reusable contraction program rather than weakening functional gates."
+  ],
+  "exploitability_risks": [
+    "Once the sector amplitudes are available, temporal operators are only 8 by 8 and the schedule space is finite; intended difficulty rests on correctly deriving and implementing the stabilizer transfer and the coupled synthesis, so source audit must reject a standalone NumPy spatial replacement.",
+    "The prompt states the process-instrument mathematics completely. A strong agent may reproduce it and enumerate schedules; this reserve is scientifically distinct but not presumed model-hard without a protocol-qualified pilot.",
+    "Published evaluator, expert, and local canary seeds become contaminated development evidence and cannot establish private model hardness."
+  ],
+  "numerical_statistical_risks": [
+    "Five-round conditional probabilities are naturally around 1e-39. They remain far above complex128 underflow, but normalized fidelities can amplify relative contraction error and require pinned-image parity checks.",
+    "The exact deterministic scenarios have no sampling uncertainty; robust means max-min over the declared finite scenario set, not a confidence guarantee for an unknown experiment.",
+    "NumPy Generator bytes and low-order floating arithmetic can drift across versions, so exact case_digest and pinned NumPy version are mandatory trial identity."
+  ],
+  "api_risks": [
+    "Circuit.unitary must accept nonunitary rank-two and rank-four custom Gate tensors even though the method name says unitary.",
+    "Circuit.matrix must preserve gate order and return the complete unnormalized transfer operator.",
+    "The periodic two-site gate on virtual qubits L-1 and 0 must preserve supplied site ordering.",
+    "TensorCircuit backend and dtype settings are process global, and complex128 is required for the tiny unnormalized history amplitudes."
+  ],
+  "commands": {
+    "local_numpy_self_test": "python3 evaluate_118.py --self-test",
+    "default_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/process-tensor-qec-policy:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_118.py --solution solution_118'",
+    "alternate_seed_after_human_review": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/process-tensor-qec-policy:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_118.py --solution solution_118 --seed 1182037'"
+  }
+}

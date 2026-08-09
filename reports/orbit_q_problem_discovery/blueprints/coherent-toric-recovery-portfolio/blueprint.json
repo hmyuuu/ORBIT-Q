@@ -156,7 +156,7 @@
     "tensorcircuit_expert_executed": false
   },
   "admission_blockers": [
-    "Candidate 116 is a post-snapshot reserve and intentionally has no discovery binding in the frozen candidates.jsonl/shortlist. The safe runner must continue rejecting it until human review creates a separately hashed post-snapshot reserve binding; do not append or remap it into the frozen 1,000-contract snapshot.",
+    "Candidate 116 intentionally has no entry in the frozen candidates.jsonl/shortlist and now has an exact-byte post-snapshot design_only registry binding. The safe runner rejects that lifecycle before both expert and model paths; only a future separately hashed, human-reviewed executable-promotion contract may authorize a run. Do not append or remap it into the frozen 1,000-contract snapshot.",
     "Run the expert in the pinned TensorCircuit image and verify nonunitary custom-gate acceptance, arbitrary periodic two-site ordering, Circuit.matrix orientation, complex128 trace accuracy at approximately 1e-17 syndrome probabilities, runtime, and memory.",
     "Prequalify at least 25 exact pinned-image records with protocol_seed, full case_digest, expert pass logs, positive probability/coherence/tradeoff/optimum margins, and explicit admission status before authorizing any schedule.",
     "Freeze independent verifier-only holdouts only after human review; do not promote any local host digest in this blueprint into a trial manifest.",

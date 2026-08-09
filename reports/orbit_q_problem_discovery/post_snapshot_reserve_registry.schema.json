@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit-q.local/schemas/post_snapshot_reserve_registry.schema.json",
+  "title": "ORBIT-Q post-snapshot reserve design registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "registry_kind",
+    "frozen_snapshot",
+    "reserves",
+    "registry_hash"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "registry_kind": {"const": "orbit_q_post_snapshot_reserve_design_registry"},
+    "frozen_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidates.jsonl_sha256",
+        "shortlist.json_sha256",
+        "summary.json_sha256"
+      ],
+      "properties": {
+        "candidates.jsonl_sha256": {"$ref": "#/$defs/sha256"},
+        "shortlist.json_sha256": {"$ref": "#/$defs/sha256"},
+        "summary.json_sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "reserves": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/reserve"}
+    },
+    "registry_hash": {"$ref": "#/$defs/sha256"}
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//).+$"
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relativePath"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "auditStatus": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "scientific_design_review",
+        "local_oracle_status",
+        "tensorcircuit_expert_status",
+        "pinned_image_status",
+        "harbor_status",
+        "solver_model_status",
+        "hardness_status",
+        "execution_authorized"
+      ],
+      "properties": {
+        "classification": {"const": "design_only"},
+        "scientific_design_review": {"const": "completed_with_blockers"},
+        "local_oracle_status": {"const": "validated_nonbinding"},
+        "tensorcircuit_expert_status": {"const": "not_executed"},
+        "pinned_image_status": {"const": "not_executed"},
+        "harbor_status": {"const": "not_executed"},
+        "solver_model_status": {"const": "not_executed"},
+        "hardness_status": {"const": "no_claim"},
+        "execution_authorized": {"const": false}
+      }
+    },
+    "reserve": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "slug",
+        "problem_id",
+        "lifecycle_status",
+        "blueprint_path",
+        "artifacts",
+        "blueprint_bundle_sha256",
+        "audit_status",
+        "entry_hash"
+      ],
+      "properties": {
+        "candidate_id": {"type": "string", "minLength": 1},
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "problem_id": {"type": "integer", "minimum": 1},
+        "lifecycle_status": {"const": "design_only"},
+        "blueprint_path": {"$ref": "#/$defs/relativePath"},
+        "artifacts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "blueprint_metadata",
+            "instruction",
+            "evaluator",
+            "expert_solution"
+          ],
+          "properties": {
+            "blueprint_metadata": {"$ref": "#/$defs/artifact"},
+            "instruction": {"$ref": "#/$defs/artifact"},
+            "evaluator": {"$ref": "#/$defs/artifact"},
+            "expert_solution": {"$ref": "#/$defs/artifact"}
+          }
+        },
+        "blueprint_bundle_sha256": {"$ref": "#/$defs/sha256"},
+        "audit_status": {"$ref": "#/$defs/auditStatus"},
+        "entry_hash": {"$ref": "#/$defs/sha256"}
+      }
+    }
+  }
+}

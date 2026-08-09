@@ -125,9 +125,141 @@ fidelity, and requires an exact non-boolean integer cost. Focused regressions
 cover these cases.
 
 Finally, the reserve deliberately remains outside the frozen 50-family,
-1,000-contract discovery snapshot. The safe runner must reject it until human
-review creates a separately hashed post-snapshot reserve binding; it must not
-be appended to or falsely remapped into the frozen corpus. A stronger QEC
+1,000-contract discovery snapshot. Before the provenance registry existed, the
+safe runner rejected it because there was no discovery binding. Its later
+exact-byte `design_only` binding remains non-executable; only a distinct
+human-reviewed executable-promotion contract could authorize a run. It must
+not be appended to or falsely remapped into the frozen corpus. A stronger QEC
 successor should make physical recovery implementation affect performance or
 require synthesis of the recovery set itself before consuming pinned or model
 trial resources.
+
+## Phase 5 — Process-tensor QEC policy reserve
+
+The next source-grounded direction was the process-tensor QEC lead. The
+primary references were checked directly: Kobayashi et al., *Tensor-network
+decoders for process tensor descriptions of non-Markovian noise*
+(arXiv:2412.13739), explicitly combine maximum-likelihood QEC decoding with a
+process-tensor representation of spatiotemporal correlations; Link, Tu, and
+Strunz, *Open Quantum System Dynamics from Infinite Tensor Network
+Contraction* (arXiv:2307.01802), support a bounded-memory tensor-network view
+of non-Markovian dynamics. The coherent surface-code sources used for reserve
+116 remain the spatial foundation.
+
+The resulting problem 118 design uses two distance-five toric memories, six
+five-round syndrome histories per case, three alternative retained-memory
+process scenarios, and five intervention primitives. A round-sector amplitude
+coherently sums 2^24 stabilizer representatives. Those amplitudes become
+logical-plus-memory process instruments; intervention-dependent memory
+back-actions make earlier actions affect later rounds. Each history has 5^5
+possible schedules, and all histories share one active cost budget. The
+expert uses a five-virtual-qubit TensorCircuit row transfer, a cheapest-policy
+warm start with deterministic coordinate sweeps, exact schedule frontiers,
+and a coupled cost dynamic program. The evaluator independently uses NumPy
+row transfers, a direct L=3 plaquette enumeration, and explicit dense Choi
+propagation.
+
+Four non-binding host seeds passed. Spatial transfer and enumeration agreed to
+3.123e-17; compact and dense-Choi temporal fidelities agreed to 5.552e-17.
+Across eight cases, the minimum cheapest-to-selected objective margin was
+0.102610 and the minimum selected-to-unconstrained margin was 0.114493. Five
+schema, finite-value, identity, and valid-but-suboptimal mutations were
+rejected per seed. An in-memory conventional circuit-composition proxy ran the
+129-effective-line expert end to end and matched the oracle to 1.61e-15, but
+this was deliberately not represented as a real TensorCircuit execution.
+
+Independent review confirmed the toric, temporal, and fidelity mathematics,
+then recommended **HOLD**. The prompt necessarily states the 8-by-8 temporal
+operators, finite 5^5 search, and coupled budget program, leaving only the
+spatial row transfer to derive. That is genuine finite synthesis, but it is
+probably too recipe-exposed to justify a GPT-5.6 pilot. The warm-start sweeps
+also do not reduce the subsequent exhaustive search. Actual pinned
+TensorCircuit behavior, complex128 accuracy near 1e-39 conditional
+probabilities, runtime below 180 seconds, and memory remain unproved.
+
+The review additionally found that a local `--seed` value remained visible in
+`sys.argv` even after environment scrubbing. The evaluator now removes both
+seed environment variables and all evaluator arguments before importing the
+submission; an explicit untrusted-module probe verified the scrub. The
+probability diagnostic was also renamed and made to select the actual
+minimum-cost action rather than shuffled action index zero.
+
+Problem 118 is therefore preserved as an honest four-file design iteration,
+not promoted or scheduled. The recommended successor is an online causal
+prefix-sharing policy over syndrome trees, or a reusable contraction-program
+synthesis problem whose success cannot be reduced to transcribing the stated
+temporal equations and enumerating a small finite schedule set.
+
+## Phase 6 — Strengthen the held replica-moment reserve
+
+The next requested direction was a materially harder successor to held reserve
+115. The design constraint was unusually specific: many shared p2/p3/p4
+mixed-state replica queries, no published expert einsum maps, a reusable
+contraction graph in the answer, an independently derived TensorCircuit-free
+oracle, and strict operation and memory certificates. The important risk was
+that a larger list of direct moment queries would only repeat 115's weakness:
+the model could transcribe each exposed formula independently.
+
+The selected design makes the reusable program part of the scored artifact.
+Each seeded trial contains two 32-system/32-environment Stinespring
+purifications. Each case carries 48 overlapping queries—16 at each of orders
+two, three, and four—whose A/B/identity layouts branch over five shared tail
+segments. The prompt defines only the mathematical rule that a bra replica
+index equals a forward-cycled ket index on A, a reverse-cycled index on B, and
+the same index elsewhere. It does not publish an einsum expression. The expert
+must derive one order-generic permutation compiler.
+
+Every query becomes a selector string over the interleaved physical MPS. The
+returned program is the unique order-separated prefix trie of those strings,
+numbered in canonical depth-first preorder. The evaluator checks every node,
+parent, selector, terminal, operation count, conservative live-environment
+capacity, and SHA-256 program digest exactly. Across four local seeds the
+canonical programs used 726–918 transfers per case, only 23.63%–29.88% of the
+3,072 transfers required by 48 disjoint 64-site paths. A per-query path graph
+therefore cannot pass. The remaining loophole—computing independently and
+fabricating the correct compact graph afterward—cannot be closed by functional
+values alone, so the claim boundary explicitly requires source audit, runtime
+comparison, and process memory telemetry.
+
+The expert uses an exact four-bond TensorCircuit MPS, derives its einsum labels
+from the permutation exponent, and executes the trie recursively while
+deleting each child environment after its subtree. The four-bond capacity is
+not an approximation target: 200 generated cases across seeds 1172000–1172099
+had maximum intermediate numerical Schmidt rank four. The live-memory
+certificate conservatively charges every nonterminal bond at full capacity,
+giving 4,128,770 complex elements for an order-four root-to-leaf path even when
+realized tensors are smaller.
+
+The independent evaluator uses a NumPy TEBD MPS and the integer-subscript form
+of `einsum`, rather than the expert's string compiler. Its dense canary traces
+the environment, forms the requested reduced density matrix and partial
+transpose, and compares matrix powers against both the transfer and an
+explicit permutation of k dense purification replicas for k=2,3,4. The maximum
+canary error was 8.882e-16. Four local seeds passed the full expert-source API
+shim with zero metric error, all five semantic mutations were rejected, Ruff
+and static policy passed, and the expert used 135 effective lines. An explicit
+untrusted-module probe also observed neither the seed environment variable nor
+parsed `--seed`/`--solution` CLI arguments at import or execution time.
+
+The resulting four-file reserve is proposed problem 117 under
+`reports/orbit_q_problem_discovery/blueprints/replica-transfer-program-synthesis/`.
+It remains a HOLD: no real TensorCircuit image execution, runtime or RSS
+measurement, Harbor verifier, human review, private prequalification, or solver
+trial has occurred. The graph-level reuse requirement and independent oracle
+are established locally; TensorCircuit feasibility and model hardness are not.
+
+### Post-format checkpoint note
+
+Repository-wide Ruff formatting changed only layout, not the scientific
+algorithms. Final static-policy counts are 139 effective lines for problem 117
+and 146 for problem 118, both below the frozen 160-line limit with score 1.0.
+The design-only registry was rehashed from these final bytes.
+
+### Reserve-lifecycle correction
+
+The Phase 4 statement about creating a post-snapshot binding described the
+state before the provenance registry existed. Problems 116, 117, and 118 are
+now exact-byte-bound there as `design_only`. The runner rejects that lifecycle
+before both expert and model paths; the registry is not execution authority.
+Only a future separately hashed, human-reviewed executable-promotion contract
+could authorize a run, without appending or remapping the frozen snapshot.
