@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "problem_id": 109,
+  "candidate_id": "f16_robust_leakage_grape--benchmark--robust_ensemble",
+  "slug": "robust-leakage-grape",
+  "title": "Hidden-ensemble leakage-aware robust GRAPE",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_109.py",
+  "expert_solution": "expert/solution_109.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 18,
+  "tags": ["quantum-control", "qutrit", "grape", "robust-ensemble"],
+  "difficulty_explanation": "A nominal or mean-risk pulse is insufficient: the submitted qutrit pulse must suppress leakage and coherent error over secret coupled perturbations while obeying hard endpoint, amplitude, and slew constraints.",
+  "solution_explanation": "The expert uses TensorCircuit QuditCircuit propagators and exact JAX reverse-mode gradients, a composite-pulse warm start, deterministic uncertainty-set augmentation, and a continuation from mean loss to a smooth worst-case loss.",
+  "verification_explanation": "An independent SciPy matrix-exponential oracle evaluates the pulse on hidden seeded interior members and every uncertainty-box corner, then enforces fidelity, leakage, and hardware constraints.",
+  "conditioning_notes": "The projected computational-block fidelity is global-phase invariant. Leakage is evaluated independently because a good nominal trace overlap can hide population outside the computational subspace. Sparse axis anchors do not control coupled box corners.",
+  "api_risks": "Requires differentiable tensorcircuit.QuditCircuit.unitary, QuditCircuit.matrix, tc.gates.Gate, and the JAX backend expm in the pinned TensorCircuit-NG image. The expert fixes complex128 to avoid threshold-scale drift.",
+  "status": "prototype_untested_by_model"
+}
