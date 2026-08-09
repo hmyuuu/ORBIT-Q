@@ -1,0 +1,51 @@
+# Conditioned fermionic-Gaussian quench identification
+
+Implement `run_solution(config)` in `/root/solution_105.py`.
+
+You receive correlation features from a number-conserving plus pairing quench
+of a fermionic Gaussian state. Three real parameters are hidden:
+
+```text
+theta = (hopping_strength, pairing_strength, staggered_potential)
+```
+
+For each probe, start from the occupation pattern in `config["filled"]` on
+`config["n_sites"]` fermionic modes. Apply `config["steps"]` first-order
+Trotter layers. In every layer, in this order:
+
+1. On site `i`, apply a chemical-potential evolution with
+   `chi = dt * mu * (-1)**i * (1 + 0.13*cos(phase + 0.31*i))`.
+2. On every even bond followed by every odd bond, apply hopping with
+   `chi = dt * J * (1 + 0.11*sin(phase + 0.47*i))`.
+3. On the same even/odd bond order, apply superconducting pairing with
+   `chi = dt * Delta * exp(1j*(phase + 0.19*i))`.
+
+Then perform the declared occupation postselections in order. The branch
+probability for outcome zero at mode `i` is `real(C[i,i])` in TensorCircuit's
+FGS correlation convention; outcome one has the complementary probability.
+
+The feature vector is:
+
+- log of the total postselection probability;
+- `real(C[i,i])` for every `feature_site`;
+- real and imaginary parts of `C[i,j]` for every `feature_pair`;
+- real and imaginary parts of `C[i,j+n_sites]` for every `feature_pair`.
+
+`config["training_probes"]` contains probe dictionaries and observed feature
+vectors. Infer the three parameters inside `config["parameter_bounds"]`, then
+predict features for `config["heldout_probes"]`.
+
+Return a dictionary with exactly these required entries:
+
+```python
+{
+    "estimated_parameters": np.ndarray,  # shape (3,)
+    "training_rmse": float,
+    "heldout_features": np.ndarray,      # (n_heldout, feature_dimension)
+}
+```
+
+The production instance has too many modes for a dense statevector. The core
+fermionic evolution and postselection must use TensorCircuit-NG's
+`FGSSimulator`; support libraries may be used for classical optimization.
+Results must be deterministic and finish within 300 seconds.

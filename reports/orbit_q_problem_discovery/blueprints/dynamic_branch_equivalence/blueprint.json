@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "problem_id": 103,
+  "numeric_id": 103,
+  "slug": "dynamic-branch-equivalence",
+  "candidate_id": "f45_dynamic_circuit_branch_equivalence--benchmark--adaptive",
+  "title": "Branch-sensitive equivalence of dynamic circuits",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_103.py",
+  "expert_solution": "expert/solution_103.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 180,
+  "expert_time_estimate_hours": 8,
+  "tags": ["dynamic-circuits", "instrument-equivalence", "adaptive", "postselection"],
+  "difficulty_explanation": "Branch-resolved instrument equivalence requires preserving unnormalized conditional maps, reset semantics, and feed-forward across hidden probes; averaged output-state comparisons are insufficient.",
+  "status": "prototype_untested_by_model",
+  "framework": {
+    "required": "tensorcircuit",
+    "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "tested_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": ["Circuit.post_select", "Circuit.state"]
+  },
+  "contract": {
+    "entrypoint": "solution_103.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 180,
+    "deterministic": true,
+    "hidden_case_source": "runtime seed ORBIT_DYNAMIC_SEED or evaluator --seed",
+    "anti_hardcoding": "The seed changes program syntax, probes, mutations, and case digest; labels are not passed to the solution.",
+    "oracle": "Independent complex128 NumPy branch projector simulation",
+    "pass_signal": "Overall: PASS"
+  },
+  "difficulty_levers": [
+    "instrument rather than averaged-state equivalence",
+    "unnormalized zero-probability branches",
+    "one- and two-round measurement histories",
+    "reset and branch-dependent feed-forward",
+    "syntactically distant but exactly equivalent circuit identities",
+    "planted angle, feed-forward, and reset mutations"
+  ],
+  "claim_boundary": "The expert and evaluator are validated prototypes. No solver-model trial has been run and no model-hardness claim is made.",
+  "api_risks": [
+    "TensorCircuit post_select returns an unnormalized state; normalizing would erase branch probability.",
+    "post_select is an alias of the mid_measurement projector path in the pinned image and should be canaried after upgrades.",
+    "The pinned projector path showed approximately 1e-6 accumulated normalization error on rewritten circuits, so the evaluator uses a 5e-6 equivalence tolerance while planted mutations exceed 2e-4.",
+    "Circuit-wide backend and dtype setters are process-global, so evaluator isolation is required when mixing framework tests."
+  ]
+}

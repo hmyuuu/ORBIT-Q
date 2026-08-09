@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "problem_id": 105,
+  "candidate_id": "f01_fermionic_gaussian_conditioned_quench--representation_stress--inverse",
+  "slug": "conditioned-fgs-inverse",
+  "title": "Conditioned fermionic-Gaussian quench identification",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_105.py",
+  "expert_solution": "expert/solution_105.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "status": "prototype"
+}

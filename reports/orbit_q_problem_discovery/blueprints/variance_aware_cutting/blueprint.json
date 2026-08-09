@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "problem_id": 104,
+  "numeric_id": 104,
+  "slug": "variance-aware-cutting",
+  "candidate_id": "f43_circuit_cutting_reconstruction--benchmark--finite_shot_noise",
+  "title": "Variance-aware signed circuit cutting",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_104.py",
+  "expert_solution": "expert/solution_104.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 180,
+  "expert_time_estimate_hours": 8,
+  "tags": ["circuit-cutting", "finite-shot", "quasiprobability", "variance-allocation"],
+  "difficulty_explanation": "The solution must combine signed fragment reconstruction, TensorCircuit boundary-state experiments, derivative-aware integer shot allocation, and canonical seeded sampling.",
+  "status": "prototype_untested_by_model",
+  "framework": {
+    "required": "tensorcircuit",
+    "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "tested_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": ["Circuit.expectation_ps"]
+  },
+  "contract": {
+    "entrypoint": "solution_104.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 180,
+    "deterministic": true,
+    "hidden_case_source": "runtime seed ORBIT_CUTTING_SEED or evaluator --seed",
+    "anti_hardcoding": "The seed changes both fragments, observables, shot budgets, and sampling streams; oracle values are not passed to the solution.",
+    "oracle": "Independent complex128 NumPy fragments plus an uncut statevector identity canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "difficulty_levers": [
+    "signed six-state wire-cut reconstruction",
+    "boundary state can be entangled with discarded left qubits",
+    "nonuniform derivative-aware integer shot allocation",
+    "seeded finite-shot sampling in a canonical component order",
+    "independent uncut identity validation"
+  ],
+  "claim_boundary": "The expert and evaluator are validated prototypes. No solver-model trial has been run and no model-hardness claim is made.",
+  "api_risks": [
+    "expectation_ps uses integer Pauli codes 0=I, 1=X, 2=Y, 3=Z; a convention drift silently changes observables.",
+    "TensorCircuit backend and dtype configuration is process-global.",
+    "The prescribed seeded sampler relies on NumPy Generator/PCG64 and must be version-canary tested if the image changes."
+  ]
+}
