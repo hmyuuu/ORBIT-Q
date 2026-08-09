@@ -35,7 +35,8 @@
     "effective_line_limit": 160,
     "runtime_limit_seconds": 300,
     "deterministic": true,
-    "hidden_case_source": "runtime seed ORBIT_CONTRACTION_SEED or evaluator --seed",
+    "hidden_case_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_CONTRACTION_SEED fallback, or evaluator --seed",
+    "determinism_scope": "trial manifests bind the pinned image and evaluator-emitted case_digest; a seed alone is not a cross-runtime case identity",
     "anti_hardcoding": "The seed changes graph relabelings, all circuit angles, and selected output strings; oracle amplitudes and planted elimination orders are not passed to the solution.",
     "oracle": "Independent complex128 NumPy variable elimination on the IQP Ising factor graph, with a separate tiny dense-sum identity canary",
     "pass_signal": "Overall: PASS"
