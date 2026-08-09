@@ -300,6 +300,37 @@ def test_runner_can_use_codex_para_with_auth_json_without_exposing_credentials(
     assert not any("auth.json" in item for item in command)
 
 
+def test_runner_expert_only_omits_solver_and_keeps_single_candidate_verifier(
+    tmp_path: Path, monkeypatch
+) -> None:
+    task_dir = materialize(tmp_path)
+    monkeypatch.setenv("HTTP_PROXY", "http://127.0.0.1:7890")
+    monkeypatch.setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
+    args = runner.parse_args(
+        runner_args(
+            task_dir,
+            tmp_path,
+            "--expert-only",
+            "--force-auth-json",
+            "--bridge-loopback-proxy",
+        )
+    )
+    command, resolved_task = runner.build_harbor_command(args)
+
+    assert resolved_task == task_dir
+    assert command.count("-p") == 1
+    assert command[command.index("-p") + 1] == str(task_dir)
+    assert command[command.index("-n") + 1] == "1"
+    assert "--agent-import-path" not in command
+    assert "--agent-kwarg" not in command
+    assert "--agent-env" not in command
+    assert "-m" not in command
+    assert "adapters.codex_para_verifier:CodexParaVerifier" in command
+    assert command.count("force_auth_json=true") == 1
+    assert "HTTP_PROXY=http://host.docker.internal:7890" in command
+    assert "HTTPS_PROXY=http://host.docker.internal:7890" in command
+
+
 def test_runner_rejects_force_auth_json_with_public_codex_agent(
     tmp_path: Path,
 ) -> None:

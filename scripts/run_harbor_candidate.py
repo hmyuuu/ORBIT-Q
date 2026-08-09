@@ -182,7 +182,6 @@ def build_harbor_command(args: argparse.Namespace) -> tuple[list[str], Path]:
         )
 
     audit_model = args.audit_model or args.model
-    agent_import = SOLVER_AGENTS[args.solver_agent]
     cmd = [
         str(args.harbor_bin),
         "run",
@@ -196,32 +195,43 @@ def build_harbor_command(args: argparse.Namespace) -> tuple[list[str], Path]:
         "framework=tensorcircuit",
         "--environment-kwarg",
         f"docker_image={args.docker_image}",
-        "--agent-import-path",
-        agent_import,
-        "--agent-kwarg",
-        f"reasoning_effort={args.reasoning_effort}",
-        "--verifier-import-path",
-        "adapters.codex_para_verifier:CodexParaVerifier",
-        "--verifier-kwarg",
-        f"audit_model={audit_model}",
-        "--verifier-env",
-        "REQUIRED_QUANTUM_FRAMEWORK=tensorcircuit",
     ]
+    if not args.expert_only:
+        cmd.extend(
+            [
+                "--agent-import-path",
+                SOLVER_AGENTS[args.solver_agent],
+                "--agent-kwarg",
+                f"reasoning_effort={args.reasoning_effort}",
+            ]
+        )
+    cmd.extend(
+        [
+            "--verifier-import-path",
+            "adapters.codex_para_verifier:CodexParaVerifier",
+            "--verifier-kwarg",
+            f"audit_model={audit_model}",
+            "--verifier-env",
+            "REQUIRED_QUANTUM_FRAMEWORK=tensorcircuit",
+        ]
+    )
     if args.force_auth_json:
-        if args.solver_agent != "codex-para":
+        if not args.expert_only and args.solver_agent != "codex-para":
             raise CandidateTaskError(
                 "--force-auth-json requires --solver-agent codex-para"
             )
-        cmd.extend(["--agent-kwarg", "force_auth_json=true"])
+        if not args.expert_only:
+            cmd.extend(["--agent-kwarg", "force_auth_json=true"])
         cmd.extend(["--verifier-kwarg", "force_auth_json=true"])
     if args.bridge_loopback_proxy:
         for key, value in bridged_loopback_proxy_env().items():
-            cmd.extend(["--agent-env", f"{key}={value}"])
+            if not args.expert_only:
+                cmd.extend(["--agent-env", f"{key}={value}"])
             cmd.extend(["--verifier-env", f"{key}={value}"])
+    if not args.expert_only:
+        cmd.extend(["-m", args.model])
     cmd.extend(
         [
-            "-m",
-            args.model,
             "-n",
             "1",
             "--override-cpus",
@@ -285,6 +295,14 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         "--audit-model",
         default=None,
         help="Codex verifier audit model (default: the solver model).",
+    )
+    parser.add_argument(
+        "--expert-only",
+        action="store_true",
+        help=(
+            "Run the packaged expert solution through the verifier without importing "
+            "or invoking a solver agent."
+        ),
     )
     parser.add_argument(
         "--docker-image",
@@ -351,9 +369,13 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(f"Mode: {mode}")
     print(f"Candidate task: {task_dir}")
     print("Framework: tensorcircuit")
-    print(f"Solver model: {args.model}")
-    print(f"Solver agent: {args.solver_agent}")
-    print(f"Solver reasoning effort: {args.reasoning_effort}")
+    if args.expert_only:
+        print("Solver: not invoked (packaged expert verification)")
+    else:
+        print(f"Solver model: {args.model}")
+        print(f"Solver agent: {args.solver_agent}")
+        print(f"Solver reasoning effort: {args.reasoning_effort}")
+    print(f"Verifier audit model: {args.audit_model or args.model}")
     print(
         f"Codex auth source: {'auth.json' if args.force_auth_json else 'environment'}"
     )
