@@ -22,5 +22,15 @@
   "verification_explanation": "A TensorCircuit-free NumPy density-matrix oracle independently composes unitary conjugations and Kraus maps, hides seeded parameter instances, and checks both parameter recovery and unseen causal-break trajectories.",
   "conditioning_notes": "The exchange-phase interval is narrower than one period and all hidden parameters are interior. Known phase-referenced memory preparations and diverse X/Y system controls and readouts remove the exchange-phase gauge. Only system observables are exposed; causal breaks make retained-memory effects identifiable rather than reducible to one fitted system channel.",
   "api_risks": "Requires TensorCircuit-NG DMCircuit.unitary, DMCircuit.reset, DMCircuit.amplitudedamping(gamma, p), and append-after-densitymatrix(reuse=False) behavior in the pinned image. The expert requests complex128 and uses finite-difference steps larger than contraction noise.",
-  "status": "prototype_untested_by_model"
+  "status": "prototype_untested_by_model",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "local_default": 1102026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream for the hidden parameters and ordered training and held-out causal-break probes.",
+    "determinism_scope": "The exact public causal-break inverse config is deterministic under the pinned runtime and is identified by the evaluator-emitted case_digest; the hidden parameter vector and oracle targets are excluded.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, and ndarray/scalar normalization over the exact public config; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; eigensolver-derived public observations can drift across numerical runtimes, so trial manifests must bind the image/runtime and case_digest rather than seed alone."
+  }
 }

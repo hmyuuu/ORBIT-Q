@@ -15,6 +15,17 @@
   "tags": ["dynamic-circuits", "instrument-equivalence", "adaptive", "postselection"],
   "difficulty_explanation": "Branch-resolved instrument equivalence requires preserving unnormalized conditional maps, reset semantics, and feed-forward across hidden probes; averaged output-state comparisons are insufficient.",
   "status": "prototype_untested_by_model",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_DYNAMIC_SEED",
+    "local_default": 1032026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that deterministically emits all 12 ordered hidden cases.",
+    "determinism_scope": "Exact public case bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over the ordered exact public cases; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
   "framework": {
     "required": "tensorcircuit",
     "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
@@ -26,7 +37,8 @@
     "effective_line_limit": 160,
     "runtime_limit_seconds": 180,
     "deterministic": true,
-    "hidden_case_source": "runtime seed ORBIT_DYNAMIC_SEED or evaluator --seed",
+    "hidden_case_source": "explicit evaluator --seed, otherwise verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_DYNAMIC_SEED, or local default 1032026",
+    "determinism_scope": "one base seed drives the ordered 12-case generator stream; trial evidence binds the pinned image and evaluator-emitted case_digest",
     "anti_hardcoding": "The seed changes program syntax, probes, mutations, and case digest; labels are not passed to the solution.",
     "oracle": "Independent complex128 NumPy branch projector simulation",
     "pass_signal": "Overall: PASS"

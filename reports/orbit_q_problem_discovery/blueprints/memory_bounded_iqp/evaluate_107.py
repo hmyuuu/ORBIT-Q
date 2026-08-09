@@ -12,6 +12,29 @@ import time
 import numpy as np
 
 
+DEFAULT_SEED = 1072026
+
+
+def default_seed():
+    return int(
+        os.environ.get(
+            "ORBIT_Q_CANDIDATE_SEED",
+            os.environ.get("ORBIT_CONTRACTION_SEED", str(DEFAULT_SEED)),
+        )
+    )
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def _grid_edges(rows, cols):
     edges = []
     for column in range(cols):
@@ -61,10 +84,9 @@ def _make_cases(seed, count=2):
 
 def build_config(seed):
     cases, _ = _make_cases(seed)
-    encoded = json.dumps(cases, sort_keys=True, separators=(",", ":")).encode()
     return {
         "cases": cases,
-        "case_digest": hashlib.sha256(encoded).hexdigest(),
+        "case_digest": case_digest(cases),
         "amplitude_scaling": "2**(n_qubits/2)",
     }
 
@@ -152,6 +174,21 @@ def _array(result, key, dtype):
 def evaluate(module_name, seed):
     cases, oracle_orders = _make_cases(seed)
     config = build_config(seed)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": seed,
+                    "case_digest": config["case_digest"],
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
+    os.environ.pop("ORBIT_CONTRACTION_SEED", None)
     if not _dense_canary():
         raise AssertionError("internal IQP partition-function canary failed")
     expected = np.array(
@@ -209,9 +246,8 @@ def evaluate(module_name, seed):
             certificate_valid and np.array_equal(peaks, expected_peaks)
         ),
         "representation stress active": all(case["n_qubits"] >= 70 for case in cases),
-        "runtime below 300 seconds": elapsed < 300,
     }
-    digest = config["case_digest"][:16]
+    digest = config["case_digest"]
     max_error = (
         float(np.max(np.abs(amplitudes - expected)))
         if amplitudes.shape == expected.shape
@@ -219,7 +255,7 @@ def evaluate(module_name, seed):
     )
     print("Problem 107 evaluation")
     print(f"Solution module: {module_name}")
-    print(f"Case seed: {seed}; case digest: {digest}")
+    print(f"Case seed: {seed}; case digest: {digest[:16]}")
     print(f"End-to-end solution time: {elapsed:.3f}s")
     print(f"Maximum scaled-amplitude error: {max_error:.3e}")
     print(f"Measured induced widths: {measured_widths.tolist()}")
@@ -237,12 +273,7 @@ def main():
     parser.add_argument(
         "--seed",
         type=int,
-        default=int(
-            os.environ.get(
-                "ORBIT_Q_CANDIDATE_SEED",
-                os.environ.get("ORBIT_CONTRACTION_SEED", "1072026"),
-            )
-        ),
+        default=default_seed(),
     )
     args = parser.parse_args()
     raise SystemExit(0 if evaluate(args.solution, args.seed) else 1)

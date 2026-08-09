@@ -28,10 +28,12 @@ class CodexParaVerifier(Verifier):
         install_retries: int = 3,
         install_retry_delay_sec: float = 5.0,
         model_catalog_path: str | None = None,
+        expert_only: bool = False,
         **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
         self.audit_model = audit_model
+        self.expert_only = expert_only
         self._codex = CodexPara(
             logs_dir=self.trial_paths.verifier_dir,
             model_name=audit_model,
@@ -111,6 +113,13 @@ class CodexParaVerifier(Verifier):
         )
         if self._codex.profile:
             self.override_env["CODEX_PROFILE"] = self._codex.profile
+        if self.expert_only:
+            self.override_env.update(
+                {
+                    "ORBIT_Q_EXPERT_PREQUALIFICATION_MODE": "expert_only_oracle",
+                    "ORBIT_Q_NON_HARDNESS_RUN": "expert_prequalification",
+                }
+            )
 
     @override
     async def verify(self) -> VerifierResult:

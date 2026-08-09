@@ -367,6 +367,49 @@ def evaluate(module_name, seed):
     for name, passed in criteria.items():
         print(f"  {name}: {'PASS' if passed else 'FAIL'}")
     passed = all(criteria.values())
+    admission_metrics = {
+        "orbit_q_expert_admission_metrics": {
+            "schema_version": 1,
+            "protocol_seed": seed,
+            "case_digest": config["case_digest"],
+            "metrics": [
+                {
+                    "metric": "minimum_absolute_ppt_gap",
+                    "direction": "at_least",
+                    "observed": float(np.min(np.abs(expected_gap))),
+                    "threshold": 2e-6,
+                },
+                {
+                    "metric": "maximum_oracle_imaginary_residual",
+                    "direction": "at_most",
+                    "observed": float(imaginary_residual),
+                    "threshold": 2e-10,
+                },
+                {
+                    "metric": "maximum_mps_bond_dimension",
+                    "direction": "at_least",
+                    "observed": float(max(bonds)),
+                    "threshold": 3.0,
+                },
+                {
+                    "metric": "certified_npt_case_count",
+                    "direction": "at_least",
+                    "observed": float(np.count_nonzero(expected_certificate)),
+                    "threshold": 0.5,
+                },
+                {
+                    "metric": "ppt_control_case_count",
+                    "direction": "at_least",
+                    "observed": float(np.count_nonzero(~expected_certificate)),
+                    "threshold": 0.5,
+                },
+            ],
+        }
+    }
+    print(
+        json.dumps(admission_metrics, sort_keys=True, separators=(",", ":")),
+        flush=True,
+    )
     print(f"Overall: {'PASS' if passed else 'FAIL'}")
     return passed
 

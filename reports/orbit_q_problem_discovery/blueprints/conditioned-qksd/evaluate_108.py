@@ -12,6 +12,29 @@ import time
 import numpy as np
 
 
+DEFAULT_SEED = 1082026
+
+
+def default_seed():
+    return int(
+        os.environ.get(
+            "ORBIT_Q_CANDIDATE_SEED",
+            os.environ.get("ORBIT_QKSD_SEED", str(DEFAULT_SEED)),
+        )
+    )
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
 def _one_body(case):
     matrix = np.diag(np.asarray(case["onsite"], dtype=float)).astype(complex)
     for left, right, real, imag in case["hoppings"]:
@@ -207,10 +230,9 @@ def _make_case(rng, index):
 def build_config(seed):
     rng = np.random.default_rng(seed)
     cases = [_make_case(rng, index) for index in range(2)]
-    encoded = json.dumps(cases, sort_keys=True, separators=(",", ":")).encode()
     return {
         "cases": cases,
-        "case_digest": hashlib.sha256(encoded).hexdigest(),
+        "case_digest": case_digest(cases),
         "measurement_model": "asymmetric binary readout after normalized Hadamard tests",
     }
 
@@ -268,9 +290,24 @@ def _array(result, key, dtype):
 
 
 def evaluate(module_name, seed):
+    config = build_config(seed)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": seed,
+                    "case_digest": config["case_digest"],
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
+    os.environ.pop("ORBIT_QKSD_SEED", None)
     if not _dense_canary():
         raise AssertionError("independent Slater-transition canary failed")
-    config = build_config(seed)
     expected = [_conditioned_solution(case) for case in config["cases"]]
     control = [_moments(case, case["control_lags"]) for case in config["cases"]]
     started = time.perf_counter()
@@ -346,7 +383,6 @@ def evaluate(module_name, seed):
                 and np.all(expected_ranks < 12)
                 and all(item["spectrum"][0] < -1e-4 for item in expected)
             ),
-            "runtime below 300 seconds": elapsed < 300,
         }
         max_energy_error = float(np.max(np.abs(energies - expected_energies)))
         max_control_error = float(
@@ -363,7 +399,7 @@ def evaluate(module_name, seed):
         print(f"Solution error: {type(exc).__name__}: {exc}")
     print("Problem 108 evaluation")
     print(f"Solution module: {module_name}")
-    print(f"Case seed: {seed}; digest: {config['case_digest'][:16]}")
+    print(f"Case seed: {seed}; case digest: {config['case_digest'][:16]}")
     print(f"End-to-end solution time: {elapsed:.3f}s")
     print(f"Maximum Ritz-energy error: {max_energy_error:.3e}")
     print(f"Maximum control-moment error: {max_control_error:.3e}")
@@ -380,7 +416,7 @@ def main():
     parser.add_argument(
         "--seed",
         type=int,
-        default=int(os.environ.get("ORBIT_QKSD_SEED", "1082026")),
+        default=default_seed(),
     )
     args = parser.parse_args()
     raise SystemExit(0 if evaluate(args.solution, args.seed) else 1)

@@ -8,6 +8,7 @@ import argparse
 import hashlib
 import importlib
 import json
+import os
 import time
 
 import numpy as np
@@ -15,6 +16,42 @@ from numpy.polynomial.chebyshev import chebfit
 
 
 DEFAULT_SEEDS = (102031, 102043, 102059)
+BASE_SEED_OFFSETS = tuple(seed - DEFAULT_SEEDS[0] for seed in DEFAULT_SEEDS)
+
+
+def seeds_from_base(base_seed):
+    """Expand one verifier-only base seed to the three-instance schedule."""
+
+    if base_seed < 0:
+        raise ValueError("base seed must be non-negative")
+    return tuple(base_seed + offset for offset in BASE_SEED_OFFSETS)
+
+
+def default_seeds():
+    """Preserve local defaults unless Harbor supplies its verifier-only seed."""
+
+    base_seed = os.environ.get("ORBIT_Q_CANDIDATE_SEED")
+    return DEFAULT_SEEDS if base_seed is None else seeds_from_base(int(base_seed))
+
+
+def _json_default(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    raise TypeError(f"not JSON serializable: {type(value).__name__}")
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+        default=_json_default,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def z_phase(phi):
@@ -161,15 +198,37 @@ def evaluate_case(module, seed):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--solution", default="solution_102")
-    parser.add_argument("--seeds", default=",".join(map(str, DEFAULT_SEEDS)))
+    parser.add_argument("--seeds", default=",".join(map(str, default_seeds())))
     args = parser.parse_args()
     seeds = tuple(int(value) for value in args.seeds.split(",") if value)
+    if not seeds or seeds != seeds_from_base(seeds[0]):
+        raise ValueError("--seeds must be an ordered (b, b + 12, b + 28) schedule")
+    verifier_seed = os.environ.get("ORBIT_Q_CANDIDATE_SEED")
+    if verifier_seed is not None and int(verifier_seed) != seeds[0]:
+        raise ValueError("--seeds cannot override the verifier-authorized base seed")
+    digest = case_digest([generate_case(seed)[0] for seed in seeds])
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": seeds[0],
+                    "case_digest": digest,
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
     module = importlib.import_module(args.solution)
 
     all_pass = True
     total_time = 0.0
     print("Problem 102 evaluation")
     print(f"Solution module: {args.solution}")
+    print(f"Case seeds: {','.join(map(str, seeds))}")
+    print(f"Case digest: {digest[:16]}")
     for seed in seeds:
         criteria, metrics = evaluate_case(module, seed)
         total_time += metrics["elapsed"]
@@ -180,12 +239,10 @@ def main():
         )
         for name, passed in criteria.items():
             print(f"  {name}: {'PASS' if passed else 'FAIL'}")
-    all_pass &= total_time <= 300.0
     print(f"End-to-end solution time: {total_time:.2f}s")
-    print(
-        f"Timed execution within 300 seconds: {'PASS' if total_time <= 300.0 else 'FAIL'}"
-    )
+    print("Runtime is reported separately and does not change functional correctness")
     print(f"Overall: {'PASS' if all_pass else 'FAIL'}")
+    raise SystemExit(0 if all_pass else 1)
 
 
 if __name__ == "__main__":

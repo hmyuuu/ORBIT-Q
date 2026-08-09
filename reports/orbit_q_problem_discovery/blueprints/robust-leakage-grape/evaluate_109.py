@@ -1,13 +1,42 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib
 import json
+import os
 import time
 from itertools import product
 
 import numpy as np
 from scipy.linalg import expm
+
+
+DEFAULT_SEED = 1092026
+
+
+def default_seed():
+    return int(os.environ.get("ORBIT_Q_CANDIDATE_SEED", str(DEFAULT_SEED)))
+
+
+def _json_default(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    raise TypeError(f"not JSON serializable: {type(value).__name__}")
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+        default=_json_default,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _operators():
@@ -104,9 +133,28 @@ def _heldout(config, seed):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--solution", default="solution_109")
-    parser.add_argument("--seed", type=int, default=1092026)
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=default_seed(),
+    )
     args = parser.parse_args()
     config = _configuration(args.seed)
+    digest = case_digest(config)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": args.seed,
+                    "case_digest": digest,
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
     started = time.perf_counter()
     try:
         result = importlib.import_module(args.solution).run_solution(config)
@@ -157,7 +205,58 @@ def main():
         passed = False
         summary = {"error": f"{type(exc).__name__}: {exc}"}
     print(f"End-to-end solution time: {elapsed:.6f}s")
+    print(f"Case seed: {args.seed}; case digest: {digest[:16]}")
     print(json.dumps(summary, sort_keys=True))
+    if passed:
+        admission_metrics = {
+            "orbit_q_expert_admission_metrics": {
+                "schema_version": 1,
+                "protocol_seed": args.seed,
+                "case_digest": digest,
+                "metrics": [
+                    {
+                        "metric": "heldout_worst_infidelity",
+                        "direction": "at_most",
+                        "observed": summary["heldout_worst_infidelity"],
+                        "threshold": config["maximum_worst_infidelity"],
+                    },
+                    {
+                        "metric": "heldout_p95_infidelity",
+                        "direction": "at_most",
+                        "observed": summary["heldout_p95_infidelity"],
+                        "threshold": config["maximum_p95_infidelity"],
+                    },
+                    {
+                        "metric": "heldout_worst_leakage",
+                        "direction": "at_most",
+                        "observed": summary["heldout_worst_leakage"],
+                        "threshold": config["maximum_worst_leakage"],
+                    },
+                    {
+                        "metric": "maximum_drive_amplitude",
+                        "direction": "at_most",
+                        "observed": summary["max_drive_amplitude"],
+                        "threshold": config["max_drive_amplitude"] + 1e-9,
+                    },
+                    {
+                        "metric": "maximum_slew_per_slice",
+                        "direction": "at_most",
+                        "observed": summary["max_slew_per_slice"],
+                        "threshold": config["max_slew_per_slice"] + 1e-9,
+                    },
+                    {
+                        "metric": "maximum_edge_amplitude",
+                        "direction": "at_most",
+                        "observed": summary["max_edge_amplitude"],
+                        "threshold": config["max_edge_amplitude"] + 1e-9,
+                    },
+                ],
+            }
+        }
+        print(
+            json.dumps(admission_metrics, sort_keys=True, separators=(",", ":")),
+            flush=True,
+        )
     print("Overall: PASS" if passed else "Overall: FAIL")
     raise SystemExit(0 if passed else 1)
 

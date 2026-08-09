@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import importlib
 import json
+import os
 import time
 
 import numpy as np
@@ -13,6 +15,31 @@ X = np.array([[0, 1], [1, 0]], dtype=np.complex128)
 Y = np.array([[0, -1j], [1j, 0]], dtype=np.complex128)
 Z = np.diag([1, -1]).astype(np.complex128)
 PAULI = {"I": I2, "X": X, "Y": Y, "Z": Z}
+DEFAULT_SEED = 1102026
+
+
+def default_seed():
+    return int(os.environ.get("ORBIT_Q_CANDIDATE_SEED", str(DEFAULT_SEED)))
+
+
+def _json_default(value):
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    raise TypeError(f"not JSON serializable: {type(value).__name__}")
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+        default=_json_default,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _rotation(axis, angle):
@@ -160,9 +187,28 @@ def _configuration(seed):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--solution", default="solution_110")
-    parser.add_argument("--seed", type=int, default=1102026)
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=default_seed(),
+    )
     args = parser.parse_args()
     config, hidden = _configuration(args.seed)
+    digest = case_digest(config)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": args.seed,
+                    "case_digest": digest,
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
     started = time.perf_counter()
     try:
         result = importlib.import_module(args.solution).run_solution(config)
@@ -216,6 +262,7 @@ def main():
         passed = False
         summary = {"error": f"{type(exc).__name__}: {exc}"}
     print(f"End-to-end solution time: {elapsed:.6f}s")
+    print(f"Case seed: {args.seed}; case digest: {digest[:16]}")
     print(json.dumps(summary, sort_keys=True))
     print("Overall: PASS" if passed else "Overall: FAIL")
     raise SystemExit(0 if passed else 1)

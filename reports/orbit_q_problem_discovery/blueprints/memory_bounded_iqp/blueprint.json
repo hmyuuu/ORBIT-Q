@@ -21,6 +21,17 @@
   ],
   "difficulty_explanation": "The solver must recognize a shuffled low-treewidth IQP factor graph, produce a checkable bounded-width elimination certificate, and execute selected 72-qubit amplitudes with a custom TensorCircuit contraction instead of a dense statevector.",
   "status": "prototype_untested_by_model",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_CONTRACTION_SEED",
+    "local_default": 1072026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits the two ordered IQP cases and private oracle orders.",
+    "determinism_scope": "Exact public case bytes are deterministic only under the pinned image/runtime and are identified by the evaluator-emitted case_digest; private oracle orders are excluded.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over the ordered exact public IQP cases; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
   "framework": {
     "required": "tensorcircuit",
     "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
@@ -35,7 +46,7 @@
     "effective_line_limit": 160,
     "runtime_limit_seconds": 300,
     "deterministic": true,
-    "hidden_case_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_CONTRACTION_SEED fallback, or evaluator --seed",
+    "hidden_case_source": "explicit evaluator --seed, otherwise verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_CONTRACTION_SEED, or local default 1072026",
     "determinism_scope": "trial manifests bind the pinned image and evaluator-emitted case_digest; a seed alone is not a cross-runtime case identity",
     "anti_hardcoding": "The seed changes graph relabelings, all circuit angles, and selected output strings; oracle amplitudes and planted elimination orders are not passed to the solution.",
     "oracle": "Independent complex128 NumPy variable elimination on the IQP Ising factor graph, with a separate tiny dense-sum identity canary",

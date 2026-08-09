@@ -15,6 +15,27 @@ import numpy as np
 
 PAULIS = ((0, 0), (1, 0), (1, 1), (0, 1))
 LABEL = {(0, 0): "I", (1, 0): "X", (1, 1): "Y", (0, 1): "Z"}
+DEFAULT_SEED = 1062026
+
+
+def default_seed():
+    return int(
+        os.environ.get(
+            "ORBIT_Q_CANDIDATE_SEED",
+            os.environ.get("ORBIT_CSS_SEED", str(DEFAULT_SEED)),
+        )
+    )
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _rref(rows, width=None):
@@ -154,9 +175,7 @@ def _make_instance(dimension, rng):
 def build_config(seed):
     rng = np.random.default_rng(seed)
     instances = [_make_instance(dimension, rng) for dimension in (3, 4)]
-    digest = hashlib.sha256(
-        json.dumps(instances, sort_keys=True, separators=(",", ":")).encode()
-    ).hexdigest()
+    digest = case_digest(instances)
     return {
         "instances": instances,
         "case_digest": digest,
@@ -387,6 +406,21 @@ def _evaluate_record(instance, record):
 
 def evaluate(module_name, seed):
     config = build_config(seed)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": seed,
+                    "case_digest": config["case_digest"],
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
+    os.environ.pop("ORBIT_CSS_SEED", None)
     started = time.perf_counter()
     try:
         result = importlib.import_module(module_name).run_solution(config)
@@ -413,7 +447,6 @@ def evaluate(module_name, seed):
         criteria = {
             key: all(record[key] for record in per_instance) for key in per_instance[0]
         }
-        criteria["runtime below 180 seconds"] = elapsed < 180
         summary = {
             "instances": len(config["instances"]),
             "seed": seed,
@@ -426,6 +459,7 @@ def evaluate(module_name, seed):
     passed = all(criteria.values())
     print("Problem 106 evaluation")
     print(f"Solution module: {module_name}")
+    print(f"Case seed: {seed}; case digest: {config['case_digest'][:16]}")
     print(f"End-to-end solution time: {elapsed:.6f}s")
     print(json.dumps(summary, sort_keys=True))
     print("Passing criteria:")
@@ -439,7 +473,9 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--solution", default="solution_106")
     parser.add_argument(
-        "--seed", type=int, default=int(os.environ.get("ORBIT_CSS_SEED", "1062026"))
+        "--seed",
+        type=int,
+        default=default_seed(),
     )
     args = parser.parse_args()
     raise SystemExit(0 if evaluate(args.solution, args.seed) else 1)

@@ -48,6 +48,13 @@ def _seed_schedule(value: str) -> list[int]:
     return seeds
 
 
+def _nonblank_text(value: str) -> str:
+    normalized = " ".join(value.split())
+    if not normalized:
+        raise argparse.ArgumentTypeError("value must contain non-whitespace text")
+    return normalized
+
+
 def _validated_workspace(value: Path) -> Path:
     workspace = value.resolve()
     if workspace.is_relative_to(ROOT):
@@ -81,8 +88,8 @@ def main() -> None:
         "--role", choices=CONCEPT_REVIEW_ROLES + PILOT_REVIEW_ROLES, required=True
     )
     review.add_argument("--decision", choices=("approve", "reject"), required=True)
-    review.add_argument("--reviewer", required=True)
-    review.add_argument("--note", required=True)
+    review.add_argument("--reviewer", type=_nonblank_text, required=True)
+    review.add_argument("--note", type=_nonblank_text, required=True)
 
     prototype = sub.add_parser(
         "record-prototype", help="record expert baseline and verifier-only evidence"
@@ -100,6 +107,13 @@ def main() -> None:
     )
     authorize.add_argument("--seeds", type=_seed_schedule, required=True)
     authorize.add_argument("--output", type=Path, required=True)
+    authorize.add_argument(
+        "--pilot-manifest-hash",
+        help=(
+            "Required for confirmation: the completed zero-pass, two-auditor "
+            "pilot manifest for the same candidate/model/protocol family."
+        ),
+    )
 
     trial = sub.add_parser(
         "record-trial", help="record raw Harbor outcome; does not classify failures"
@@ -120,8 +134,8 @@ def main() -> None:
         choices=("success",) + SUBSTANTIVE_FAILURE_CLASSES + EXCLUDED_FAILURE_CLASSES,
         required=True,
     )
-    audit.add_argument("--reviewer", required=True)
-    audit.add_argument("--note", required=True)
+    audit.add_argument("--reviewer", type=_nonblank_text, required=True)
+    audit.add_argument("--note", type=_nonblank_text, required=True)
 
     hardness = sub.add_parser(
         "hardness-status", help="summarize audited evidence for one frozen manifest"
@@ -173,6 +187,7 @@ def main() -> None:
                 args.stage,
                 args.seeds,
                 args.output.resolve(),
+                args.pilot_manifest_hash,
             )
         )
     elif args.command == "record-trial":

@@ -127,7 +127,8 @@ python3 scripts/run_autoresearch_discovery.py run \
   --raw-manifest reports/orbit_q_problem_discovery/local_inputs/provider-b.json
 ```
 
-The default store is `.artifacts/orbit-q-autoresearch`, which is ignored by Git.
+The default store is `.artifacts/problem-discovery/autoresearch`, which is
+ignored by Git.
 Both inputs and outputs must resolve inside `--workspace-root`; anything in or
 through `tasks/` is rejected. This prevents discovery work from mutating or
 using the canonical Harbor benchmark tasks.

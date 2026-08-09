@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 import importlib.util
+import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -9,6 +11,52 @@ import sys
 from pathlib import Path
 
 from static_policy import check_source
+
+
+DEFAULT_MAX_EFFECTIVE_CODE_LINES = 200
+MIN_MAX_EFFECTIVE_CODE_LINES = 1
+MAX_MAX_EFFECTIVE_CODE_LINES = 200
+CASE_IDENTITY_KEY = "orbit_q_case_identity"
+EXPERT_ADMISSION_METRICS_KEY = "orbit_q_expert_admission_metrics"
+EXPERT_ADMISSION_PATH = Path("/logs/verifier/expert-admission.json")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+IMAGE_DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
+METRIC_RE = re.compile(r"^[a-z][a-z0-9_]{0,63}$")
+EXPERT_BINDING_ENV = {
+    "candidate_id": "ORBIT_Q_CANDIDATE_ID",
+    "candidate_hash": "ORBIT_Q_CANDIDATE_HASH",
+    "expert_baseline_sha256": "ORBIT_Q_EXPERT_BASELINE_SHA256",
+    "evaluator_sha256": "ORBIT_Q_EVALUATOR_SHA256",
+    "task_bundle_sha256": "ORBIT_Q_TASK_BUNDLE_SHA256",
+    "framework_prompt_sha256": "ORBIT_Q_FRAMEWORK_PROMPT_SHA256",
+    "verifier_harness_sha256": "ORBIT_Q_VERIFIER_HARNESS_SHA256",
+    "container_image_digest": "ORBIT_Q_CONTAINER_IMAGE_DIGEST",
+}
+
+
+def _max_effective_code_lines(value: str | None = None) -> int:
+    """Parse a verifier-only line limit without allowing policy relaxation."""
+
+    raw_value = os.environ.get("MAX_EFFECTIVE_CODE_LINES") if value is None else value
+    if raw_value is None:
+        return DEFAULT_MAX_EFFECTIVE_CODE_LINES
+    if not re.fullmatch(r"[0-9]+", raw_value):
+        raise ValueError("MAX_EFFECTIVE_CODE_LINES must be a base-10 integer")
+    parsed = int(raw_value)
+    if not MIN_MAX_EFFECTIVE_CODE_LINES <= parsed <= MAX_MAX_EFFECTIVE_CODE_LINES:
+        raise ValueError(
+            "MAX_EFFECTIVE_CODE_LINES must be between "
+            f"{MIN_MAX_EFFECTIVE_CODE_LINES} and {MAX_MAX_EFFECTIVE_CODE_LINES}"
+        )
+    return parsed
+
+
+def _static_policy_result(source: Path, framework: str) -> dict:
+    return check_source(
+        source,
+        framework,
+        max_lines=_max_effective_code_lines(),
+    )
 
 
 def _load_module(path: Path, name: str):
@@ -40,6 +88,187 @@ def _parse_runtime_sec(output: str) -> float | None:
     return float(match.group(1))
 
 
+def _structured_output_rows(output: str, key: str) -> list[dict]:
+    """Return exact one-key JSON records emitted by the trusted evaluator."""
+
+    rows = []
+    for line in output.splitlines():
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict) and key in value:
+            if set(value) != {key} or not isinstance(value[key], dict):
+                raise ValueError(f"{key} output line must contain exactly one object")
+            rows.append(value[key])
+    return rows
+
+
+def _sha256_words(digest: str) -> dict[str, int]:
+    """Encode a SHA-256 into JSON-safe reward integers Harbor preserves."""
+
+    return {
+        f"expert_admission_sha256_word_{index}": int(digest[offset : offset + 8], 16)
+        for index, offset in enumerate(range(0, 64, 8))
+    }
+
+
+def _expert_admission_record(output: str, functional_passed: bool) -> tuple[dict, str]:
+    """Recompute strict case-admission margins from evaluator stdout.
+
+    The operator cannot supply an admission summary.  The only accepted values are
+    the structured rows captured from the evaluator subprocess whose source hash is
+    frozen by the expert-run bindings.
+    """
+
+    if os.environ.get("ORBIT_Q_EXPERT_PREQUALIFICATION_MODE") != "expert_only_oracle":
+        raise ValueError("expert admission requested outside expert-only mode")
+    if not functional_passed:
+        raise ValueError("expert admission requires a functional pass")
+
+    identity_rows = _structured_output_rows(output, CASE_IDENTITY_KEY)
+    metric_rows = _structured_output_rows(output, EXPERT_ADMISSION_METRICS_KEY)
+    if len(identity_rows) != 1 or len(metric_rows) != 1:
+        raise ValueError(
+            "expert evaluator must emit exactly one case identity and one admission row"
+        )
+    identity = identity_rows[0]
+    if set(identity) != {"protocol_seed", "case_digest"}:
+        raise ValueError("expert case identity has an invalid shape")
+    seed = identity["protocol_seed"]
+    case_digest = identity["case_digest"]
+    if isinstance(seed, bool) or not isinstance(seed, int) or seed < 0:
+        raise ValueError("expert protocol seed must be a nonnegative integer")
+    if not isinstance(case_digest, str) or not SHA256_RE.fullmatch(case_digest):
+        raise ValueError("expert case digest must be a full lowercase SHA-256")
+
+    declared = metric_rows[0]
+    if set(declared) != {
+        "schema_version",
+        "protocol_seed",
+        "case_digest",
+        "metrics",
+    }:
+        raise ValueError("expert admission metric row has an invalid shape")
+    if (
+        declared["schema_version"] != 1
+        or declared["protocol_seed"] != seed
+        or declared["case_digest"] != case_digest
+    ):
+        raise ValueError("expert admission metrics disagree with case identity")
+    metrics = declared["metrics"]
+    if not isinstance(metrics, list) or not metrics:
+        raise ValueError("expert admission metrics must be a nonempty list")
+
+    margins = []
+    seen = set()
+    for index, metric in enumerate(metrics):
+        if not isinstance(metric, dict) or set(metric) != {
+            "metric",
+            "direction",
+            "observed",
+            "threshold",
+        }:
+            raise ValueError(f"expert admission metric {index} has an invalid shape")
+        name = metric["metric"]
+        direction = metric["direction"]
+        if not isinstance(name, str) or not METRIC_RE.fullmatch(name):
+            raise ValueError(f"expert admission metric {index} has an invalid name")
+        if name in seen:
+            raise ValueError("expert admission metric names must be unique")
+        seen.add(name)
+        if direction not in {"at_least", "at_most"}:
+            raise ValueError(f"expert admission metric {index} has invalid direction")
+        observed = metric["observed"]
+        threshold = metric["threshold"]
+        if any(
+            isinstance(value, bool)
+            or not isinstance(value, (int, float))
+            or not math.isfinite(float(value))
+            for value in (observed, threshold)
+        ):
+            raise ValueError(f"expert admission metric {index} must be finite numeric")
+        observed = float(observed)
+        threshold = float(threshold)
+        margin = (
+            observed - threshold if direction == "at_least" else threshold - observed
+        )
+        if margin <= 0:
+            raise ValueError(
+                f"expert admission metric {name} has no strict pass margin"
+            )
+        margins.append(
+            {
+                "metric": name,
+                "direction": direction,
+                "observed": observed,
+                "threshold": threshold,
+                "absolute_margin": margin,
+                "passed": True,
+            }
+        )
+
+    bindings = {}
+    for name, env_name in EXPERT_BINDING_ENV.items():
+        value = os.environ.get(env_name)
+        if not value:
+            raise ValueError(f"missing frozen expert binding {env_name}")
+        bindings[name] = value
+    if not bindings["candidate_id"].strip():
+        raise ValueError("candidate id must be nonempty")
+    for name in (
+        "candidate_hash",
+        "expert_baseline_sha256",
+        "evaluator_sha256",
+        "task_bundle_sha256",
+        "framework_prompt_sha256",
+        "verifier_harness_sha256",
+    ):
+        if not SHA256_RE.fullmatch(bindings[name]):
+            raise ValueError(f"{name} must be a full lowercase SHA-256")
+    if not IMAGE_DIGEST_RE.fullmatch(bindings["container_image_digest"]):
+        raise ValueError("container image digest must be sha256:<64 lowercase hex>")
+    if os.environ.get("ORBIT_Q_CANDIDATE_SEED") != str(seed):
+        raise ValueError("verifier seed binding disagrees with evaluator case identity")
+
+    threshold_policy = [
+        {
+            "metric": margin["metric"],
+            "direction": margin["direction"],
+            "threshold": margin["threshold"],
+        }
+        for margin in margins
+    ]
+    threshold_payload = json.dumps(
+        threshold_policy, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode()
+    record = {
+        "schema_version": 1,
+        "producer": "orbit_q_score_submission_from_candidate_evaluator",
+        **bindings,
+        "protocol_seed": seed,
+        "case_digest": case_digest,
+        "expert_passed": True,
+        "threshold_policy_sha256": hashlib.sha256(threshold_payload).hexdigest(),
+        "admission": {
+            "status": "admitted",
+            "minimum_margin": min(row["absolute_margin"] for row in margins),
+            "margins": margins,
+        },
+    }
+    serialized = json.dumps(record, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
+    EXPERT_ADMISSION_PATH.write_text(serialized)
+    return record, hashlib.sha256(serialized.encode()).hexdigest()
+
+
+def _compound_reward(
+    functional_score: float, static_policy_score: float, llm_audit_score: float
+) -> float:
+    """Compute pass reward; runtime remains a reporting-only diagnostic."""
+
+    return float(functional_score * static_policy_score * llm_audit_score)
+
+
 def _functional_score(problem_id: int, solution_module: str) -> dict:
     evaluate_path = Path(f"/tests/evaluate_{problem_id}.py")
     cmd = [sys.executable, str(evaluate_path), "--solution", solution_module]
@@ -61,7 +290,12 @@ def _functional_score(problem_id: int, solution_module: str) -> dict:
             env=env,
         )
     except subprocess.TimeoutExpired as exc:
-        output = (exc.stdout or "") if isinstance(exc.stdout, str) else ""
+        captured = exc.stdout or ""
+        output = (
+            captured.decode("utf-8", errors="replace")
+            if isinstance(captured, bytes)
+            else str(captured)
+        )
         output += "\nFUNCTIONAL_TIMEOUT"
         Path("/logs/verifier/functional-stdout.txt").write_text(output)
         return {
@@ -74,7 +308,16 @@ def _functional_score(problem_id: int, solution_module: str) -> dict:
         }
     output = completed.stdout
     runtime_sec = _parse_runtime_sec(output)
-    passed = completed.returncode == 0 and "Overall: PASS" in output
+    overall_lines = [
+        line.strip()
+        for line in output.splitlines()
+        if line.strip() in {"Overall: PASS", "Overall: FAIL"}
+    ]
+    passed = (
+        completed.returncode == 0
+        and bool(overall_lines)
+        and overall_lines[-1] == "Overall: PASS"
+    )
     Path("/logs/verifier/functional-stdout.txt").write_text(output)
     return {
         "functional_score": 1.0 if passed else 0.0,
@@ -147,8 +390,29 @@ def main() -> None:
         )
         return
 
-    static = check_source(solution_path, framework)
+    try:
+        static = _static_policy_result(solution_path, framework)
+    except ValueError as exc:
+        details["verifier_configuration_error"] = str(exc)
+        Path("/logs/verifier/reward.json").write_text(json.dumps(rewards, indent=2))
+        Path("/logs/verifier/audit-details.json").write_text(
+            json.dumps(details, indent=2)
+        )
+        return
     functional = _functional_score(problem_id, solution_module)
+    expert_admission_hash = None
+    if os.environ.get("ORBIT_Q_EXPERT_PREQUALIFICATION_MODE") == "expert_only_oracle":
+        try:
+            _, expert_admission_hash = _expert_admission_record(
+                Path("/logs/verifier/functional-stdout.txt").read_text(
+                    encoding="utf-8", errors="replace"
+                ),
+                bool(functional.get("functional_passed")),
+            )
+        except (OSError, TypeError, ValueError) as exc:
+            functional["functional_score"] = 0.0
+            functional["functional_passed"] = False
+            functional["expert_admission_error"] = str(exc)
     problem_statement_path = Path("/tests/problem_statement.md")
     problem_statement = (
         problem_statement_path.read_text(errors="replace")
@@ -212,12 +476,13 @@ def main() -> None:
             ),
         }
     )
-    rewards["reward"] = (
-        rewards["functional_score"]
-        * rewards["runtime_score"]
-        * rewards["static_policy_score"]
-        * rewards["llm_audit_score"]
+    rewards["reward"] = _compound_reward(
+        rewards["functional_score"],
+        rewards["static_policy_score"],
+        rewards["llm_audit_score"],
     )
+    if expert_admission_hash is not None:
+        rewards.update(_sha256_words(expert_admission_hash))
 
     Path("/root/evaluation_summary.json").write_text(json.dumps(details, indent=2))
     Path("/logs/verifier/audit-details.json").write_text(json.dumps(details, indent=2))

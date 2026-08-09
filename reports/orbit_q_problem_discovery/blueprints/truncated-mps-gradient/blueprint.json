@@ -86,6 +86,17 @@
     "oracle": "Independent complex128 canonical TEBD plus retained-rank central finite differences and a four-qubit dense gate-order canary",
     "pass_signal": "Overall: PASS"
   },
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_MPS_SEED",
+    "local_default": 1112026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits both ordered truncated-MPS cases.",
+    "determinism_scope": "Exact public case bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over both ordered exact public cases; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
   "difficulty_levers": [
     "36-qubit evaluation cases make dense complex128 statevectors exceed the task memory envelope",
     "alternating forward RXX and backward RZZ sweeps make center direction and gate order operational",

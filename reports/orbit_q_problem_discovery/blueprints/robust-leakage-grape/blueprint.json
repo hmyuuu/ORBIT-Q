@@ -17,5 +17,15 @@
   "verification_explanation": "An independent SciPy matrix-exponential oracle evaluates the pulse on hidden seeded interior members and every uncertainty-box corner, then enforces fidelity, leakage, and hardware constraints.",
   "conditioning_notes": "The projected computational-block fidelity is global-phase invariant. Leakage is evaluated independently because a good nominal trace overlap can hide population outside the computational subspace. Sparse axis anchors do not control coupled box corners.",
   "api_risks": "Requires differentiable tensorcircuit.QuditCircuit.unitary, QuditCircuit.matrix, tc.gates.Gate, and the JAX backend expm in the pinned TensorCircuit-NG image. The expert fixes complex128 to avoid threshold-scale drift.",
-  "status": "prototype_untested_by_model"
+  "status": "prototype_untested_by_model",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "local_default": 1092026,
+    "base_seed_mapping": "The base seed generates public uncertainty widths and pulse parameters; base_seed XOR 0x5A17C3 initializes the independent 48-point held-out interior stream, while all eight corners are enumerated.",
+    "determinism_scope": "The exact public control config is deterministic under the pinned runtime and is identified by the evaluator-emitted case_digest; hidden held-out members and oracle metrics are excluded.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, and ndarray/scalar normalization over the exact public config; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6 and SciPy 1.17.1; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  }
 }

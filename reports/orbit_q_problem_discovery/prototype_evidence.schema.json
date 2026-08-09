@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orbit-q.local/schemas/problem-discovery-prototype-evidence-v1.json",
+  "$id": "https://orbit-q.local/schemas/problem-discovery-prototype-evidence-v2.json",
   "title": "ORBIT-Q problem-discovery prototype evidence",
   "type": "object",
   "additionalProperties": false,
@@ -12,13 +12,14 @@
     "environment",
     "public_api_canary",
     "verifier_runs",
+    "expert_prequalified_cases",
     "independent_oracle_runs",
     "gold_effective_lines",
     "valid_alternatives",
     "mutation_tests"
   ],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"const": 2},
     "candidate_id": {"type": "string", "minLength": 1},
     "candidate_hash": {"$ref": "#/$defs/sha256"},
     "artifacts": {
@@ -28,6 +29,8 @@
         "expert_baseline",
         "independent_oracle",
         "evaluator",
+        "instruction",
+        "candidate_metadata",
         "task_bundle",
         "framework_prompt"
       ],
@@ -35,6 +38,8 @@
         "expert_baseline": {"$ref": "#/$defs/artifact"},
         "independent_oracle": {"$ref": "#/$defs/artifact"},
         "evaluator": {"$ref": "#/$defs/artifact"},
+        "instruction": {"$ref": "#/$defs/artifact"},
+        "candidate_metadata": {"$ref": "#/$defs/artifact"},
         "task_bundle": {"$ref": "#/$defs/artifact"},
         "framework_prompt": {"$ref": "#/$defs/artifact"}
       }
@@ -44,6 +49,10 @@
       "additionalProperties": false,
       "required": [
         "container_image_digest",
+        "docker_image",
+        "harbor_version",
+        "harbor_task_digest",
+        "task_checksum",
         "source_commit",
         "observed_cpu_count",
         "observed_memory_mb"
@@ -51,11 +60,18 @@
       "properties": {
         "container_image_digest": {
           "type": "string",
-          "pattern": "^sha256:[0-9a-fA-F]{64}$"
+          "pattern": "^sha256:[0-9a-f]{64}$"
         },
-        "source_commit": {"type": "string", "pattern": "^[0-9a-fA-F]{7,64}$"},
+        "docker_image": {
+          "type": "string",
+          "pattern": "^[^@\\s]*[Tt]ensor[Cc]ircuit[^@\\s]*$"
+        },
+        "harbor_version": {"type": "string", "minLength": 1},
+        "harbor_task_digest": {"$ref": "#/$defs/sha256"},
+        "task_checksum": {"$ref": "#/$defs/sha256"},
+        "source_commit": {"type": "string", "pattern": "^[0-9a-f]{7,64}$"},
         "observed_cpu_count": {"type": "integer", "minimum": 1},
-        "observed_memory_mb": {"type": "number", "exclusiveMinimum": 0}
+        "observed_memory_mb": {"type": "integer", "minimum": 1}
       }
     },
     "public_api_canary": {
@@ -74,6 +90,12 @@
       "type": "array",
       "minItems": 20,
       "items": {"$ref": "#/$defs/verifier_run"}
+    },
+    "expert_prequalified_cases": {
+      "type": "array",
+      "minItems": 25,
+      "description": "Finished expert-only Harbor runs from which exact public cases and strictly positive admission margins are derived. Every later model seed schedule must be a subset of these records.",
+      "items": {"$ref": "#/$defs/expert_prequalified_case"}
     },
     "independent_oracle_runs": {
       "type": "array",
@@ -122,7 +144,7 @@
     "notes": {"type": "string"}
   },
   "$defs": {
-    "sha256": {"type": "string", "pattern": "^[0-9a-fA-F]{64}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
     "file": {
       "type": "object",
       "additionalProperties": false,
@@ -172,11 +194,84 @@
         "peak_memory_mb": {"type": "number", "exclusiveMinimum": 0},
         "container_image_digest": {
           "type": "string",
-          "pattern": "^sha256:[0-9a-fA-F]{64}$"
+          "pattern": "^sha256:[0-9a-f]{64}$"
         },
         "log": {
           "$ref": "#/$defs/file",
           "description": "Finished Harbor verifier result JSON with compound rewards and operator-attested image and peak-memory facts."
+        }
+      }
+    },
+    "admission_margin": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["metric", "direction", "observed", "threshold", "absolute_margin", "passed"],
+      "properties": {
+        "metric": {"type": "string", "minLength": 1},
+        "direction": {"enum": ["at_least", "at_most"]},
+        "observed": {"type": "number"},
+        "threshold": {"type": "number"},
+        "absolute_margin": {"type": "number", "exclusiveMinimum": 0},
+        "passed": {"const": true}
+      }
+    },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "minimum_margin", "margins"],
+      "properties": {
+        "status": {"const": "admitted"},
+        "minimum_margin": {"type": "number", "exclusiveMinimum": 0},
+        "margins": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/admission_margin"}
+        }
+      }
+    },
+    "expert_prequalified_case": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_id",
+        "expert_passed",
+        "runtime_sec",
+        "protocol_seed",
+        "case_digest",
+        "admission",
+        "threshold_policy_sha256",
+        "run_evidence_sha256",
+        "raw_evidence"
+      ],
+      "properties": {
+        "job_id": {"type": "string", "minLength": 1},
+        "protocol_seed": {"type": "integer", "minimum": 0},
+        "case_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "expert_passed": {"const": true},
+        "runtime_sec": {"type": "number", "exclusiveMinimum": 0},
+        "admission": {"$ref": "#/$defs/admission"},
+        "threshold_policy_sha256": {"$ref": "#/$defs/sha256"},
+        "run_evidence_sha256": {"$ref": "#/$defs/sha256"},
+        "raw_evidence": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "raw_job",
+            "harbor_config",
+            "harbor_lock",
+            "harbor_job_lock",
+            "functional_output",
+            "admission_record"
+          ],
+          "properties": {
+            "raw_job": {"$ref": "#/$defs/file"},
+            "harbor_config": {"$ref": "#/$defs/file"},
+            "harbor_lock": {"$ref": "#/$defs/file"},
+            "harbor_job_lock": {"$ref": "#/$defs/file"},
+            "functional_output": {"$ref": "#/$defs/file"},
+            "admission_record": {"$ref": "#/$defs/file"}
+          },
+          "description": "Finished expert-only Harbor evidence. The pipeline rehashes and reparses all six files and derives every summary field."
         }
       }
     }

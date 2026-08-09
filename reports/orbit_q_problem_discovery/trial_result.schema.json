@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://orbit-q.local/schemas/problem-discovery-trial-result-v1.json",
+  "$id": "https://orbit-q.local/schemas/problem-discovery-trial-result-v2.json",
   "title": "ORBIT-Q normalized Harbor trial result",
   "type": "object",
   "additionalProperties": false,
@@ -13,8 +13,18 @@
     "container_image_digest",
     "framework_prompt_sha256",
     "task_bundle_sha256",
+    "harbor_task_digest",
+    "task_checksum",
     "job_id",
     "protocol_seed",
+    "case_digest",
+    "solver_input_tokens",
+    "solver_output_tokens",
+    "solver_total_tokens",
+    "token_budget_compliant",
+    "hard_token_limit_enforced",
+    "solver_provider_identity_verified",
+    "audit_model_identity_verified",
     "execution_status",
     "reward",
     "functional_score",
@@ -22,10 +32,14 @@
     "llm_audit_score",
     "runtime_sec",
     "raw_job",
-    "solver_transcript"
+    "solver_transcript",
+    "harbor_config",
+    "harbor_lock",
+    "harbor_job_lock",
+    "functional_output"
   ],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"const": 2},
     "manifest_hash": {"$ref": "#/$defs/sha256"},
     "candidate_hash": {"$ref": "#/$defs/sha256"},
     "model": {"type": "string", "minLength": 1},
@@ -36,8 +50,18 @@
     },
     "framework_prompt_sha256": {"$ref": "#/$defs/sha256"},
     "task_bundle_sha256": {"$ref": "#/$defs/sha256"},
+    "harbor_task_digest": {"$ref": "#/$defs/sha256"},
+    "task_checksum": {"$ref": "#/$defs/sha256"},
     "job_id": {"type": "string", "minLength": 1},
     "protocol_seed": {"type": "integer"},
+    "case_digest": {"$ref": "#/$defs/sha256"},
+    "solver_input_tokens": {"type": "integer", "minimum": 0},
+    "solver_output_tokens": {"type": "integer", "minimum": 0},
+    "solver_total_tokens": {"type": "integer", "minimum": 0},
+    "token_budget_compliant": {"type": "boolean"},
+    "hard_token_limit_enforced": {"type": "boolean"},
+    "solver_provider_identity_verified": {"type": "boolean"},
+    "audit_model_identity_verified": {"type": "boolean"},
     "execution_status": {
       "enum": [
         "completed",
@@ -54,9 +78,16 @@
     "runtime_sec": {"type": "number", "minimum": -1},
     "raw_job": {
       "$ref": "#/$defs/file",
-      "description": "One finished Harbor trial result.json containing verifier_result.rewards plus an operator-named orbit_q_attestation block bound to the manifest and complete protocol config."
+      "description": "One finished Harbor trial result.json. Machine fields, not the supplemental operator attestation, determine protocol identity and scores."
     },
     "solver_transcript": {"$ref": "#/$defs/file"},
+    "harbor_config": {"$ref": "#/$defs/file"},
+    "harbor_lock": {"$ref": "#/$defs/file"},
+    "harbor_job_lock": {"$ref": "#/$defs/file"},
+    "functional_output": {
+      "$ref": "#/$defs/file",
+      "description": "Hashed verifier stdout containing exactly one structured full case digest and protocol seed."
+    },
     "notes": {"type": "string"}
   },
   "$defs": {

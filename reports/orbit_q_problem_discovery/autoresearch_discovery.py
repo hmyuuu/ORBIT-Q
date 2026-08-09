@@ -1461,7 +1461,7 @@ def _add_store_arguments(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "--store-root",
         type=Path,
-        default=Path(".artifacts/orbit-q-autoresearch"),
+        default=Path(".artifacts/problem-discovery/autoresearch"),
     )
 
 

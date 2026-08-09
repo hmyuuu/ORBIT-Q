@@ -26,6 +26,27 @@ CX = np.array(
     dtype=np.complex128,
 )
 CZ = np.diag([1, 1, 1, -1]).astype(np.complex128)
+DEFAULT_SEED = 1032026
+
+
+def default_seed():
+    return int(
+        os.environ.get(
+            "ORBIT_Q_CANDIDATE_SEED",
+            os.environ.get("ORBIT_DYNAMIC_SEED", str(DEFAULT_SEED)),
+        )
+    )
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _gate(name, *qubits, theta=None):
@@ -54,7 +75,11 @@ def _rewrite(gates):
     for index, gate in enumerate(gates):
         name, q = gate["name"], gate["qubits"]
         if name == "rx":
-            out += [_gate("h", q[0]), _gate("rz", q[0], theta=gate["theta"]), _gate("h", q[0])]
+            out += [
+                _gate("h", q[0]),
+                _gate("rz", q[0], theta=gate["theta"]),
+                _gate("h", q[0]),
+            ]
         elif name == "ry":
             out += [
                 _gate("rz", q[0], theta=-math.pi / 2),
@@ -63,8 +88,11 @@ def _rewrite(gates):
             ]
         elif name == "cx":
             out += [
-                _gate("h", q[0]), _gate("h", q[1]), _gate("cx", q[1], q[0]),
-                _gate("h", q[0]), _gate("h", q[1]),
+                _gate("h", q[0]),
+                _gate("h", q[1]),
+                _gate("cx", q[1], q[0]),
+                _gate("h", q[0]),
+                _gate("h", q[1]),
             ]
         else:
             out.append(dict(gate))
@@ -178,10 +206,14 @@ def _mutate(program, rng, n, attempt):
     mutant = json.loads(json.dumps(program))
     kind = attempt % 3
     if kind == 0:
-        mutant["final"].append(_gate("rz", int(rng.integers(n)), theta=0.11 + 0.03 * attempt))
+        mutant["final"].append(
+            _gate("rz", int(rng.integers(n)), theta=0.11 + 0.03 * attempt)
+        )
     elif kind == 1:
         target = int((mutant["rounds"][0]["measure"] + 1) % n)
-        mutant["rounds"][0]["branches"]["1"].append(_gate("rx", target, theta=0.19 + 0.02 * attempt))
+        mutant["rounds"][0]["branches"]["1"].append(
+            _gate("rx", target, theta=0.19 + 0.02 * attempt)
+        )
     else:
         mutant["rounds"][0]["reset"] = not mutant["rounds"][0]["reset"]
     return mutant
@@ -205,23 +237,50 @@ def make_cases(seed, count=12):
         else:
             for attempt in range(12):
                 program_b = _mutate(rewritten, rng, n, attempt)
-                trial = {"n_qubits": n, "probes": probes, "program_a": program_a, "program_b": program_b}
+                trial = {
+                    "n_qubits": n,
+                    "probes": probes,
+                    "program_a": program_a,
+                    "program_b": program_b,
+                }
                 if _oracle_case(trial)[0] > 2e-4:
                     break
             else:
                 raise RuntimeError("failed to plant a detectable instrument mutation")
-        cases.append({"n_qubits": n, "probes": probes, "program_a": program_a, "program_b": program_b})
+        cases.append(
+            {
+                "n_qubits": n,
+                "probes": probes,
+                "program_a": program_a,
+                "program_b": program_b,
+            }
+        )
     return cases
 
 
 def build_config(seed):
     cases = make_cases(seed)
-    digest = hashlib.sha256(json.dumps(cases, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    digest = case_digest(cases)
     return {"cases": cases, "equivalence_tolerance": 5e-6, "case_digest": digest}
 
 
 def evaluate(module_name, seed):
     config = build_config(seed)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": seed,
+                    "case_digest": config["case_digest"],
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
+    os.environ.pop("ORBIT_DYNAMIC_SEED", None)
     expected = [_oracle_case(case) for case in config["cases"]]
     start = time.perf_counter()
     result = importlib.import_module(module_name).run_solution(config)
@@ -236,27 +295,35 @@ def evaluate(module_name, seed):
         "distance shape": distances.shape == shape,
         "classification shape": equivalent.shape == shape,
         "completeness shape": completeness.shape == shape,
-        "outputs finite": bool(np.all(np.isfinite(distances)) and np.all(np.isfinite(completeness))),
+        "outputs finite": bool(
+            np.all(np.isfinite(distances)) and np.all(np.isfinite(completeness))
+        ),
         "branch distances match independent oracle": bool(
-            distances.shape == shape and np.allclose(distances, expected_distances, atol=2e-6, rtol=3e-6)
+            distances.shape == shape
+            and np.allclose(distances, expected_distances, atol=2e-6, rtol=3e-6)
         ),
         "equivalence classifications correct": bool(
             equivalent.shape == shape
-            and np.array_equal(equivalent, expected_distances <= config["equivalence_tolerance"])
+            and np.array_equal(
+                equivalent, expected_distances <= config["equivalence_tolerance"]
+            )
         ),
         "branch completeness preserved": bool(
             completeness.shape == shape
             and np.allclose(completeness, expected_completeness, atol=2e-6, rtol=0)
             and np.max(completeness) < 2e-6
         ),
-        "runtime below 180 seconds": elapsed < 180,
     }
     print("Problem 103 evaluation")
     print(f"Solution module: {module_name}")
     print(f"Case seed: {seed}; case digest: {config['case_digest'][:16]}")
     print(f"End-to-end solution time: {elapsed:.2f}s")
-    print(f"Cases: {len(config['cases'])}; expected equivalent: {int(np.sum(expected_distances <= config['equivalence_tolerance']))}")
-    print(f"Largest reported instrument distance: {float(np.max(distances)) if distances.shape == shape else float('nan'):.6e}")
+    print(
+        f"Cases: {len(config['cases'])}; expected equivalent: {int(np.sum(expected_distances <= config['equivalence_tolerance']))}"
+    )
+    print(
+        f"Largest reported instrument distance: {float(np.max(distances)) if distances.shape == shape else float('nan'):.6e}"
+    )
     print("Passing criteria:")
     for name, passed in criteria.items():
         print(f"  {name}: {'PASS' if passed else 'FAIL'}")
@@ -267,9 +334,13 @@ def evaluate(module_name, seed):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--solution", default="solution_103")
-    parser.add_argument("--seed", type=int, default=int(os.environ.get("ORBIT_DYNAMIC_SEED", "1032026")))
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=default_seed(),
+    )
     args = parser.parse_args()
-    evaluate(args.solution, args.seed)
+    raise SystemExit(0 if evaluate(args.solution, args.seed) else 1)
 
 
 if __name__ == "__main__":

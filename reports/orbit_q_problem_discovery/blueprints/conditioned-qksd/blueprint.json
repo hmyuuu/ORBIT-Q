@@ -26,6 +26,17 @@
   "verification_explanation": "The evaluator does not import TensorCircuit. It independently diagonalizes each hidden one-particle Hamiltonian, derives Slater determinants and Hamiltonian transition moments, generates seeded asymmetric-readout counts, repeats the complete conditioned QKSD pipeline, and checks a separate dense Jordan-Wigner Fock-space canary.",
   "relevant_experience": "The prototype combines quantum subspace diagonalization under finite sampling, measurement-error calibration, canonical orthogonalization of noisy overlap matrices, and phase-sensitive fermionic-Gaussian transition formulas.",
   "status": "prototype_untested_by_model",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_QKSD_SEED",
+    "local_default": 1082026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits both ordered QKSD cases, all calibration counts, and all signal counts.",
+    "determinism_scope": "Exact public count and case bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over the ordered exact public QKSD cases and count streams; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; RNG and linear-algebra changes can alter exact case bytes, so trial manifests must bind the image/runtime and case_digest rather than seed alone."
+  },
   "framework": {
     "required": "tensorcircuit",
     "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
@@ -41,7 +52,8 @@
     "effective_line_limit": 160,
     "runtime_limit_seconds": 300,
     "deterministic": true,
-    "hidden_case_source": "runtime seed ORBIT_QKSD_SEED or evaluator --seed",
+    "hidden_case_source": "explicit evaluator --seed, otherwise verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_QKSD_SEED, or local default 1082026",
+    "determinism_scope": "one base seed drives both ordered cases and all finite-shot streams; trial evidence binds the pinned image and evaluator-emitted case_digest",
     "anti_hardcoding": "The seed changes mode count, hidden relabeling, onsite disorder, complex Peierls phases, occupied modes, readout responses, calibration counts, all signal counts, and nonces; exact control moments and final Ritz values are never included in the configuration.",
     "oracle": "Independent complex128 one-particle evolution and Slater transition determinants, seeded binomial readout channels, full QKSD reconstruction, and a separate 16-dimensional Jordan-Wigner Fock-space canary",
     "pass_signal": "Overall: PASS"

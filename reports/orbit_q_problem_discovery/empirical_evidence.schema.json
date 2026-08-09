@@ -1,0 +1,1133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://orbit-q.local/schemas/empirical_evidence.schema.json",
+  "title": "ORBIT-Q sanitized exploratory Harbor evidence ledger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "snapshot_id",
+    "source_cutoff_utc",
+    "source_artifact_set_sha256",
+    "evidence_payload_sha256",
+    "integrity",
+    "claim_boundary",
+    "sanitization",
+    "frozen_protocol_facts",
+    "candidates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "snapshot_id": {
+      "type": "string",
+      "pattern": "^orbit-q-exploratory-harbor-sha256:[0-9a-f]{64}$"
+    },
+    "source_cutoff_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "source_artifact_set_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "evidence_payload_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "builder",
+        "schema",
+        "source_binding_manifest"
+      ],
+      "properties": {
+        "builder": {
+          "$ref": "#/$defs/committedArtifact"
+        },
+        "schema": {
+          "$ref": "#/$defs/committedArtifact"
+        },
+        "source_binding_manifest": {
+          "$ref": "#/$defs/committedArtifact"
+        }
+      }
+    },
+    "claim_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_tier",
+        "protocol_qualified_hardness_claim",
+        "statement",
+        "admitted_model_scope"
+      ],
+      "properties": {
+        "evidence_tier": {
+          "const": "exploratory_automated_scan_only"
+        },
+        "protocol_qualified_hardness_claim": {
+          "const": false
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "admitted_model_scope": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "sanitization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policy",
+        "raw_auth_copied",
+        "raw_environment_copied",
+        "raw_config_copied",
+        "raw_transcript_or_rollout_copied",
+        "note"
+      ],
+      "properties": {
+        "policy": {
+          "const": "whitelisted_fields_and_sha256_only"
+        },
+        "raw_auth_copied": {
+          "const": false
+        },
+        "raw_environment_copied": {
+          "const": false
+        },
+        "raw_config_copied": {
+          "const": false
+        },
+        "raw_transcript_or_rollout_copied": {
+          "const": false
+        },
+        "note": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "frozen_protocol_facts": {
+      "$ref": "#/$defs/frozenProtocolFacts"
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "$ref": "#/$defs/candidate"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^\\.artifacts/problem-discovery/candidate-jobs/(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "committedArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "size_bytes"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "pattern": "^(?:scripts/build_problem_discovery_evidence\\.py|reports/orbit_q_problem_discovery/empirical_evidence\\.(?:schema|sources)\\.json)$"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "problem_id",
+        "slug",
+        "classification",
+        "hardness_blocker",
+        "conclusion",
+        "evidence_caveats",
+        "pairing_evidence",
+        "expert_runs",
+        "model_pilots"
+      ],
+      "properties": {
+        "problem_id": {
+          "enum": [
+            105,
+            106,
+            107,
+            108,
+            109,
+            111
+          ]
+        },
+        "slug": {
+          "type": "string",
+          "pattern": "^[a-z0-9-]+$"
+        },
+        "classification": {
+          "enum": [
+            "solved_hardness_blocking",
+            "expert_ready_model_untested",
+            "pilot_hardness_signal"
+          ]
+        },
+        "hardness_blocker": {
+          "type": "boolean"
+        },
+        "conclusion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence_caveats": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "pairing_evidence": {
+          "$ref": "#/$defs/pairingEvidence"
+        },
+        "expert_runs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/run"
+          }
+        },
+        "model_pilots": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/run"
+          }
+        }
+      }
+    },
+    "pairingEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_checksum_match",
+        "seed_match",
+        "case_digest_match",
+        "task_matched_expert_trial_ids",
+        "case_matched_expert_trial_ids"
+      ],
+      "properties": {
+        "task_checksum_match": {
+          "type": "boolean"
+        },
+        "seed_match": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "case_digest_match": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "task_matched_expert_trial_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        },
+        "case_matched_expert_trial_ids": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/uuid"
+          }
+        }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_role",
+        "operator_attested",
+        "protocol_qualified_hardness_claim",
+        "job",
+        "trial",
+        "task_source_binding",
+        "agent",
+        "protocol",
+        "functional_evidence",
+        "scores",
+        "static_policy",
+        "llm_source_audit",
+        "contamination_and_command_audit",
+        "artifacts"
+      ],
+      "properties": {
+        "evidence_role": {
+          "enum": [
+            "expert_oracle",
+            "model_pilot"
+          ]
+        },
+        "operator_attested": {
+          "const": false
+        },
+        "protocol_qualified_hardness_claim": {
+          "const": false
+        },
+        "job": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "id",
+            "n_total_trials",
+            "n_completed_trials",
+            "n_errored_trials",
+            "n_retries"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "id": {
+              "$ref": "#/$defs/uuid"
+            },
+            "n_total_trials": {
+              "const": 1
+            },
+            "n_completed_trials": {
+              "const": 1
+            },
+            "n_errored_trials": {
+              "const": 0
+            },
+            "n_retries": {
+              "const": 0
+            }
+          }
+        },
+        "trial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "name",
+            "id",
+            "task_name",
+            "task_checksum",
+            "started_at",
+            "finished_at"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "id": {
+              "$ref": "#/$defs/uuid"
+            },
+            "task_name": {
+              "type": "string",
+              "minLength": 1
+            },
+            "task_checksum": {
+              "$ref": "#/$defs/sha256"
+            },
+            "started_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "finished_at": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "task_source_binding": {
+          "$ref": "#/$defs/taskSourceBinding"
+        },
+        "agent": {
+          "$ref": "#/$defs/agent"
+        },
+        "protocol": {
+          "$ref": "#/$defs/runProtocol"
+        },
+        "functional_evidence": {
+          "$ref": "#/$defs/functionalEvidence"
+        },
+        "scores": {
+          "$ref": "#/$defs/scores"
+        },
+        "static_policy": {
+          "$ref": "#/$defs/staticPolicy"
+        },
+        "llm_source_audit": {
+          "$ref": "#/$defs/llmSourceAudit"
+        },
+        "contamination_and_command_audit": {
+          "$ref": "#/$defs/commandAudit"
+        },
+        "artifacts": {
+          "type": "object",
+          "minProperties": 7,
+          "additionalProperties": {
+            "$ref": "#/$defs/artifact"
+          }
+        }
+      }
+    },
+    "taskSourceBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task_checksum",
+        "task_source_set_sha256",
+        "file_count"
+      ],
+      "properties": {
+        "task_checksum": {
+          "$ref": "#/$defs/sha256"
+        },
+        "task_source_set_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "file_count": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "agent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "version",
+        "solver_adapter",
+        "model",
+        "reasoning_effort"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "oracle",
+            "codex"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "solver_adapter": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "reasoning_effort": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "runProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "framework",
+        "image_tag",
+        "environment_adapter",
+        "override_cpus",
+        "override_memory_mb",
+        "verifier_adapter",
+        "audit_model",
+        "proxy_bridge_configured",
+        "network_isolation"
+      ],
+      "properties": {
+        "framework": {
+          "const": "tensorcircuit"
+        },
+        "image_tag": {
+          "const": "challenge-benchmark-quantum-tensorcircuit:py311"
+        },
+        "environment_adapter": {
+          "const": "adapters.framework_docker:FrameworkDockerEnvironment"
+        },
+        "override_cpus": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "override_memory_mb": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "verifier_adapter": {
+          "const": "adapters.codex_para_verifier:CodexParaVerifier"
+        },
+        "audit_model": {
+          "const": "gpt-5.6-sol"
+        },
+        "proxy_bridge_configured": {
+          "type": "boolean"
+        },
+        "network_isolation": {
+          "const": false
+        }
+      }
+    },
+    "functionalEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "overall_pass_marker",
+        "verifier_functional_passed",
+        "verifier_functional_return_code",
+        "seed",
+        "case_digest",
+        "case_digest_scope",
+        "metrics",
+        "evaluation_checks",
+        "evaluation_check_source"
+      ],
+      "properties": {
+        "overall_pass_marker": {
+          "type": "boolean"
+        },
+        "verifier_functional_passed": {
+          "type": "boolean"
+        },
+        "verifier_functional_return_code": {
+          "type": "integer"
+        },
+        "seed": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "case_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]+$"
+        },
+        "case_digest_scope": {
+          "enum": [
+            "not_emitted",
+            "full_sha256",
+            "reported_16_hex_digest",
+            "other_emitted_digest"
+          ]
+        },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "controls_shape": {
+              "$ref": "#/$defs/shapeMetric"
+            },
+            "heldout_max_error": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "heldout_p95_infidelity": {
+              "$ref": "#/$defs/unitMetric"
+            },
+            "heldout_shape": {
+              "$ref": "#/$defs/shapeMetric"
+            },
+            "heldout_worst_infidelity": {
+              "$ref": "#/$defs/unitMetric"
+            },
+            "heldout_worst_leakage": {
+              "$ref": "#/$defs/unitMetric"
+            },
+            "instances": {
+              "$ref": "#/$defs/countMetric"
+            },
+            "max_drive_amplitude": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "max_edge_amplitude": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "max_slew_per_slice": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "parameter_max_error": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "parameter_shape": {
+              "$ref": "#/$defs/shapeMetric"
+            },
+            "training_rmse": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "training_worst_infidelity": {
+              "$ref": "#/$defs/unitMetric"
+            },
+            "training_worst_leakage": {
+              "$ref": "#/$defs/unitMetric"
+            },
+            "maximum_scaled_amplitude_error": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "measured_induced_widths": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 1000000
+              }
+            },
+            "maximum_ritz_energy_error": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "maximum_control_moment_error": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "maximum_energy_error": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "maximum_gradient_error": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            },
+            "active_cuts": {
+              "$ref": "#/$defs/countMetric"
+            },
+            "minimum_relative_cut_gap": {
+              "$ref": "#/$defs/nonnegativeMetric"
+            }
+          }
+        },
+        "evaluation_checks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "metric",
+              "observed",
+              "comparator",
+              "threshold",
+              "passed"
+            ],
+            "properties": {
+              "metric": {
+                "type": "string"
+              },
+              "observed": {
+                "type": "number"
+              },
+              "comparator": {
+                "const": "<="
+              },
+              "threshold": {
+                "type": "number"
+              },
+              "passed": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "evaluation_check_source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "compound_reward",
+        "functional_score",
+        "runtime_score",
+        "functional_evaluator_runtime_sec",
+        "static_policy_score",
+        "llm_audit_score"
+      ],
+      "properties": {
+        "compound_reward": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "functional_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "runtime_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "functional_evaluator_runtime_sec": {
+          "type": "number",
+          "minimum": 0
+        },
+        "static_policy_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "llm_audit_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "staticPolicy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "framework",
+        "line_count",
+        "max_lines",
+        "imports",
+        "forbidden_imports",
+        "cheating_hits",
+        "raw_simulator_hits",
+        "framework_score",
+        "no_forbidden_framework_score",
+        "no_raw_simulator_bypass_score",
+        "no_static_cheating_score"
+      ],
+      "properties": {
+        "framework": {
+          "const": "tensorcircuit"
+        },
+        "line_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_lines": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1
+        },
+        "imports": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "forbidden_imports": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "cheating_hits": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "raw_simulator_hits": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "framework_score": {
+          "type": "number"
+        },
+        "no_forbidden_framework_score": {
+          "type": "number"
+        },
+        "no_raw_simulator_bypass_score": {
+          "type": "number"
+        },
+        "no_static_cheating_score": {
+          "type": "number"
+        }
+      }
+    },
+    "llmSourceAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "uses_required_framework",
+        "imports_other_quantum_framework",
+        "uses_other_quantum_framework",
+        "raw_numpy_jax_quantum_simulator_bypass",
+        "hardcoded_or_hidden_answer",
+        "tampers_with_tests_or_rewards",
+        "exploits_evaluator_weakness",
+        "faithfully_implements_problem",
+        "obvious_implementation_error",
+        "problem_alignment_issues",
+        "confidence"
+      ],
+      "properties": {
+        "uses_required_framework": {
+          "type": "boolean"
+        },
+        "imports_other_quantum_framework": {
+          "type": "boolean"
+        },
+        "uses_other_quantum_framework": {
+          "type": "boolean"
+        },
+        "raw_numpy_jax_quantum_simulator_bypass": {
+          "type": "boolean"
+        },
+        "hardcoded_or_hidden_answer": {
+          "type": "boolean"
+        },
+        "tampers_with_tests_or_rewards": {
+          "type": "boolean"
+        },
+        "exploits_evaluator_weakness": {
+          "type": "boolean"
+        },
+        "faithfully_implements_problem": {
+          "type": "boolean"
+        },
+        "obvious_implementation_error": {
+          "type": "boolean"
+        },
+        "problem_alignment_issues": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "commandAudit": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "automated_scan_status",
+        "review_method",
+        "trajectory_step_count",
+        "tool_call_count",
+        "tool_call_counts_by_name",
+        "allowed_tool_names",
+        "disallowed_tool_name_scan",
+        "network_command_scan",
+        "protected_benchmark_artifact_scan",
+        "credential_or_environment_dump_scan",
+        "allowed_read_scope_observed",
+        "installed_package_test_search_observed",
+        "automated_scan_raw_rollout_sha256",
+        "human_review",
+        "unassessed",
+        "cryptographically_signed_command_attestation"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "automated_scan_pass_human_review_none",
+            "automated_scan_pass_human_reviewed",
+            "not_applicable_oracle_copy"
+          ]
+        },
+        "automated_scan_status": {
+          "enum": [
+            "pass",
+            "not_applicable"
+          ]
+        },
+        "review_method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "trajectory_step_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tool_call_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "tool_call_counts_by_name": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "allowed_tool_names": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "disallowed_tool_name_scan": {
+          "type": "string"
+        },
+        "network_command_scan": {
+          "type": "string"
+        },
+        "protected_benchmark_artifact_scan": {
+          "type": "string"
+        },
+        "credential_or_environment_dump_scan": {
+          "type": "string"
+        },
+        "allowed_read_scope_observed": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "installed_package_test_search_observed": {
+          "type": "boolean"
+        },
+        "automated_scan_raw_rollout_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "human_review": {
+          "$ref": "#/$defs/humanReview"
+        },
+        "unassessed": {
+          "$ref": "#/$defs/stringArray"
+        },
+        "cryptographically_signed_command_attestation": {
+          "const": false
+        }
+      }
+    },
+    "humanReview": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "reviewer_id",
+        "reviewed_at",
+        "reviewed_raw_rollout_sha256",
+        "decision"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "none",
+            "approved"
+          ]
+        },
+        "reviewer_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "minLength": 1
+        },
+        "reviewed_at": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "reviewed_raw_rollout_sha256": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "decision": {
+          "enum": [
+            "approved",
+            null
+          ]
+        }
+      }
+    },
+    "frozenProtocolFacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "framework",
+        "image_tag",
+        "environment_adapter",
+        "override_cpus",
+        "override_memory_mb",
+        "verifier_adapter",
+        "audit_model",
+        "model_pilot_solver_adapter",
+        "model_pilot_model",
+        "model_pilot_reasoning_effort",
+        "codex_cli_version",
+        "tensorcircuit_version_observed_in_pilot_trajectories",
+        "network_policy",
+        "image_digest_observation"
+      ],
+      "properties": {
+        "framework": {
+          "const": "tensorcircuit"
+        },
+        "image_tag": {
+          "const": "challenge-benchmark-quantum-tensorcircuit:py311"
+        },
+        "environment_adapter": {
+          "type": "string"
+        },
+        "override_cpus": {
+          "type": "integer"
+        },
+        "override_memory_mb": {
+          "type": "integer"
+        },
+        "verifier_adapter": {
+          "type": "string"
+        },
+        "audit_model": {
+          "type": "string"
+        },
+        "model_pilot_solver_adapter": {
+          "type": "string"
+        },
+        "model_pilot_model": {
+          "const": "gpt-5.6-sol"
+        },
+        "model_pilot_reasoning_effort": {
+          "const": "high"
+        },
+        "codex_cli_version": {
+          "type": "string"
+        },
+        "tensorcircuit_version_observed_in_pilot_trajectories": {
+          "type": "string"
+        },
+        "network_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "proxy_bridge_configured",
+            "network_isolation",
+            "note"
+          ],
+          "properties": {
+            "proxy_bridge_configured": {
+              "type": "boolean"
+            },
+            "network_isolation": {
+              "const": false
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        },
+        "image_digest_observation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "image_tag",
+            "sha256",
+            "source",
+            "source_record_sha256",
+            "selected_harbor_results_bind_digest",
+            "note"
+          ],
+          "properties": {
+            "image_tag": {
+              "type": "string"
+            },
+            "sha256": {
+              "type": "string",
+              "pattern": "^sha256:[0-9a-f]{64}$"
+            },
+            "source": {
+              "type": "string"
+            },
+            "source_record_sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "selected_harbor_results_bind_digest": {
+              "const": false
+            },
+            "note": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "nonnegativeMetric": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1000000000000000
+    },
+    "unitMetric": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "countMetric": {
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 1000000000
+    },
+    "shapeMetric": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 1000000
+      }
+    },
+    "stringArray": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

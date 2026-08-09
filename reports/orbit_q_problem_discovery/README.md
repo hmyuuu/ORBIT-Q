@@ -8,7 +8,10 @@ auditable regimes, not 1,000 independently sourced problem statements. The
 pipeline then selects ten candidates for human design review.
 
 The shortlist is **not** a claim that GPT-5.6-sol cannot solve these problems.
-All candidates have `empirical_status=untested`. A model-hardness claim is
+The frozen design rows retain `empirical_status=untested` as an
+**at-discovery-time** field. Current expert and model runs live separately in
+`empirical_evidence.json` and `empirical_evidence.md`, so new evidence does not
+silently rewrite the 1,000-contract source snapshot. A model-hardness claim is
 allowed only after expert feasibility, human approval, repeated frozen-model
 trials, and human failure classification.
 
@@ -82,6 +85,9 @@ Prototype admission requires all of the following:
 - independent oracle runtime is at most 240 seconds;
 - gold solution is at most 160 effective Python lines;
 - verifier-only succeeds in at least 20 reproductions;
+- at least 25 distinct seeds pass finished expert-only Harbor verifier runs;
+- every expert run freezes the task, prompt, image, CPU/memory, and oracle mode;
+- the evaluator emits a hash-bound admission record under one fixed threshold policy;
 - measured peak memory fits the observed runner envelope.
 
 Infrastructure, authentication, policy refusal, ambiguous specification, and
@@ -97,6 +103,41 @@ Rebuild the deterministic corpus and report from the normalized catalog:
 python3 scripts/run_problem_discovery.py build
 python3 scripts/run_problem_discovery.py status
 ```
+
+Run the resumable offline source-discovery stages with a reviewed query plan and
+operator-provided raw-hit manifests:
+
+```bash
+python3 scripts/run_autoresearch_discovery.py plan \
+  --plan .artifacts/problem-discovery/query-plan.json
+python3 scripts/run_autoresearch_discovery.py run \
+  --plan .artifacts/problem-discovery/query-plan.json \
+  --raw-manifest .artifacts/problem-discovery/provider-results.json
+```
+
+This command performs deterministic ingest, normalization, exact/near
+deduplication, and coverage sampling. It deliberately performs no network
+search and never treats an operator-provided result as independently attested.
+See `AUTORESEARCH_DISCOVERY.md` for the schemas, custody boundary, and
+stage-by-stage resume commands.
+
+Verify the sanitized empirical snapshot from its committed, file-by-file source
+manifest. This mode works in a clean clone and does not need private job logs:
+
+```bash
+python3 scripts/build_problem_discovery_evidence.py --check
+```
+
+Operators with the ignored raw jobs can separately reconstruct and compare the
+snapshot, including task files, rollouts, configs, and oracle transcripts:
+
+```bash
+python3 scripts/build_problem_discovery_evidence.py --check-raw
+```
+
+That ledger labels passing target-model pilots as hardness-blocking and keeps a
+single substantive failure at the weaker `pilot_hardness_signal` level. It
+does not convert exploratory runs into protocol-qualified hardness evidence.
 
 Record concept approval one role at a time:
 
@@ -132,24 +173,23 @@ python3 scripts/run_problem_discovery.py authorize \
 
 The manifest binds the reviewed candidate hash to the model, prompt hash,
 container digest, source commit, evaluator, baseline, oracle, and reviewer
-decisions. The protocol config additionally freezes provider/model build,
+decisions. The protocol config additionally freezes provider/model identity,
 reasoning effort, budgets, solver and Harbor versions, audit model, tool/network
-policy, and hardware class. Outputs outside `.artifacts/problem-discovery/` or
-overwrites of an existing manifest are rejected. Any reviewed content or gate
-change revokes the authorization.
+policy, hardware class, exact task package, and a one-use seed schedule. Outputs
+outside `.artifacts/problem-discovery/` or overwrites of an existing manifest
+are rejected. Any reviewed content or gate change revokes the authorization.
 
-After an approved external Harbor run, `record-trial` imports a normalized
-result JSON under `.artifacts/problem-discovery/`, verifies its raw Harbor-job
-and solver-transcript hashes, derives scores and execution status from the
-finished Harbor `result.json`, and checks its `orbit_q_attestation` against the
-frozen manifest. A separately typed score cannot override the raw result. The
-attestation binds the complete protocol configuration and names the responsible
-runner operator. Local hashes provide tamper evidence, not third-party identity
-proof; the two human auditors remain part of the trust boundary. The importer
-does not infer why a run failed. A named reviewer must then use
-`audit-trial` to classify that outcome. `hardness-status` counts only unique,
-substantive failures on which two distinct failure auditors agree toward the
-precommitted seed schedule; excluded, missing, extra, or disputed failures
+After an approved Harbor run, `record-trial` imports a normalized result JSON
+under `.artifacts/problem-discovery/`, verifies the raw Harbor job, config,
+trial lock, job lock, solver transcript, and functional-output hashes, and
+derives scores, execution status, resource bindings, and full case identity
+from those machine artifacts. A separately typed score or supplemental operator
+attestation cannot override the raw result. Local hashes provide tamper evidence,
+not third-party identity proof; the two human auditors remain part of the trust
+boundary. The importer does not infer why a run failed. A named reviewer must
+then use `audit-trial` to classify that outcome. `hardness-status` counts only
+unique, substantive failures on which two distinct failure auditors agree toward
+the precommitted seed schedule; excluded, missing, extra, or disputed failures
 invalidate the schedule. Any raw compound pass blocks a model-hard conclusion,
 even before human audit. Five failures yield only a pilot signal. A fresh
 confirmation manifest needs at least 20 valid trials before the stronger label.
@@ -161,26 +201,131 @@ python3 scripts/run_problem_discovery.py hardness-status \
 ```
 
 Materialized prototypes are executed through the separate candidate-only
-runner. It accepts exactly one explicit staged task, always requests one
-Harbor trial, and is a dry run unless `--execute` is supplied. Verify the
-packaged expert before invoking a solver:
+runner. It accepts exactly one explicit staged task, always requests one Harbor
+trial, and is a dry run unless `--execute` is supplied. Expert prequalification
+is explicitly excluded from model-hardness evidence. Materialize from the
+review snapshot first; this embeds the reviewed candidate contract into the
+exact task directory:
+
+```bash
+python3 scripts/materialize_candidate_task.py \
+  --blueprint-dir reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape \
+  --discovery-workspace reports/orbit_q_problem_discovery \
+  --output-root .artifacts/problem-discovery/candidate-tasks
+```
+
+Then run one previously unused seed with the image digest resolved and reviewed
+out of band. A successful run is collected automatically into one immutable
+schema-compatible case item:
 
 ```bash
 python3 scripts/run_harbor_candidate.py \
-  --task-dir .artifacts/problem-discovery/candidate-tasks/candidate-SLUG \
-  --model gpt-5.6-sol \
+  --task-dir .artifacts/problem-discovery/candidate-tasks/candidate-robust-leakage-grape \
+  --workspace reports/orbit_q_problem_discovery \
   --audit-model gpt-5.6-sol \
   --expert-only \
+  --candidate-seed 1092026 \
+  --docker-image challenge-benchmark-quantum-tensorcircuit:py311 \
+  --container-image-digest sha256:REPLACE_WITH_64_LOWERCASE_HEX \
+  --job-name expert-robust-leakage-grape-seed-1092026 \
+  --expert-evidence-dir .artifacts/problem-discovery/expert-prequalification \
   --force-auth-json \
-  --bridge-loopback-proxy
+  --bridge-loopback-proxy \
+  --execute
 ```
+
+At present, candidate 109 (`robust-leakage-grape`) is the only active shortlist
+candidate whose evaluator declares the candidate-specific numerical admission
+record required by this producer. Candidate 115 (`noisy-ppt3-replica`) also
+implements the convention, but it is a post-shortlist reserve: its case items
+cannot be recorded as reviewed prototype evidence until humans explicitly
+promote it and rematerialize it against the resulting reviewed contract. Other
+candidates remain ineligible for this command until their own evaluator metrics
+and thresholds are reviewed and implemented; the materializer/runner preflight
+rejects missing declarations rather than inventing a generic margin.
 
 For frozen repeated trials, `--candidate-seed INTEGER` is passed only to the
 verifier as `ORBIT_Q_CANDIDATE_SEED`; it is never added to the solver
 environment. Candidate evaluators must explicitly consume that variable, and
 the precommitted seed schedule must be expert-prequalified before a real model
 run. A seed that violates a numerical admission margin is rejected rather than
-counted as model failure.
+counted as model failure. Prototype evidence schema v2 records at least 25
+finished, unique expert-only Harbor jobs, not self-declared case JSON. For every
+job the pipeline rehashes and reparses the raw Harbor result, resolved config,
+trial lock, job lock, functional stdout, and evaluator admission record. It
+derives the job/pass/runtime, nonnegative `protocol_seed`, full lowercase
+64-hex `case_digest`, numerical margins, and minimum margin; declared summaries
+must match. The case identity must be the first nonempty functional-output line,
+and exactly one final `Overall: PASS` must close the output. All jobs must share
+one hash-derived threshold policy and must bind the frozen candidate, expert,
+evaluator, task, prompt, image, and resource envelope. Authorization can select
+only a subset of those records; their complete payloads are hashed into the
+manifest and all six raw files are rehashed and reparsed at authorization,
+execution/reservation, trial import, and hardness summary.
+
+The expert producer also freezes the verifier runtime surface. Before Harbor
+starts and again while evidence is collected, it requires the staged
+`score_submission.py`, `test.sh`, `static_policy.py`, and `audit_codex.py` to
+match the repository templates byte-for-byte with their expected modes. It
+does the same for `solution/solve.sh`, exact-recomputes `task.toml`, the
+instruction, metadata, IDs, evaluator, expert, and admission marker from the
+reviewed blueprint, and rejects every unexpected file or directory.
+`PYTHONDONTWRITEBYTECODE=1` keeps the strict file allowlist stable. The canonical
+verifier-harness manifest hash is carried through verifier environment, the
+evaluator admission record, the raw result hash words, and recorded prototype
+bindings. The collector and later prototype gates also recompute Harbor's local
+task package digest and legacy `Task.checksum` from that same directory; a
+well-formed but unrelated lock digest or result checksum is rejected.
+
+The evaluator emits only observed numerical values and fixed thresholds. The
+shared verifier reads the full captured evaluator stdout, checks the case
+identity, recomputes every strict pass margin and the threshold-policy hash, and
+writes `expert-admission.json`. Its SHA-256 is encoded as eight integer reward
+fields, so the ordinary raw Harbor trial result binds the exact record without
+trusting a CLI or operator summary. The collector additionally verifies that
+Harbor used its built-in Oracle agent, copied the exact reviewed expert file,
+and locked the same materialized task directory whose evaluator and solution
+hashes were reviewed.
+
+These local evidence files and Harbor locks are hash-bound but not signed by a
+remote attestation service. An operator with write access could fabricate a
+self-consistent bundle. Human review must therefore verify provenance and job
+acquisition independently; the pipeline guarantees internal consistency and
+detects later mutation, not operator identity, wall-clock ordering, image-registry
+custody, or hardware-backed origin. The reward-word binding is a deterministic
+content link, not a cryptographic signature by Harbor or the container runtime.
+
+All review-ledger mutations use one cross-process lock around the complete
+read-modify-write transaction. Concurrent reviews, authorizations/revocations,
+seed reservations, trial imports/pass vetoes, and audits therefore cannot
+silently overwrite one another.
+
+A model run additionally requires an active manifest. All model, image,
+resource, prompt, timeout, tool, network, and audit settings are derived from
+that manifest rather than accepted as command-line overrides:
+
+```bash
+python3 scripts/run_harbor_candidate.py \
+  --task-dir .artifacts/problem-discovery/candidate-tasks/candidate-SLUG \
+  --manifest .artifacts/problem-discovery/run-manifest.json \
+  --candidate-seed 101 \
+  --job-name pilot-CANDIDATE-seed-101
+```
+
+Each evaluator emits exactly one `orbit_q_case_identity` JSON record containing
+the authorized base seed and full 64-hex public-configuration digest. Seed reuse,
+digest drift, retries, parallel trials, extra mounts/hosts/tools, timeout
+overrides, and unapproved environment fields fail closed during evidence import.
+The evaluator emits and flushes that identity before submitted code runs, then
+removes verifier seed variables before importing the solution. Static policy
+also rejects environment, stack-frame, `/proc`, and test-path introspection.
+
+The present implementation intentionally stops short of a final model-hardness
+claim. Harbor/Codex does not expose a hard runtime token cap or immutable runtime
+build IDs, and submitted code still runs in the evaluator process rather than a
+separately sandboxed solution process. Pilot signals may guide research, but
+`hardness-status` reports these as admission limitations and fails closed until
+all three controls are machine-observed.
 
 ## Repository boundary
 
@@ -199,8 +344,18 @@ explicit human decision.
 - `shortlist.md`: human review report with scientific rationale and sources;
 - `summary.json`: deterministic counts, score weights, and snapshot hash;
 - `review_state.json`: empty-by-default human decisions and evidence ledger;
+- `empirical_evidence.json`: deterministic, sanitized expert/model run ledger;
+- `empirical_evidence.md`: human-readable empirical status and trust boundary;
+- `empirical_evidence.schema.json`: machine-readable ledger contract;
+- `empirical_evidence.sources.json`: committed file-by-file evidence bindings;
 - `pipeline.py`: generation, validation, review gates, and manifest authorization;
 - `research_protocol.json`: staged, resumable source-search and ingestion contract;
+- `autoresearch_discovery.py`: executable offline ingest, normalization, dedupe,
+  and coverage-sampling stages;
+- `AUTORESEARCH_DISCOVERY.md`: discovery-stage schemas, commands, and evidence
+  boundary;
+- `autoresearch_*.schema.json`: query-plan, raw-hit, normalized-record, and
+  content-addressed artifact schemas;
 - `prototype_evidence.schema.json`: required file-backed prototype evidence;
 - `trial_result.schema.json`: normalized, manifest-bound Harbor result format;
 - `protocol_config.example.json`: frozen solver/verifier protocol template.

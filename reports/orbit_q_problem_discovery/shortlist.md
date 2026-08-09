@@ -8,8 +8,9 @@
 
 The deterministic matrix contains **1,000 candidates**
 from **50 families**, four scale regimes, and five
-situations. Ten candidates were selected for design review; none has been
-empirically tested.
+situations. Ten candidates were selected for design review; none was
+empirically tested in this frozen discovery snapshot; current expert/model
+evidence is maintained separately.
 
 | Rank | Candidate | Domain | Design prior | TC path | Verifier |
 | ---: | --- | --- | ---: | ---: | ---: |
@@ -26,7 +27,7 @@ empirically tested.
 
 ## 1. Fault-tolerant CSS state-preparation synthesis
 
-- Candidate: `f03_fault_tolerant_css_state_preparation--benchmark--robust_ensemble` (`b681a83d4e4f4cee9200b9cde0716ad36617fd54d83dd80f7860210af8d66897`)
+- Candidate: `f03_fault_tolerant_css_state_preparation--benchmark--robust_ensemble` (`251f3954938eeb90673dbba0797e91ffe2fd103e02903dd81f05397e7148d05c`)
 - Contract: Synthesize a CSS logical-state preparation and verification circuit that preserves the target stabilizers and detects every declared low-weight propagated fault. Use the intended production regime with a target expert p95 runtime below 180 seconds. Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.
 - TensorCircuit path: Construct and execute the candidate encoder, verification checks, and injected Pauli faults as TensorCircuit circuits; use tableau logic only as an independent verifier.
 - Oracle: Polynomial stabilizer/isometry checks plus exhaustive single-fault propagation and exact small-code state verification.
@@ -39,7 +40,7 @@ empirically tested.
 
 ## 2. Conditioned fermionic-Gaussian Kitaev quench
 
-- Candidate: `f01_fermionic_gaussian_conditioned_quench--representation_stress--inverse` (`40456821bcf45981180886097788fcf6867750de17ee90840ace3b7785bcbf06`)
+- Candidate: `f01_fermionic_gaussian_conditioned_quench--representation_stress--inverse` (`507bfe4d40de51a3ba8f8621d105ebd169ab6256dfae5c9ae617d218240ab060`)
 - Contract: Evolve a Kitaev-chain Gaussian state, condition on occupation outcomes, and recover parity correlators or hidden quench parameters. Scale past naive dense simulation so the documented TensorCircuit representation is essential. Infer hidden parameters from seeded observations and validate on held-out interventions.
 - TensorCircuit path: Use TensorCircuit's FGS covariance engine for Bogoliubov evolution, measurement conditioning, and parity observables; forbid dense Jordan-Wigner statevectors at production scale.
 - Oracle: Exact Jordan-Wigner simulation on tiny instances plus an independent covariance-matrix implementation on production instances.
@@ -52,7 +53,7 @@ empirically tested.
 
 ## 3. Mixed-state multiparameter SLD-QFIM probe design
 
-- Candidate: `f02_mixed_state_sld_qfim_probe--benchmark--robust_ensemble` (`d0947debfeb60374c68778fc577b94e81ea54baabf8e4348ecaa687d0e85101e`)
+- Candidate: `f02_mixed_state_sld_qfim_probe--benchmark--robust_ensemble` (`be222ff1591873d3b597c38fbce2aea0d84764a38260fef42910384c95023d7a`)
 - Contract: Optimize a noisy probe circuit using the symmetric-logarithmic-derivative quantum Fisher information matrix on a fixed support whose nonzero eigenvalues obey an explicit lower bound. Use the intended production regime with a target expert p95 runtime below 180 seconds. Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.
 - TensorCircuit path: Use DMCircuit for parameterized noisy channels and backend Jacobians; compute the stable spectral SLD formula as support code.
 - Oracle: Finite-difference density derivatives and an independent eigenbasis SLD implementation with hidden parameter points.
@@ -65,7 +66,7 @@ empirically tested.
 
 ## 4. Quantum signal-processing phase synthesis
 
-- Candidate: `f09_qsp_phase_synthesis--benchmark--inverse` (`c364fda8c6b81045f5b6c3c4ea47c111202630e6cf0a7861f1ae13b4f4a2bfe6`)
+- Candidate: `f09_qsp_phase_synthesis--benchmark--inverse` (`8c46897356845545e4f4fff106e72bbc2fca4723602ce16119edfdbc727d46f2`)
 - Contract: Recover parity-constrained phase factors for a hidden target polynomial and verify the resulting TensorCircuit QSP response on an independent grid. Use the intended production regime with a target expert p95 runtime below 180 seconds. Infer hidden parameters from seeded observations and validate on held-out interventions.
 - TensorCircuit path: Implement the QSP SU(2) sequence as a parameterized TensorCircuit and use backend AD to fit phase factors under fixed gauge conventions.
 - Oracle: Independent polynomial evaluation, unitarity/parity identities, and dense response checks on hidden grid points.
@@ -78,7 +79,7 @@ empirically tested.
 
 ## 5. Dynamic-circuit branch equivalence certificate
 
-- Candidate: `f45_dynamic_circuit_branch_equivalence--benchmark--adaptive` (`33fec298a816426595a6b980025906b1dfb9616757a3ea2b87204c5ef187adf7`)
+- Candidate: `f45_dynamic_circuit_branch_equivalence--benchmark--adaptive` (`fb22480c99907bd00bec43e2e45eed9c865ed0567e1025fda43eb94104d62011`)
 - Contract: Given two measurement-conditioned circuits with resets and feed-forward, construct a branch-sensitive certificate or counterexample showing whether their induced quantum instruments agree. Use the intended production regime with a target expert p95 runtime below 180 seconds. Use intermediate results to choose later circuit operations or experiments.
 - TensorCircuit path: Explicitly enumerate postselected/Kraus branches in TensorCircuit and compare their conditional output maps; support code may perform independent Choi linear algebra.
 - Oracle: Independent branchwise Choi matrices, trace-preservation identities, and planted inequivalent mutations with exact witnesses.
@@ -91,7 +92,7 @@ empirically tested.
 
 ## 6. Quantum Lanczos excited-state spectrum
 
-- Candidate: `f28_quantum_lanczos_excited_states--benchmark--robust_ensemble` (`684ddb0b1711485be21b185a5e1ffcd467833ba8faac273d2d165e4424864f72`)
+- Candidate: `f28_quantum_lanczos_excited_states--benchmark--robust_ensemble` (`479f2bcb7bc876547929d6d769f0b4b8965ba82717b60454660c773d314d99a1`)
 - Contract: Generate imaginary-time Krylov states and solve a stabilized generalized eigenproblem for low excitations. Use the intended production regime with a target expert p95 runtime below 180 seconds. Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.
 - TensorCircuit path: Use TensorCircuit state preparation/overlaps and framework AD for variational imaginary time.
 - Oracle: Exact eigenspectrum and subspace residual checks.
@@ -104,7 +105,7 @@ empirically tested.
 
 ## 7. Non-Markovian memory-channel system identification
 
-- Candidate: `f04_nonmarkovian_memory_identification--benchmark--inverse` (`e314b459f2436fe5725b191875c5be552a44c3c3e05a59a567080379bb587840`)
+- Candidate: `f04_nonmarkovian_memory_identification--benchmark--inverse` (`804a5ff526ef0997abbd879a35c482e8c306e7754635994cf1221111a62bf0b9`)
 - Contract: Identify a recurrent system-memory interaction from intervention sequences and predict held-out multitime observables. Use the intended production regime with a target expert p95 runtime below 180 seconds. Infer hidden parameters from seeded observations and validate on held-out interventions.
 - TensorCircuit path: Represent the system plus compact memory as a recurrent TensorCircuit/DMCircuit and differentiate held-out intervention losses.
 - Oracle: Generate data from a sealed parameter set and score held-out process predictions, with small Choi/process-tensor cross-checks.
@@ -117,7 +118,7 @@ empirically tested.
 
 ## 8. Variance-aware circuit cutting reconstruction
 
-- Candidate: `f43_circuit_cutting_reconstruction--benchmark--finite_shot_noise` (`d6eddc62baedc740d27db395f09dec808161f4adc087f96f3e5e9f8151ae4952`)
+- Candidate: `f43_circuit_cutting_reconstruction--benchmark--finite_shot_noise` (`c92dc3d477ca9f01977ef47a60a3c795ad453bb57fabe4200ccae615ff69c335`)
 - Contract: Cut a structured circuit at fixed wires, execute TensorCircuit subcircuits, and reconstruct selected observables with a bounded sampling overhead. Use the intended production regime with a target expert p95 runtime below 180 seconds. Operate under an explicit seeded noise and shot budget with a precomputed variance margin.
 - TensorCircuit path: Use TensorCircuit for every subcircuit and measurement basis; NumPy may perform declared classical recombination.
 - Oracle: Uncut small circuits and exact quasiprobability reconstruction identities.
@@ -130,7 +131,7 @@ empirically tested.
 
 ## 9. Leakage-aware robust GRAPE control
 
-- Candidate: `f16_robust_leakage_grape--benchmark--robust_ensemble` (`fb1880db3d041ae7414b7ccdb97dee9546ff080b1dedef05ce6c53050ceabdf7`)
+- Candidate: `f16_robust_leakage_grape--benchmark--robust_ensemble` (`f99d78b299e6c2b2ae6b0df423045f443c7ed024c75f243b88b94c32ba405448`)
 - Contract: Optimize a qutrit-aware control pulse across detuning and amplitude-error ensembles while penalizing leakage. Use the intended production regime with a target expert p95 runtime below 180 seconds. Satisfy one frozen objective across a seeded ensemble of perturbations or hidden instances.
 - TensorCircuit path: Use TensorCircuit qudit/custom-gate primitives with Diffrax/JAX evolution and automatic differentiation.
 - Oracle: Independent matrix-exponential propagation and gradient finite differences on hidden ensemble members.
@@ -143,7 +144,7 @@ empirically tested.
 
 ## 10. Memory-constrained contraction plan and selected amplitudes
 
-- Candidate: `f50_memory_constrained_contraction--representation_stress--forward` (`09d873ad318aa815cd242ef317f0574e4b0060383d670b475119ce1c063b2610`)
+- Candidate: `f50_memory_constrained_contraction--representation_stress--forward` (`0bfece0e3ec2d937063a1b843147a7bf701f061788f50aedf88646a630562c8b`)
 - Contract: Plan and execute a tensor-network contraction for a structured nonlocal circuit under an explicit peak-memory budget, returning selected amplitudes and contraction-cost evidence. Scale past naive dense simulation so the documented TensorCircuit representation is essential. Compute a physically meaningful observable or state diagnostic from fixed inputs.
 - TensorCircuit path: Build the circuit and execute the accepted contraction plan through TensorCircuit/TensorNetwork; dense statevector materialization is infeasible at the production scale.
 - Oracle: Exact amplitudes on reduced circuits, independently contracted production amplitudes, and measured peak-memory/cost checks for the submitted plan.

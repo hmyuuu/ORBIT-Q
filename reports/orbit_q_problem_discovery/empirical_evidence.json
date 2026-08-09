@@ -1,0 +1,2635 @@
+{
+  "candidates": [
+    {
+      "classification": "solved_hardness_blocking",
+      "conclusion": "The expert oracle and one gpt-5.6-sol/high pilot passed the same frozen task checksum. This admitted exploratory solve blocks a claim that this frozen task is unsolved by the target model.",
+      "evidence_caveats": [
+        "The paired functional output did not emit a case digest; task checksum and any reported seed are the available case-binding evidence."
+      ],
+      "expert_runs": [
+        {
+          "agent": {
+            "kind": "oracle",
+            "model": null,
+            "reasoning_effort": null,
+            "solver_adapter": "harbor.agents.oracle:Oracle",
+            "version": "1.0.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/artifacts/manifest.json",
+              "sha256": "5a72f5e104b6a3d9adf5c9bf8b0f67ebe3bf0f653a95598d69d0e28024eb148b",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/verifier/audit-details.json",
+              "sha256": "e5f0280253e9dcfb5954b1e32f722de7f3bba5803804090b3c9fb063a028aeaf",
+              "size_bytes": 3296
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/verifier/functional-stdout.txt",
+              "sha256": "1ae89668b81c1c80a775512daadd5f4e555811c082904aa866b6b85e360c7274",
+              "size_bytes": 232
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/result.json",
+              "sha256": "a55c9cb1366e083650ecdb9dba352d6df1ec0b06e976825f467401f9d89bd344",
+              "size_bytes": 6939
+            },
+            "oracle_transcript": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/agent/oracle.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size_bytes": 0
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/config.json",
+              "sha256": "7945f22fb89104dca475d0359aef2c6afb5c02d61021323115dbde0dc415a102",
+              "size_bytes": 1141
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/verifier/reward.json",
+              "sha256": "05a6594c492b6c10251ab7b5143ecf04bbb2cff4af9eacaab57940f42a4bc189",
+              "size_bytes": 824
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/artifacts/root/solution_105.py",
+              "sha256": "4ccf342901e44abe2ffc5bcf989679414605a3f53c2b7680e95974785be32b19",
+              "size_bytes": 3036
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-fgs-full-audit-v2/candidate-conditioned-fgs-invers__KfttN55/result.json",
+              "sha256": "7d51b87db353c8bf6601463e5a734ed09fcc3c8615fef44ee1e3c30bfe8368a9",
+              "size_bytes": 5570
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [],
+            "allowed_tool_names": [],
+            "automated_scan_raw_rollout_sha256": null,
+            "automated_scan_status": "not_applicable",
+            "credential_or_environment_dump_scan": "not_applicable_no_model_trajectory",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "not_applicable_no_model_trajectory",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "not_applicable_no_model_trajectory",
+            "protected_benchmark_artifact_scan": "not_applicable_no_model_trajectory",
+            "review_method": "Oracle copied the packaged expert solution; no model tool-call trajectory exists.",
+            "status": "not_applicable_oracle_copy",
+            "tool_call_count": 0,
+            "tool_call_counts_by_name": {},
+            "trajectory_step_count": 0,
+            "unassessed": []
+          },
+          "evidence_role": "expert_oracle",
+          "functional_evidence": {
+            "case_digest": null,
+            "case_digest_scope": "not_emitted",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "heldout_max_error": 1.251776460264864e-13,
+              "heldout_shape": [
+                2,
+                28
+              ],
+              "parameter_max_error": 1.0191847366058937e-13,
+              "parameter_shape": [
+                3
+              ],
+              "training_rmse": 3.788496484645803e-14
+            },
+            "overall_pass_marker": true,
+            "seed": null,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "3eed2f55-035e-4830-90b9-bb0710ccc677",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "expert-conditioned-fgs-full-audit-v2"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 3.774931,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "__future__",
+              "numpy",
+              "scipy",
+              "tensorcircuit"
+            ],
+            "line_count": 80,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": []
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "cc873d33632352c5291fb11aecc15d77bc66977ee048f96fa60a8174ab6bf3b2",
+            "task_source_set_sha256": "fb3edf397658bd6922f69a1eb652982e3de6e41af6f54b0cf9c0f790b203e99f"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T17:30:04.537938Z",
+            "id": "988681f6-c931-4323-9ef5-89f4b2a88e77",
+            "name": "candidate-conditioned-fgs-invers__KfttN55",
+            "started_at": "2026-08-09T17:29:06.426480Z",
+            "task_checksum": "cc873d33632352c5291fb11aecc15d77bc66977ee048f96fa60a8174ab6bf3b2",
+            "task_name": "candidate-conditioned-fgs-inverse"
+          }
+        }
+      ],
+      "hardness_blocker": true,
+      "model_pilots": [
+        {
+          "agent": {
+            "kind": "codex",
+            "model": "gpt-5.6-sol",
+            "reasoning_effort": "high",
+            "solver_adapter": "adapters.codex_para:CodexPara",
+            "version": "0.146.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/artifacts/manifest.json",
+              "sha256": "5a72f5e104b6a3d9adf5c9bf8b0f67ebe3bf0f653a95598d69d0e28024eb148b",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/verifier/audit-details.json",
+              "sha256": "f74e0406910ef3befac2f0cad7116ac8e9a6aa56ee348fe8f405138cf5984b28",
+              "size_bytes": 3854
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/verifier/functional-stdout.txt",
+              "sha256": "15ade8770c800098ec547f7a31170f2a3fad9ee22446dda103f9400cecfc2ab4",
+              "size_bytes": 233
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/result.json",
+              "sha256": "e672a3a463c1c0065f491bddc3a761fd0ae60fff70dc6d2f788c047fdff2b058",
+              "size_bytes": 6974
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/config.json",
+              "sha256": "eac4e01e9b1197a2b6a7e59cc480b284e9cc811d0d8dab38abb1419a399d3cf2",
+              "size_bytes": 1632
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/verifier/reward.json",
+              "sha256": "3c459ce6c9b82a5c874e1aeff53321d9390bcfe4c8d07671302c458b802050a2",
+              "size_bytes": 825
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/artifacts/root/solution_105.py",
+              "sha256": "79247d1c330f018c7b958f8e094c7a7184fc8e0443f5f2953470904d3c3060ee",
+              "size_bytes": 6891
+            },
+            "trajectory": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/agent/trajectory.json",
+              "sha256": "c4a60f065313a767eb16a32542fdfbac9478f94318c83b4391e0b845573bc3e3",
+              "size_bytes": 181090
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-fgs-gpt56-high-004/candidate-conditioned-fgs-invers__TrwKe78/result.json",
+              "sha256": "8539162a0286220ddd20c218655d31e2e4bc77e4e3cbda1bf7b5d7c8d83d4c12",
+              "size_bytes": 6052
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [
+              "self-authored solver working files",
+              "installed TensorCircuit and dependency source/examples/tests"
+            ],
+            "allowed_tool_names": [
+              "exec",
+              "wait"
+            ],
+            "automated_scan_raw_rollout_sha256": "df932650a1b666455d29e35cae2574478efed27459411fe2d401cafdfd5b09d5",
+            "automated_scan_status": "pass",
+            "credential_or_environment_dump_scan": "no_matches_observed",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "no_matches_observed",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": true,
+            "network_command_scan": "no_matches_observed",
+            "protected_benchmark_artifact_scan": "no_disallowed_access_observed",
+            "review_method": "Deterministic allowlist and marker scans of recorded rollout tool-call names and inputs; this automated scan is not a human attestation and raw content is not copied.",
+            "status": "automated_scan_pass_human_review_none",
+            "tool_call_count": 29,
+            "tool_call_counts_by_name": {
+              "exec": 24,
+              "wait": 5
+            },
+            "trajectory_step_count": 36,
+            "unassessed": [
+              "pretraining contamination",
+              "packet-level network activity",
+              "subprocess or access not represented in recorded tool-call inputs",
+              "cryptographic completeness of the raw event record"
+            ]
+          },
+          "evidence_role": "model_pilot",
+          "functional_evidence": {
+            "case_digest": null,
+            "case_digest_scope": "not_emitted",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "heldout_max_error": 1.6412982084546002e-12,
+              "heldout_shape": [
+                2,
+                28
+              ],
+              "parameter_max_error": 7.420120073931002e-12,
+              "parameter_shape": [
+                3
+              ],
+              "training_rmse": 5.150770482881125e-13
+            },
+            "overall_pass_marker": true,
+            "seed": null,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "f2c08f4d-5920-41d0-91ea-f219079742e7",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "pilot-conditioned-fgs-gpt56-high-004"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 30.020061,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "numpy",
+              "scipy",
+              "tensorcircuit"
+            ],
+            "line_count": 141,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": []
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "cc873d33632352c5291fb11aecc15d77bc66977ee048f96fa60a8174ab6bf3b2",
+            "task_source_set_sha256": "fb3edf397658bd6922f69a1eb652982e3de6e41af6f54b0cf9c0f790b203e99f"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T17:42:10.017950Z",
+            "id": "9ded9086-de90-4a4c-a971-1af8ae098d38",
+            "name": "candidate-conditioned-fgs-invers__TrwKe78",
+            "started_at": "2026-08-09T17:30:25.688451Z",
+            "task_checksum": "cc873d33632352c5291fb11aecc15d77bc66977ee048f96fa60a8174ab6bf3b2",
+            "task_name": "candidate-conditioned-fgs-inverse"
+          }
+        }
+      ],
+      "pairing_evidence": {
+        "case_digest_match": null,
+        "case_matched_expert_trial_ids": [],
+        "seed_match": null,
+        "task_checksum_match": true,
+        "task_matched_expert_trial_ids": [
+          "988681f6-c931-4323-9ef5-89f4b2a88e77"
+        ]
+      },
+      "problem_id": 105,
+      "slug": "conditioned-fgs-inverse"
+    },
+    {
+      "classification": "solved_hardness_blocking",
+      "conclusion": "The expert oracle and one gpt-5.6-sol/high pilot passed the same frozen task checksum. This admitted exploratory solve blocks a claim that this frozen task is unsolved by the target model.",
+      "evidence_caveats": [],
+      "expert_runs": [
+        {
+          "agent": {
+            "kind": "oracle",
+            "model": null,
+            "reasoning_effort": null,
+            "solver_adapter": "harbor.agents.oracle:Oracle",
+            "version": "1.0.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/artifacts/manifest.json",
+              "sha256": "f895998ac403aee252673ba323c589bc12e6a4944eadcef11cc402b41be5d740",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/verifier/audit-details.json",
+              "sha256": "5c03ecc5edbcbfb77f4e5891e321d4c107b3a2b27cc63d960077440087507c47",
+              "size_bytes": 4176
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/verifier/functional-stdout.txt",
+              "sha256": "c64b22177fcfb0cb41bcaefcef0e2108f7cb8285de7f98ed39da01ccade41761",
+              "size_bytes": 545
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/result.json",
+              "sha256": "8e1c0d02d443f7bf4427bdc65d1f670a92a694f1e90c74e4a1dc3cc5974aee43",
+              "size_bytes": 6941
+            },
+            "oracle_transcript": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/agent/oracle.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size_bytes": 0
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/config.json",
+              "sha256": "0c53b2be9301cee83ac33dbf8f4cc4264eefca3f74b4671f96847e91902b9c60",
+              "size_bytes": 1252
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/verifier/reward.json",
+              "sha256": "a8b6203ada3c9f91025be4ef637376fdd58a1a4185838aada30a0f54eb01de94",
+              "size_bytes": 825
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/artifacts/root/solution_106.py",
+              "sha256": "bf1e1e193274ff9a2e7086683a39797b9842bf630c8660b924a8d4d408a2290c",
+              "size_bytes": 5573
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-css-state-full-audit-v1/candidate-css-state-verification__PnZ9tui/result.json",
+              "sha256": "e3d80780bb01f9cf59156bb6160a69ddc2dea12e0b277c11e296d765a43f5b62",
+              "size_bytes": 5647
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [],
+            "allowed_tool_names": [],
+            "automated_scan_raw_rollout_sha256": null,
+            "automated_scan_status": "not_applicable",
+            "credential_or_environment_dump_scan": "not_applicable_no_model_trajectory",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "not_applicable_no_model_trajectory",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "not_applicable_no_model_trajectory",
+            "protected_benchmark_artifact_scan": "not_applicable_no_model_trajectory",
+            "review_method": "Oracle copied the packaged expert solution; no model tool-call trajectory exists.",
+            "status": "not_applicable_oracle_copy",
+            "tool_call_count": 0,
+            "tool_call_counts_by_name": {},
+            "trajectory_step_count": 0,
+            "unassessed": []
+          },
+          "evidence_role": "expert_oracle",
+          "functional_evidence": {
+            "case_digest": "3756ccf5e2905e6f7e771c1912f815664c9f22205c5543adb9d34c97d4a27df8",
+            "case_digest_scope": "full_sha256",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "instances": 2
+            },
+            "overall_pass_marker": true,
+            "seed": 1062026,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "0fb20d4b-337c-4aef-926a-fa3d5857e5f5",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "expert-css-state-full-audit-v1"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 31.728049,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "itertools",
+              "numpy",
+              "tensorcircuit"
+            ],
+            "line_count": 140,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": [
+              "eigh"
+            ]
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "30dae1caadb663639c796393ccbf1b97acc5656d2674ece18406fea00c7d274d",
+            "task_source_set_sha256": "35b33aa692fcc649013dca2dcb1d10b64f012d79c5c7f3606e87e7daa721fa39"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T17:44:29.459003Z",
+            "id": "163ccb01-2a28-4439-a6cc-3a5b1d368d20",
+            "name": "candidate-css-state-verification__PnZ9tui",
+            "started_at": "2026-08-09T17:42:56.921859Z",
+            "task_checksum": "30dae1caadb663639c796393ccbf1b97acc5656d2674ece18406fea00c7d274d",
+            "task_name": "candidate-css-state-verification"
+          }
+        }
+      ],
+      "hardness_blocker": true,
+      "model_pilots": [
+        {
+          "agent": {
+            "kind": "codex",
+            "model": "gpt-5.6-sol",
+            "reasoning_effort": "high",
+            "solver_adapter": "adapters.codex_para:CodexPara",
+            "version": "0.146.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/artifacts/manifest.json",
+              "sha256": "f895998ac403aee252673ba323c589bc12e6a4944eadcef11cc402b41be5d740",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/verifier/audit-details.json",
+              "sha256": "55aaeadd7e9c021620bc3dc8a8af825fa289e88c37f7692ca62be28d81b0c0e8",
+              "size_bytes": 4112
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/verifier/functional-stdout.txt",
+              "sha256": "c823ae7ae57e2c3545e2871c30043f593ae3b6746bd904c0b978dd76f0b81688",
+              "size_bytes": 545
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/result.json",
+              "sha256": "c8f852bc99c3b5b2a515159165d27a7640d90227ed58324d20e1beafb7834477",
+              "size_bytes": 6974
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/config.json",
+              "sha256": "230d58d08ffb181b3cce89bb6d530afe8377ca3b8f6d5b2a1788458a8f03d75c",
+              "size_bytes": 1625
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/verifier/reward.json",
+              "sha256": "5ca06cb7e3a8656121b87ade213bf9ad06f294c0c545275073aae326c031ce27",
+              "size_bytes": 825
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/artifacts/root/solution_106.py",
+              "sha256": "c13056948b74cc8991ebf05f3c58bc1b17b84f7ccb3ac6c2bc08691f3820ab29",
+              "size_bytes": 6164
+            },
+            "trajectory": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/agent/trajectory.json",
+              "sha256": "2463faee0c37e9d8eaa1cc9dc8ec507809b37d5abd19cfff04c32b2bbde5a5d2",
+              "size_bytes": 176346
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-css-state-gpt56-high-001/candidate-css-state-verification__3QBkgrB/result.json",
+              "sha256": "0d7a24c26ac23faec999d3191a2aac07acaa0b83e18fdf0dbf584cbeec63315f",
+              "size_bytes": 6037
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [
+              "self-authored solver working files",
+              "installed TensorCircuit and dependency source/examples/tests"
+            ],
+            "allowed_tool_names": [
+              "exec",
+              "wait"
+            ],
+            "automated_scan_raw_rollout_sha256": "1f4037f5763a5a74eb0455e73bcecf65ee6d2f075ad8c82424dc2285bbcc6321",
+            "automated_scan_status": "pass",
+            "credential_or_environment_dump_scan": "no_matches_observed",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "no_matches_observed",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "no_matches_observed",
+            "protected_benchmark_artifact_scan": "no_disallowed_access_observed",
+            "review_method": "Deterministic allowlist and marker scans of recorded rollout tool-call names and inputs; this automated scan is not a human attestation and raw content is not copied.",
+            "status": "automated_scan_pass_human_review_none",
+            "tool_call_count": 32,
+            "tool_call_counts_by_name": {
+              "exec": 28,
+              "wait": 4
+            },
+            "trajectory_step_count": 39,
+            "unassessed": [
+              "pretraining contamination",
+              "packet-level network activity",
+              "subprocess or access not represented in recorded tool-call inputs",
+              "cryptographic completeness of the raw event record"
+            ]
+          },
+          "evidence_role": "model_pilot",
+          "functional_evidence": {
+            "case_digest": "3756ccf5e2905e6f7e771c1912f815664c9f22205c5543adb9d34c97d4a27df8",
+            "case_digest_scope": "full_sha256",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "instances": 2
+            },
+            "overall_pass_marker": true,
+            "seed": 1062026,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "1b9efc33-63f0-4ac9-904e-9b37beda013f",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "pilot-css-state-gpt56-high-001"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 15.032113,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "numpy",
+              "tensorcircuit"
+            ],
+            "line_count": 155,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": []
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "30dae1caadb663639c796393ccbf1b97acc5656d2674ece18406fea00c7d274d",
+            "task_source_set_sha256": "35b33aa692fcc649013dca2dcb1d10b64f012d79c5c7f3606e87e7daa721fa39"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T17:57:23.511515Z",
+            "id": "0ba3e26d-645a-4863-bfcd-ee58a5a8b8be",
+            "name": "candidate-css-state-verification__3QBkgrB",
+            "started_at": "2026-08-09T17:44:49.665121Z",
+            "task_checksum": "30dae1caadb663639c796393ccbf1b97acc5656d2674ece18406fea00c7d274d",
+            "task_name": "candidate-css-state-verification"
+          }
+        }
+      ],
+      "pairing_evidence": {
+        "case_digest_match": true,
+        "case_matched_expert_trial_ids": [
+          "163ccb01-2a28-4439-a6cc-3a5b1d368d20"
+        ],
+        "seed_match": true,
+        "task_checksum_match": true,
+        "task_matched_expert_trial_ids": [
+          "163ccb01-2a28-4439-a6cc-3a5b1d368d20"
+        ]
+      },
+      "problem_id": 106,
+      "slug": "css-state-verification"
+    },
+    {
+      "classification": "solved_hardness_blocking",
+      "conclusion": "The expert oracle and one gpt-5.6-sol/high pilot passed the same reported seed and case digest as an expert run, but a different task checksum. This admitted exploratory solve blocks a claim that this frozen task is unsolved by the target model.",
+      "evidence_caveats": [
+        "The model and case-matched expert runs have different Harbor task checksums; this is a same-reported-case comparison, not an immutable task match.",
+        "The emitted 16-hex case digest is not a full SHA-256 digest."
+      ],
+      "expert_runs": [
+        {
+          "agent": {
+            "kind": "oracle",
+            "model": null,
+            "reasoning_effort": null,
+            "solver_adapter": "harbor.agents.oracle:Oracle",
+            "version": "1.0.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/artifacts/manifest.json",
+              "sha256": "fc753840ce109e4750d059eb591c384f63e440ed0ba86fcf5d3c4d07d472dbc7",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/verifier/audit-details.json",
+              "sha256": "a3cde07a34d6ac06bef450f4d01c0259f7ae777a89cca55af3eafb4a27880c1b",
+              "size_bytes": 4244
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/verifier/functional-stdout.txt",
+              "sha256": "899436b1ff6466883f453199d070e65f83eba2b2f2a24b7c0d8eec9030d7df15",
+              "size_bytes": 542
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/result.json",
+              "sha256": "199ca3be4ee3a42015740c5be31236e354dfbe75d1f1c4d55dbcf278c8ff0a5f",
+              "size_bytes": 6841
+            },
+            "oracle_transcript": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/agent/oracle.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size_bytes": 0
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/config.json",
+              "sha256": "156dadffb23becd6e7cbd2a643977aeb2b00e2dbe0def95cfc532483344adf7f",
+              "size_bytes": 1253
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/verifier/reward.json",
+              "sha256": "bd47a857fa2c1042229d1c87ac8fe399805ee61e2fe54d246ed48be607e9968a",
+              "size_bytes": 821
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/artifacts/root/solution_107.py",
+              "sha256": "09bb8db4b1395a81950337db546ef9796581b1ef0d73e3bc05329eb1f2515d0d",
+              "size_bytes": 2859
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-full-audit-v1/candidate-memory-bounded-iqp__ZPkaATg/result.json",
+              "sha256": "b0717988d074d92a066fe43c5b0ec9fb909e9904154fa6602369a69d0a70229c",
+              "size_bytes": 5637
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [],
+            "allowed_tool_names": [],
+            "automated_scan_raw_rollout_sha256": null,
+            "automated_scan_status": "not_applicable",
+            "credential_or_environment_dump_scan": "not_applicable_no_model_trajectory",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "not_applicable_no_model_trajectory",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "not_applicable_no_model_trajectory",
+            "protected_benchmark_artifact_scan": "not_applicable_no_model_trajectory",
+            "review_method": "Oracle copied the packaged expert solution; no model tool-call trajectory exists.",
+            "status": "not_applicable_oracle_copy",
+            "tool_call_count": 0,
+            "tool_call_counts_by_name": {},
+            "trajectory_step_count": 0,
+            "unassessed": []
+          },
+          "evidence_role": "expert_oracle",
+          "functional_evidence": {
+            "case_digest": "21894eff8b753232",
+            "case_digest_scope": "reported_16_hex_digest",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "maximum_scaled_amplitude_error": 3.548e-07,
+              "measured_induced_widths": [
+                16,
+                17
+              ]
+            },
+            "overall_pass_marker": true,
+            "seed": 1072026,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "3e7b7093-ee03-4331-afdd-c0b945644f6e",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "expert-memory-bounded-iqp-full-audit-v1"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 7.492,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "numpy",
+              "omeco",
+              "tensorcircuit"
+            ],
+            "line_count": 78,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": []
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "1188c5ff9fee5e85e9377da2d82da6642ba203ff1b4e5405a3714a2eb1c4a0e9",
+            "task_source_set_sha256": "c520897baf527acd2b32f04a849dd9d139c805827e4abb300b6392766b69954c"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T17:59:24.191988Z",
+            "id": "d25f26b5-1dc1-4d8a-84d1-3444d5f4856f",
+            "name": "candidate-memory-bounded-iqp__ZPkaATg",
+            "started_at": "2026-08-09T17:58:26.211011Z",
+            "task_checksum": "1188c5ff9fee5e85e9377da2d82da6642ba203ff1b4e5405a3714a2eb1c4a0e9",
+            "task_name": "candidate-memory-bounded-iqp"
+          }
+        },
+        {
+          "agent": {
+            "kind": "oracle",
+            "model": null,
+            "reasoning_effort": null,
+            "solver_adapter": "harbor.agents.oracle:Oracle",
+            "version": "1.0.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/artifacts/manifest.json",
+              "sha256": "fc753840ce109e4750d059eb591c384f63e440ed0ba86fcf5d3c4d07d472dbc7",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/verifier/audit-details.json",
+              "sha256": "6f3dd8e0490b60b485e02131fd58362cd38c96337b53b02ef4e0e65216737a4f",
+              "size_bytes": 3925
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/verifier/functional-stdout.txt",
+              "sha256": "178e41e96bcca8ca2011cda4cc95f25164ea08b0b397e8ef94273b036b26bbd8",
+              "size_bytes": 542
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/result.json",
+              "sha256": "834191d3e9a4c1c0622b5b4b2aedd9d0433dc7623ac3fbaee5b646f44f57ec27",
+              "size_bytes": 6841
+            },
+            "oracle_transcript": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/agent/oracle.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size_bytes": 0
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/config.json",
+              "sha256": "647546c98b9e16cb8d75cd11227d35b1ec7992d73241828a6e3f4f927bff0c02",
+              "size_bytes": 1301
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/verifier/reward.json",
+              "sha256": "223277fa6d5b98ee4dace01925a7a0c4b1acd2719afe3db8afed8403545120dc",
+              "size_bytes": 821
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/artifacts/root/solution_107.py",
+              "sha256": "09bb8db4b1395a81950337db546ef9796581b1ef0d73e3bc05329eb1f2515d0d",
+              "size_bytes": 2859
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-memory-bounded-iqp-seed-1072027/candidate-memory-bounded-iqp__sGGvztq/result.json",
+              "sha256": "040cb791895f431d2f9e73a3f19c3a4572c80c08bfc3dd4bfc59b91e6a755bdb",
+              "size_bytes": 5688
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [],
+            "allowed_tool_names": [],
+            "automated_scan_raw_rollout_sha256": null,
+            "automated_scan_status": "not_applicable",
+            "credential_or_environment_dump_scan": "not_applicable_no_model_trajectory",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "not_applicable_no_model_trajectory",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "not_applicable_no_model_trajectory",
+            "protected_benchmark_artifact_scan": "not_applicable_no_model_trajectory",
+            "review_method": "Oracle copied the packaged expert solution; no model tool-call trajectory exists.",
+            "status": "not_applicable_oracle_copy",
+            "tool_call_count": 0,
+            "tool_call_counts_by_name": {},
+            "trajectory_step_count": 0,
+            "unassessed": []
+          },
+          "evidence_role": "expert_oracle",
+          "functional_evidence": {
+            "case_digest": "428aab346b3b50c2",
+            "case_digest_scope": "reported_16_hex_digest",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "maximum_scaled_amplitude_error": 2.062e-06,
+              "measured_induced_widths": [
+                17,
+                16
+              ]
+            },
+            "overall_pass_marker": true,
+            "seed": 1072027,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "9a5e8d3a-7877-4d61-a18a-69c7745226d8",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "expert-memory-bounded-iqp-seed-1072027"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 6.508,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "numpy",
+              "omeco",
+              "tensorcircuit"
+            ],
+            "line_count": 78,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": []
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "76f9796d0b8fb19e6f321eb545c3b38eba4833336417a6228e207077ce331565",
+            "task_source_set_sha256": "c3de5a49acd97d13b178e48dc87f726a60d9d72f7983d7bc0a59c626e93ec324"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T18:02:55.435300Z",
+            "id": "e621d61c-2609-4851-874e-a8f04783bd2f",
+            "name": "candidate-memory-bounded-iqp__sGGvztq",
+            "started_at": "2026-08-09T18:01:49.414149Z",
+            "task_checksum": "76f9796d0b8fb19e6f321eb545c3b38eba4833336417a6228e207077ce331565",
+            "task_name": "candidate-memory-bounded-iqp"
+          }
+        }
+      ],
+      "hardness_blocker": true,
+      "model_pilots": [
+        {
+          "agent": {
+            "kind": "codex",
+            "model": "gpt-5.6-sol",
+            "reasoning_effort": "high",
+            "solver_adapter": "adapters.codex_para:CodexPara",
+            "version": "0.146.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/artifacts/manifest.json",
+              "sha256": "fc753840ce109e4750d059eb591c384f63e440ed0ba86fcf5d3c4d07d472dbc7",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/verifier/audit-details.json",
+              "sha256": "69272e416821a6d5bf6ddc6e2a9e7a24c27d474c8eb08833abba99056738e9c3",
+              "size_bytes": 4282
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/verifier/functional-stdout.txt",
+              "sha256": "0a195c6ead607d368f6323371906e0bd9e92d8ed5a27704d24ea58ef46ba0601",
+              "size_bytes": 542
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/result.json",
+              "sha256": "dd4ee05dce8800fb96dbafd7961686916faa7344e8d7f404a6c7bd4f45dc74c0",
+              "size_bytes": 6864
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/config.json",
+              "sha256": "5d0fecc8b3e633f5892868808e1b6e20971ee866e3ab9ea1d5940bbbe3f06d68",
+              "size_bytes": 1675
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/verifier/reward.json",
+              "sha256": "aa3782b3ad46c1c15cc69d00537186963c32502de48f8e580861a4efe15beeba",
+              "size_bytes": 821
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/artifacts/root/solution_107.py",
+              "sha256": "3371c1381e689b4e888882614ee9e48f92ca12113c0e2d5a9421708873073798",
+              "size_bytes": 5801
+            },
+            "trajectory": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/agent/trajectory.json",
+              "sha256": "c24e0111c5708f34196f05432a08602f994ead7093f104d21e23faeb27811717",
+              "size_bytes": 231576
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-memory-bounded-iqp-gpt56-high-001/candidate-memory-bounded-iqp__Hei6jzq/result.json",
+              "sha256": "4319e4306f8cd487f41ddd1ad73f4938bdf9c52a798ba0efa9a3bdfa37d81ac1",
+              "size_bytes": 6070
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [
+              "self-authored solver working files",
+              "installed TensorCircuit and dependency source/examples/tests"
+            ],
+            "allowed_tool_names": [
+              "exec",
+              "wait"
+            ],
+            "automated_scan_raw_rollout_sha256": "5e1f00359a00fa7cc0641af73027724b317e07d926ddd5c22cf8c86aa3d45c85",
+            "automated_scan_status": "pass",
+            "credential_or_environment_dump_scan": "no_matches_observed",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "no_matches_observed",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "no_matches_observed",
+            "protected_benchmark_artifact_scan": "no_disallowed_access_observed",
+            "review_method": "Deterministic allowlist and marker scans of recorded rollout tool-call names and inputs; this automated scan is not a human attestation and raw content is not copied.",
+            "status": "automated_scan_pass_human_review_none",
+            "tool_call_count": 28,
+            "tool_call_counts_by_name": {
+              "exec": 28
+            },
+            "trajectory_step_count": 35,
+            "unassessed": [
+              "pretraining contamination",
+              "packet-level network activity",
+              "subprocess or access not represented in recorded tool-call inputs",
+              "cryptographic completeness of the raw event record"
+            ]
+          },
+          "evidence_role": "model_pilot",
+          "functional_evidence": {
+            "case_digest": "428aab346b3b50c2",
+            "case_digest_scope": "reported_16_hex_digest",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "maximum_scaled_amplitude_error": 2.062e-06,
+              "measured_induced_widths": [
+                12,
+                12
+              ]
+            },
+            "overall_pass_marker": true,
+            "seed": 1072027,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "49e3aa42-7cb4-4aed-9715-a8fb634ccf02",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "pilot-memory-bounded-iqp-gpt56-high-001"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 3.405,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "cotengra",
+              "numpy",
+              "tensorcircuit",
+              "tensornetwork"
+            ],
+            "line_count": 159,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": [
+              "eigh"
+            ]
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "40d4668e7308943564c90106331442858653cbb4e2f68f345017b44382abc7d0",
+            "task_source_set_sha256": "2adb1ba4121af0cccf6cdb80a14d4aa2a0edaab959c4f55e77185cbcb959c363"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T18:13:42.218918Z",
+            "id": "6e9bac49-d338-4042-8f77-e2ac7557ee99",
+            "name": "candidate-memory-bounded-iqp__Hei6jzq",
+            "started_at": "2026-08-09T18:03:20.680757Z",
+            "task_checksum": "40d4668e7308943564c90106331442858653cbb4e2f68f345017b44382abc7d0",
+            "task_name": "candidate-memory-bounded-iqp"
+          }
+        }
+      ],
+      "pairing_evidence": {
+        "case_digest_match": true,
+        "case_matched_expert_trial_ids": [
+          "e621d61c-2609-4851-874e-a8f04783bd2f"
+        ],
+        "seed_match": true,
+        "task_checksum_match": false,
+        "task_matched_expert_trial_ids": []
+      },
+      "problem_id": 107,
+      "slug": "memory-bounded-iqp"
+    },
+    {
+      "classification": "solved_hardness_blocking",
+      "conclusion": "The expert oracle and one gpt-5.6-sol/high pilot passed the same frozen task checksum. This admitted exploratory solve blocks a claim that this frozen task is unsolved by the target model.",
+      "evidence_caveats": [
+        "The emitted 16-hex case digest is not a full SHA-256 digest."
+      ],
+      "expert_runs": [
+        {
+          "agent": {
+            "kind": "oracle",
+            "model": null,
+            "reasoning_effort": null,
+            "solver_adapter": "harbor.agents.oracle:Oracle",
+            "version": "1.0.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/artifacts/manifest.json",
+              "sha256": "a80c02582b35900864948647e42d08c6a7777fddab748e709a0b0f32f05d158a",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/verifier/audit-details.json",
+              "sha256": "da9576cc9a75af2e3e63029e345e7ed14d1ba3c14683ee32cb97523ec7f5719b",
+              "size_bytes": 3877
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/verifier/functional-stdout.txt",
+              "sha256": "281a9b1d2b52f43e213ef49f02766f8b6a4d31ef7e72f9b8d2b100a055bbb30e",
+              "size_bytes": 501
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/result.json",
+              "sha256": "7b52cf11cfc4302318f69f07ad77040bb921c3e2cb4be7e9928671a11c2cf018",
+              "size_bytes": 6795
+            },
+            "oracle_transcript": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/agent/oracle.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size_bytes": 0
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/config.json",
+              "sha256": "aee8d44924ed4e7313d3d5743f90957685ebdf6c1c4d44a9c3033b0fd08a71ab",
+              "size_bytes": 1309
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/verifier/reward.json",
+              "sha256": "8e6bc5367e088cd74a2829546a5a221e13d117801a6600b9691d7f8a4be7becc",
+              "size_bytes": 821
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/artifacts/root/solution_108.py",
+              "sha256": "630f966a0cc31f1dab43486579f50fe0794cb3f06ca29b3b1929eedd7b5ea16e",
+              "size_bytes": 5114
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-conditioned-qksd-seed-1082037-full-audit-v1/candidate-conditioned-qksd__aB6ZYbu/result.json",
+              "sha256": "3ed1304eee789baa432371b118fe76c8e93376dd83e7fc5ba25fa4816e00d871",
+              "size_bytes": 5700
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [],
+            "allowed_tool_names": [],
+            "automated_scan_raw_rollout_sha256": null,
+            "automated_scan_status": "not_applicable",
+            "credential_or_environment_dump_scan": "not_applicable_no_model_trajectory",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "not_applicable_no_model_trajectory",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "not_applicable_no_model_trajectory",
+            "protected_benchmark_artifact_scan": "not_applicable_no_model_trajectory",
+            "review_method": "Oracle copied the packaged expert solution; no model tool-call trajectory exists.",
+            "status": "not_applicable_oracle_copy",
+            "tool_call_count": 0,
+            "tool_call_counts_by_name": {},
+            "trajectory_step_count": 0,
+            "unassessed": []
+          },
+          "evidence_role": "expert_oracle",
+          "functional_evidence": {
+            "case_digest": "1e932988c8113662",
+            "case_digest_scope": "reported_16_hex_digest",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "maximum_control_moment_error": 5.278e-15,
+              "maximum_ritz_energy_error": 0.0
+            },
+            "overall_pass_marker": true,
+            "seed": 1082037,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "365dc5c5-25df-4d7a-a327-312ff727d344",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "expert-conditioned-qksd-seed-1082037-full-audit-v1"
+          },
+          "llm_source_audit": {
+            "confidence": 0.999,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 2.143,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "__future__",
+              "numpy",
+              "tensorcircuit"
+            ],
+            "line_count": 112,
+            "max_lines": 160,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": [
+              "eigvalsh",
+              "eigh"
+            ]
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "7118f2e0c089f56e8ecbc8d5740bf21a7105ea6b5a627b59320b47fbe9e1976e",
+            "task_source_set_sha256": "56f5b4e718788052e11cdac240be1cf1f6e5140ba6e359173f922015736e3865"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T18:42:05.428363Z",
+            "id": "8b52aff3-9f26-4764-94fb-90b697d538aa",
+            "name": "candidate-conditioned-qksd__aB6ZYbu",
+            "started_at": "2026-08-09T18:41:16.104169Z",
+            "task_checksum": "7118f2e0c089f56e8ecbc8d5740bf21a7105ea6b5a627b59320b47fbe9e1976e",
+            "task_name": "candidate-conditioned-qksd"
+          }
+        }
+      ],
+      "hardness_blocker": true,
+      "model_pilots": [
+        {
+          "agent": {
+            "kind": "codex",
+            "model": "gpt-5.6-sol",
+            "reasoning_effort": "high",
+            "solver_adapter": "adapters.codex_para:CodexPara",
+            "version": "0.146.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/artifacts/manifest.json",
+              "sha256": "a80c02582b35900864948647e42d08c6a7777fddab748e709a0b0f32f05d158a",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/verifier/audit-details.json",
+              "sha256": "f108f698b7dfe4ecf3fb5aeb0e2726152650b1da9a137e4bfcc88d2526bc3542",
+              "size_bytes": 4008
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/verifier/functional-stdout.txt",
+              "sha256": "ccc9f243e29dec6113e8b0588c7c56d305c96656fc6847b1e2cb957d805bb3fb",
+              "size_bytes": 501
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/result.json",
+              "sha256": "2a5d9645d84d7ba862bfc0baaddbcffca62865278a556d4c29bf3dbafa710398",
+              "size_bytes": 6826
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/config.json",
+              "sha256": "54c6e8c169433a694133959ac367e1d2995a746ae507df08d16f85971738f396",
+              "size_bytes": 1669
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/verifier/reward.json",
+              "sha256": "9bfeadf0e74924b4956ce1f9c60c467b333c90336dd7f867ac1e0375c186d0d7",
+              "size_bytes": 821
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/artifacts/root/solution_108.py",
+              "sha256": "a0c23dce6daf8e66b9e565fa91c992ccf9df173a76be1de4f97e2d25065e21c1",
+              "size_bytes": 4175
+            },
+            "trajectory": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/agent/trajectory.json",
+              "sha256": "c4442a174245f9e045091cbcccc96ac13891becca96b3ec0ae1ac2d797adf72a",
+              "size_bytes": 146204
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-conditioned-qksd-gpt56-high-001/candidate-conditioned-qksd__CcSxwVA/result.json",
+              "sha256": "c503a8a1959ce9c36b9e6df76ec088392317d915c7d4880f43b78c701c5baa82",
+              "size_bytes": 6062
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [
+              "self-authored solver working files",
+              "installed TensorCircuit and dependency source/examples/tests"
+            ],
+            "allowed_tool_names": [
+              "exec",
+              "wait"
+            ],
+            "automated_scan_raw_rollout_sha256": "39d3109e2a83a9c5b37bbcb8e67de9e9bcbeb1da4addbe3c966410ce496251f6",
+            "automated_scan_status": "pass",
+            "credential_or_environment_dump_scan": "no_matches_observed",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "no_matches_observed",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "no_matches_observed",
+            "protected_benchmark_artifact_scan": "no_disallowed_access_observed",
+            "review_method": "Deterministic allowlist and marker scans of recorded rollout tool-call names and inputs; this automated scan is not a human attestation and raw content is not copied.",
+            "status": "automated_scan_pass_human_review_none",
+            "tool_call_count": 11,
+            "tool_call_counts_by_name": {
+              "exec": 11
+            },
+            "trajectory_step_count": 18,
+            "unassessed": [
+              "pretraining contamination",
+              "packet-level network activity",
+              "subprocess or access not represented in recorded tool-call inputs",
+              "cryptographic completeness of the raw event record"
+            ]
+          },
+          "evidence_role": "model_pilot",
+          "functional_evidence": {
+            "case_digest": "1e932988c8113662",
+            "case_digest_scope": "reported_16_hex_digest",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "maximum_control_moment_error": 5.035e-15,
+              "maximum_ritz_energy_error": 0.0
+            },
+            "overall_pass_marker": true,
+            "seed": 1082037,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "2f9715fc-3e6b-4ef2-afd7-197fb1d60bb7",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "pilot-conditioned-qksd-gpt56-high-001"
+          },
+          "llm_source_audit": {
+            "confidence": 0.999,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 2.246,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "numpy",
+              "tensorcircuit"
+            ],
+            "line_count": 90,
+            "max_lines": 160,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": [
+              "eigvalsh",
+              "eigh"
+            ]
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "7118f2e0c089f56e8ecbc8d5740bf21a7105ea6b5a627b59320b47fbe9e1976e",
+            "task_source_set_sha256": "56f5b4e718788052e11cdac240be1cf1f6e5140ba6e359173f922015736e3865"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T18:48:35.150343Z",
+            "id": "c2e6dcc1-c063-44ba-bf7f-7d94d131ac30",
+            "name": "candidate-conditioned-qksd__CcSxwVA",
+            "started_at": "2026-08-09T18:42:26.205846Z",
+            "task_checksum": "7118f2e0c089f56e8ecbc8d5740bf21a7105ea6b5a627b59320b47fbe9e1976e",
+            "task_name": "candidate-conditioned-qksd"
+          }
+        }
+      ],
+      "pairing_evidence": {
+        "case_digest_match": true,
+        "case_matched_expert_trial_ids": [
+          "8b52aff3-9f26-4764-94fb-90b697d538aa"
+        ],
+        "seed_match": true,
+        "task_checksum_match": true,
+        "task_matched_expert_trial_ids": [
+          "8b52aff3-9f26-4764-94fb-90b697d538aa"
+        ]
+      },
+      "problem_id": 108,
+      "slug": "conditioned-qksd"
+    },
+    {
+      "classification": "pilot_hardness_signal",
+      "conclusion": "The expert oracle passed, while one gpt-5.6-sol/high pilot on the same frozen task checksum failed the bound functional checks heldout_p95_infidelity, heldout_worst_infidelity after passing static policy and source audit. This is an exploratory substantive optimization-performance signal only.",
+      "evidence_caveats": [
+        "The paired functional output did not emit a case digest; task checksum and any reported seed are the available case-binding evidence.",
+        "One failed pilot does not estimate pass rate or confirm membership in a protocol-qualified hard set.",
+        "The automated command scan has no hash-bound human trace review in this snapshot."
+      ],
+      "expert_runs": [
+        {
+          "agent": {
+            "kind": "oracle",
+            "model": null,
+            "reasoning_effort": null,
+            "solver_adapter": "harbor.agents.oracle:Oracle",
+            "version": "1.0.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/artifacts/manifest.json",
+              "sha256": "07a6d5afd121f1921a3896a234e8e14a7378828e2c065ff5327dec6fe28f5c19",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/verifier/audit-details.json",
+              "sha256": "48e10f150bfa76665016bc18e470a010436b5f69e33cb5b7b81332f0862da29b",
+              "size_bytes": 4688
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/verifier/functional-stdout.txt",
+              "sha256": "1b8a029e66884a483cd282da4b414f49c6dec73ffb7495ce115931f8cdd165f4",
+              "size_bytes": 459
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/result.json",
+              "sha256": "4e549cf2b46d354299631f051d46add528e4863ef9d43ee6b157b712cdbc407e",
+              "size_bytes": 6893
+            },
+            "oracle_transcript": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/agent/oracle.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size_bytes": 0
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/config.json",
+              "sha256": "af16a24fb8d423d16b9d652cf1a854f4da8aa705dd3bcf947dd91b20e7df792d",
+              "size_bytes": 1321
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/verifier/reward.json",
+              "sha256": "5fd35d32e6ec9de8168a010067f13f99b1e4d8f17bccc6e054631c8c032d32d5",
+              "size_bytes": 824
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/artifacts/root/solution_109.py",
+              "sha256": "d1d8e9baa5bf2bfa11c8406e65dc1b1201a7d76731f1e160e8f6735b9e6948c4",
+              "size_bytes": 5877
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-robust-leakage-grape-seed-1092037-full-audit-v1/candidate-robust-leakage-grape__vLwDJNz/result.json",
+              "sha256": "6c9572c237c2f5a720c4edbf79bc6f762392afd586bb52abd4fa669101619314",
+              "size_bytes": 5735
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [],
+            "allowed_tool_names": [],
+            "automated_scan_raw_rollout_sha256": null,
+            "automated_scan_status": "not_applicable",
+            "credential_or_environment_dump_scan": "not_applicable_no_model_trajectory",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "not_applicable_no_model_trajectory",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "not_applicable_no_model_trajectory",
+            "protected_benchmark_artifact_scan": "not_applicable_no_model_trajectory",
+            "review_method": "Oracle copied the packaged expert solution; no model tool-call trajectory exists.",
+            "status": "not_applicable_oracle_copy",
+            "tool_call_count": 0,
+            "tool_call_counts_by_name": {},
+            "trajectory_step_count": 0,
+            "unassessed": []
+          },
+          "evidence_role": "expert_oracle",
+          "functional_evidence": {
+            "case_digest": null,
+            "case_digest_scope": "not_emitted",
+            "evaluation_check_source": "reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape/evaluate_109.py; selected task content is bound by trial.task_checksum",
+            "evaluation_checks": [
+              {
+                "comparator": "<=",
+                "metric": "heldout_p95_infidelity",
+                "observed": 0.0005674484643113376,
+                "passed": true,
+                "threshold": 0.0007
+              },
+              {
+                "comparator": "<=",
+                "metric": "heldout_worst_infidelity",
+                "observed": 0.0010405477068784474,
+                "passed": true,
+                "threshold": 0.00125
+              },
+              {
+                "comparator": "<=",
+                "metric": "heldout_worst_leakage",
+                "observed": 7.57935323415504e-05,
+                "passed": true,
+                "threshold": 0.00015
+              },
+              {
+                "comparator": "<=",
+                "metric": "max_drive_amplitude",
+                "observed": 2.323567166938417,
+                "passed": true,
+                "threshold": 3.15
+              },
+              {
+                "comparator": "<=",
+                "metric": "max_edge_amplitude",
+                "observed": 0.0,
+                "passed": true,
+                "threshold": 0.035
+              },
+              {
+                "comparator": "<=",
+                "metric": "max_slew_per_slice",
+                "observed": 1.0254255454849346,
+                "passed": true,
+                "threshold": 1.15
+              }
+            ],
+            "metrics": {
+              "controls_shape": [
+                44,
+                2
+              ],
+              "heldout_p95_infidelity": 0.0005674484643113376,
+              "heldout_worst_infidelity": 0.0010405477068784474,
+              "heldout_worst_leakage": 7.57935323415504e-05,
+              "max_drive_amplitude": 2.323567166938417,
+              "max_edge_amplitude": 0.0,
+              "max_slew_per_slice": 1.0254255454849346,
+              "training_worst_infidelity": 0.00011268239761674792,
+              "training_worst_leakage": 1.2605469311477435e-05
+            },
+            "overall_pass_marker": true,
+            "seed": 1092037,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "a16440b2-432d-4daa-94e5-9216fdfcec28",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "expert-robust-leakage-grape-seed-1092037-full-audit-v1"
+          },
+          "llm_source_audit": {
+            "confidence": 0.97,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [
+              "The slew constraint is enforced only through a soft objective penalty, so feasibility is not guaranteed for every valid configuration.",
+              "Final radial amplitude clipping can change adjacent control differences and therefore potentially violate the slew constraint, although the evaluated submission passed.",
+              "The warm-start slice-allocation loop may fail for sufficiently small n_slices because every one of five segments is initially assigned at least two slices.",
+              "optimization_seed is ignored; this is harmless here because the optimization path is otherwise deterministic."
+            ],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 31.15239,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "__future__",
+              "itertools",
+              "numpy",
+              "scipy",
+              "tensorcircuit"
+            ],
+            "line_count": 146,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": []
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "879607220dc8eefdb9b7302a554bdbe30e65e0f2b71050deb57466e5e7f05c1d",
+            "task_source_set_sha256": "eff81bcf0555bad84e9768cfa24b99e98b47daac2e73c20c38e5576039241ec7"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T18:17:14.280108Z",
+            "id": "e1172c3b-4da9-4342-a83b-6f60f5d8baad",
+            "name": "candidate-robust-leakage-grape__vLwDJNz",
+            "started_at": "2026-08-09T18:15:42.764639Z",
+            "task_checksum": "879607220dc8eefdb9b7302a554bdbe30e65e0f2b71050deb57466e5e7f05c1d",
+            "task_name": "candidate-robust-leakage-grape"
+          }
+        }
+      ],
+      "hardness_blocker": false,
+      "model_pilots": [
+        {
+          "agent": {
+            "kind": "codex",
+            "model": "gpt-5.6-sol",
+            "reasoning_effort": "high",
+            "solver_adapter": "adapters.codex_para:CodexPara",
+            "version": "0.146.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/artifacts/manifest.json",
+              "sha256": "07a6d5afd121f1921a3896a234e8e14a7378828e2c065ff5327dec6fe28f5c19",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/verifier/audit-details.json",
+              "sha256": "af9e79fc3a43f8a25d0ddf99262c33e1b6a312974603963cfe66adb2dfcffe59",
+              "size_bytes": 4322
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/verifier/functional-stdout.txt",
+              "sha256": "94c2029aa268ee27e9dc45a54c5d95efb1b52a492c3715263454722655394b7d",
+              "size_bytes": 477
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/result.json",
+              "sha256": "5673dfab5e79de67fde2bc1377696d59cda7acfb531076b4b635db182df0cf9d",
+              "size_bytes": 6918
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/config.json",
+              "sha256": "e357b854587626926d5239bf7b0eeb81c19dcd49157db793c4d3842c616c1c66",
+              "size_bytes": 1681
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/verifier/reward.json",
+              "sha256": "80d86616b9f9ada13c360fc0b885e137448db1fcfd100889c21b6389a4caf9c3",
+              "size_bytes": 825
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/artifacts/root/solution_109.py",
+              "sha256": "790bd3d4c3965e01dfa722cbd32a9791fa510a87de8c588b08c07ec2e52d1ca4",
+              "size_bytes": 6891
+            },
+            "trajectory": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/agent/trajectory.json",
+              "sha256": "aa7323e2234a4ca12dff2e6c03b1855171c575163c283649d72974194b35ce66",
+              "size_bytes": 304836
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-robust-leakage-grape-gpt56-high-001/candidate-robust-leakage-grape__PCuQgso/result.json",
+              "sha256": "c7ec2b7aa285c4b7e63d1e4e04316b6fb7349b7ea53422796e7534176f433103",
+              "size_bytes": 6090
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [
+              "self-authored solver working files",
+              "installed TensorCircuit and dependency source/examples/tests"
+            ],
+            "allowed_tool_names": [
+              "exec",
+              "wait"
+            ],
+            "automated_scan_raw_rollout_sha256": "76bde81af2c36e6d2be54d8d78b2f369c287258cda1fe64ce05df0d414b6f655",
+            "automated_scan_status": "pass",
+            "credential_or_environment_dump_scan": "no_matches_observed",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "no_matches_observed",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": true,
+            "network_command_scan": "no_matches_observed",
+            "protected_benchmark_artifact_scan": "no_disallowed_access_observed",
+            "review_method": "Deterministic allowlist and marker scans of recorded rollout tool-call names and inputs; this automated scan is not a human attestation and raw content is not copied.",
+            "status": "automated_scan_pass_human_review_none",
+            "tool_call_count": 61,
+            "tool_call_counts_by_name": {
+              "exec": 43,
+              "wait": 18
+            },
+            "trajectory_step_count": 68,
+            "unassessed": [
+              "pretraining contamination",
+              "packet-level network activity",
+              "subprocess or access not represented in recorded tool-call inputs",
+              "cryptographic completeness of the raw event record"
+            ]
+          },
+          "evidence_role": "model_pilot",
+          "functional_evidence": {
+            "case_digest": null,
+            "case_digest_scope": "not_emitted",
+            "evaluation_check_source": "reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape/evaluate_109.py; selected task content is bound by trial.task_checksum",
+            "evaluation_checks": [
+              {
+                "comparator": "<=",
+                "metric": "heldout_p95_infidelity",
+                "observed": 0.0014157664283936111,
+                "passed": false,
+                "threshold": 0.0007
+              },
+              {
+                "comparator": "<=",
+                "metric": "heldout_worst_infidelity",
+                "observed": 0.0020573770597410723,
+                "passed": false,
+                "threshold": 0.00125
+              },
+              {
+                "comparator": "<=",
+                "metric": "heldout_worst_leakage",
+                "observed": 0.00014073717868701152,
+                "passed": true,
+                "threshold": 0.00015
+              },
+              {
+                "comparator": "<=",
+                "metric": "max_drive_amplitude",
+                "observed": 2.8389014916319546,
+                "passed": true,
+                "threshold": 3.15
+              },
+              {
+                "comparator": "<=",
+                "metric": "max_edge_amplitude",
+                "observed": 0.03499996500000001,
+                "passed": true,
+                "threshold": 0.035
+              },
+              {
+                "comparator": "<=",
+                "metric": "max_slew_per_slice",
+                "observed": 1.1207529816982702,
+                "passed": true,
+                "threshold": 1.15
+              }
+            ],
+            "metrics": {
+              "controls_shape": [
+                44,
+                2
+              ],
+              "heldout_p95_infidelity": 0.0014157664283936111,
+              "heldout_worst_infidelity": 0.0020573770597410723,
+              "heldout_worst_leakage": 0.00014073717868701152,
+              "max_drive_amplitude": 2.8389014916319546,
+              "max_edge_amplitude": 0.03499996500000001,
+              "max_slew_per_slice": 1.1207529816982702,
+              "training_worst_infidelity": 0.0002644711214032647,
+              "training_worst_leakage": 0.00010009313210912474
+            },
+            "overall_pass_marker": false,
+            "seed": 1092037,
+            "verifier_functional_passed": false,
+            "verifier_functional_return_code": 1
+          },
+          "job": {
+            "id": "ccc17430-dfb7-4d24-a49d-b899b48d942d",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "pilot-robust-leakage-grape-gpt56-high-001"
+          },
+          "llm_source_audit": {
+            "confidence": 0.96,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 0.0,
+            "functional_evaluator_runtime_sec": 62.622879,
+            "functional_score": 0.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "itertools",
+              "jax",
+              "numpy",
+              "scipy",
+              "tensorcircuit"
+            ],
+            "line_count": 145,
+            "max_lines": null,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": [
+              "eigh"
+            ]
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "879607220dc8eefdb9b7302a554bdbe30e65e0f2b71050deb57466e5e7f05c1d",
+            "task_source_set_sha256": "eff81bcf0555bad84e9768cfa24b99e98b47daac2e73c20c38e5576039241ec7"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T18:40:20.984182Z",
+            "id": "c441bfb9-9f46-4a9e-bb8b-632d534cb620",
+            "name": "candidate-robust-leakage-grape__PCuQgso",
+            "started_at": "2026-08-09T18:19:18.819554Z",
+            "task_checksum": "879607220dc8eefdb9b7302a554bdbe30e65e0f2b71050deb57466e5e7f05c1d",
+            "task_name": "candidate-robust-leakage-grape"
+          }
+        }
+      ],
+      "pairing_evidence": {
+        "case_digest_match": null,
+        "case_matched_expert_trial_ids": [],
+        "seed_match": true,
+        "task_checksum_match": true,
+        "task_matched_expert_trial_ids": [
+          "e1172c3b-4da9-4342-a83b-6f60f5d8baad"
+        ]
+      },
+      "problem_id": 109,
+      "slug": "robust-leakage-grape"
+    },
+    {
+      "classification": "solved_hardness_blocking",
+      "conclusion": "The expert oracle and one gpt-5.6-sol/high pilot passed the same frozen task checksum. This admitted exploratory solve blocks a claim that this frozen task is unsolved by the target model.",
+      "evidence_caveats": [
+        "The emitted 16-hex case digest is not a full SHA-256 digest."
+      ],
+      "expert_runs": [
+        {
+          "agent": {
+            "kind": "oracle",
+            "model": null,
+            "reasoning_effort": null,
+            "solver_adapter": "harbor.agents.oracle:Oracle",
+            "version": "1.0.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/artifacts/manifest.json",
+              "sha256": "4de3fc8c9750896be81683c356ca8551e25fd56781991c369f9e104b2421e4b8",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/verifier/audit-details.json",
+              "sha256": "cb22b10c9a5d50c82b99f8b014a06f7c73a2306c5913c7ad0f23bafb4220579d",
+              "size_bytes": 3771
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/verifier/functional-stdout.txt",
+              "sha256": "5235b1c01c105dc5353bf69000a325c1a11977b0c456b8ee30186bb2edf4c93f",
+              "size_bytes": 585
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/result.json",
+              "sha256": "9259e76d30e7c73d05444e42a271b82b930ace34058623916cb64310489db49e",
+              "size_bytes": 6935
+            },
+            "oracle_transcript": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/agent/oracle.txt",
+              "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "size_bytes": 0
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/config.json",
+              "sha256": "9df83ec414fb950d2ffa77e0de5f466d108a71b4b68b29666ae5c6aeed3e6e6f",
+              "size_bytes": 1327
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/verifier/reward.json",
+              "sha256": "e6a5b2bf454304ac744c45ac9fe4fe30d81120fcc1ec765f46cacbdb8969e623",
+              "size_bytes": 822
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/artifacts/root/solution_111.py",
+              "sha256": "9b070d8053b380a97c19c167d3687a19f858e3864d8c2ea7b0befb4e4458dbaf",
+              "size_bytes": 2815
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/expert-truncated-mps-gradient-seed-1112037-full-audit-v1/candidate-truncated-mps-gradient__A8LAvSF/result.json",
+              "sha256": "e4734ad3e16774d418295d7eda107c67d68d35f24006020bae582a685064809f",
+              "size_bytes": 5749
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [],
+            "allowed_tool_names": [],
+            "automated_scan_raw_rollout_sha256": null,
+            "automated_scan_status": "not_applicable",
+            "credential_or_environment_dump_scan": "not_applicable_no_model_trajectory",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "not_applicable_no_model_trajectory",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "not_applicable_no_model_trajectory",
+            "protected_benchmark_artifact_scan": "not_applicable_no_model_trajectory",
+            "review_method": "Oracle copied the packaged expert solution; no model tool-call trajectory exists.",
+            "status": "not_applicable_oracle_copy",
+            "tool_call_count": 0,
+            "tool_call_counts_by_name": {},
+            "trajectory_step_count": 0,
+            "unassessed": []
+          },
+          "evidence_role": "expert_oracle",
+          "functional_evidence": {
+            "case_digest": "427074eb20fbd3b1",
+            "case_digest_scope": "reported_16_hex_digest",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "active_cuts": 58,
+              "maximum_energy_error": 4.996e-16,
+              "maximum_gradient_error": 6.491e-06,
+              "minimum_relative_cut_gap": 5.317e-06
+            },
+            "overall_pass_marker": true,
+            "seed": 1112037,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "f0959ff7-b550-4637-b748-8151f65df19d",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "expert-truncated-mps-gradient-seed-1112037-full-audit-v1"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 41.042,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "numpy",
+              "tensorcircuit"
+            ],
+            "line_count": 72,
+            "max_lines": 160,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": []
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "d085b5bdce1b55b8e2140fe0db88000e600ba3ca22b7475150c228ea2f80f6e5",
+            "task_source_set_sha256": "8c5404028d52b6a00d5be020b5ab9d0c52604757da49c675d0f6495ebac7a88c"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T18:51:29.219371Z",
+            "id": "23631296-118d-49f4-b220-94c7cbfa0bf4",
+            "name": "candidate-truncated-mps-gradient__A8LAvSF",
+            "started_at": "2026-08-09T18:49:56.060766Z",
+            "task_checksum": "d085b5bdce1b55b8e2140fe0db88000e600ba3ca22b7475150c228ea2f80f6e5",
+            "task_name": "candidate-truncated-mps-gradient"
+          }
+        }
+      ],
+      "hardness_blocker": true,
+      "model_pilots": [
+        {
+          "agent": {
+            "kind": "codex",
+            "model": "gpt-5.6-sol",
+            "reasoning_effort": "high",
+            "solver_adapter": "adapters.codex_para:CodexPara",
+            "version": "0.146.0"
+          },
+          "artifacts": {
+            "artifact_manifest": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/artifacts/manifest.json",
+              "sha256": "4de3fc8c9750896be81683c356ca8551e25fd56781991c369f9e104b2421e4b8",
+              "size_bytes": 501
+            },
+            "audit_details": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/verifier/audit-details.json",
+              "sha256": "5bd5a1542f5a57c3411c613222e3395697edabcb84fa26d62b086b1ba1664f1b",
+              "size_bytes": 4299
+            },
+            "functional_stdout": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/verifier/functional-stdout.txt",
+              "sha256": "856be31cec0a9eef69689d8938f7f9b4a2921d309ad5ebef085716a1b811adc3",
+              "size_bytes": 585
+            },
+            "job_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/result.json",
+              "sha256": "1f45dc1d783eed5b83cc7ac3fade1c76fa395e100df9fa74d4d34f8f0a0ce4c3",
+              "size_bytes": 6958
+            },
+            "redacted_config": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/config.json",
+              "sha256": "052002c83737a38113e4c2d12133d19697ca641fcf59a5f5c3e8c9d0cde28e53",
+              "size_bytes": 1687
+            },
+            "reward": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/verifier/reward.json",
+              "sha256": "fc903158f94ef5ca2e39efa051406c2d9eadbc1a5ddcea7a2f5461bdcd077119",
+              "size_bytes": 822
+            },
+            "solution": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/artifacts/root/solution_111.py",
+              "sha256": "3cda07e15d311cf1824a8f66904b7b5c39b007bc614d9ec5da90334d9483626c",
+              "size_bytes": 4130
+            },
+            "trajectory": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/agent/trajectory.json",
+              "sha256": "232183f64401d9d0a9fb29381101fc3689bbe6ffce49d571c28f322646645445",
+              "size_bytes": 272224
+            },
+            "trial_result": {
+              "path": ".artifacts/problem-discovery/candidate-jobs/pilot-truncated-mps-gradient-gpt56-high-001/candidate-truncated-mps-gradient__4xfxSvV/result.json",
+              "sha256": "a05ff3933d1d3ab28a190a518e96c9456417f68a5040766c213890d495fa3050",
+              "size_bytes": 6103
+            }
+          },
+          "contamination_and_command_audit": {
+            "allowed_read_scope_observed": [
+              "self-authored solver working files",
+              "installed TensorCircuit and dependency source/examples/tests"
+            ],
+            "allowed_tool_names": [
+              "exec",
+              "wait"
+            ],
+            "automated_scan_raw_rollout_sha256": "32da9e7b3eb83c2c9c80956a4e00654db228e42d4cc3f3d9eab9fc4d5124f77a",
+            "automated_scan_status": "pass",
+            "credential_or_environment_dump_scan": "no_matches_observed",
+            "cryptographically_signed_command_attestation": false,
+            "disallowed_tool_name_scan": "no_matches_observed",
+            "human_review": {
+              "decision": null,
+              "reviewed_at": null,
+              "reviewed_raw_rollout_sha256": null,
+              "reviewer_id": null,
+              "status": "none"
+            },
+            "installed_package_test_search_observed": false,
+            "network_command_scan": "no_matches_observed",
+            "protected_benchmark_artifact_scan": "no_disallowed_access_observed",
+            "review_method": "Deterministic allowlist and marker scans of recorded rollout tool-call names and inputs; this automated scan is not a human attestation and raw content is not copied.",
+            "status": "automated_scan_pass_human_review_none",
+            "tool_call_count": 28,
+            "tool_call_counts_by_name": {
+              "exec": 26,
+              "wait": 2
+            },
+            "trajectory_step_count": 35,
+            "unassessed": [
+              "pretraining contamination",
+              "packet-level network activity",
+              "subprocess or access not represented in recorded tool-call inputs",
+              "cryptographic completeness of the raw event record"
+            ]
+          },
+          "evidence_role": "model_pilot",
+          "functional_evidence": {
+            "case_digest": "427074eb20fbd3b1",
+            "case_digest_scope": "reported_16_hex_digest",
+            "evaluation_check_source": null,
+            "evaluation_checks": [],
+            "metrics": {
+              "active_cuts": 58,
+              "maximum_energy_error": 5.551e-16,
+              "maximum_gradient_error": 6.491e-06,
+              "minimum_relative_cut_gap": 5.317e-06
+            },
+            "overall_pass_marker": true,
+            "seed": 1112037,
+            "verifier_functional_passed": true,
+            "verifier_functional_return_code": 0
+          },
+          "job": {
+            "id": "37db917d-34a7-4ea8-9259-8ea63a49c61d",
+            "n_completed_trials": 1,
+            "n_errored_trials": 0,
+            "n_retries": 0,
+            "n_total_trials": 1,
+            "name": "pilot-truncated-mps-gradient-gpt56-high-001"
+          },
+          "llm_source_audit": {
+            "confidence": 0.99,
+            "exploits_evaluator_weakness": false,
+            "faithfully_implements_problem": true,
+            "hardcoded_or_hidden_answer": false,
+            "imports_other_quantum_framework": false,
+            "obvious_implementation_error": false,
+            "problem_alignment_issues": [],
+            "raw_numpy_jax_quantum_simulator_bypass": false,
+            "tampers_with_tests_or_rewards": false,
+            "uses_other_quantum_framework": false,
+            "uses_required_framework": true
+          },
+          "operator_attested": false,
+          "protocol": {
+            "audit_model": "gpt-5.6-sol",
+            "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+            "framework": "tensorcircuit",
+            "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+            "network_isolation": false,
+            "override_cpus": 8,
+            "override_memory_mb": 8192,
+            "proxy_bridge_configured": true,
+            "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+          },
+          "protocol_qualified_hardness_claim": false,
+          "scores": {
+            "compound_reward": 1.0,
+            "functional_evaluator_runtime_sec": 34.398,
+            "functional_score": 1.0,
+            "llm_audit_score": 1.0,
+            "runtime_score": 1.0,
+            "static_policy_score": 1.0
+          },
+          "static_policy": {
+            "cheating_hits": [],
+            "forbidden_imports": [],
+            "framework": "tensorcircuit",
+            "framework_score": 1.0,
+            "imports": [
+              "collections",
+              "jax",
+              "numpy",
+              "os",
+              "tensorcircuit"
+            ],
+            "line_count": 100,
+            "max_lines": 160,
+            "no_forbidden_framework_score": 1.0,
+            "no_raw_simulator_bypass_score": 1.0,
+            "no_static_cheating_score": 1.0,
+            "raw_simulator_hits": [
+              "eigh"
+            ]
+          },
+          "task_source_binding": {
+            "file_count": 14,
+            "task_checksum": "d085b5bdce1b55b8e2140fe0db88000e600ba3ca22b7475150c228ea2f80f6e5",
+            "task_source_set_sha256": "8c5404028d52b6a00d5be020b5ab9d0c52604757da49c675d0f6495ebac7a88c"
+          },
+          "trial": {
+            "finished_at": "2026-08-09T19:03:20.023450Z",
+            "id": "f99c734a-da63-4848-8f12-f28550598ea2",
+            "name": "candidate-truncated-mps-gradient__4xfxSvV",
+            "started_at": "2026-08-09T18:53:17.331815Z",
+            "task_checksum": "d085b5bdce1b55b8e2140fe0db88000e600ba3ca22b7475150c228ea2f80f6e5",
+            "task_name": "candidate-truncated-mps-gradient"
+          }
+        }
+      ],
+      "pairing_evidence": {
+        "case_digest_match": true,
+        "case_matched_expert_trial_ids": [
+          "23631296-118d-49f4-b220-94c7cbfa0bf4"
+        ],
+        "seed_match": true,
+        "task_checksum_match": true,
+        "task_matched_expert_trial_ids": [
+          "23631296-118d-49f4-b220-94c7cbfa0bf4"
+        ]
+      },
+      "problem_id": 111,
+      "slug": "truncated-mps-gradient"
+    }
+  ],
+  "claim_boundary": {
+    "admitted_model_scope": "Exactly one completed gpt-5.6-sol/high pilot each for candidates 105, 106, 107, 108, 109, 111. candidate 105 is solved_hardness_blocking; candidate 106 is solved_hardness_blocking; candidate 107 is solved_hardness_blocking; candidate 108 is solved_hardness_blocking; candidate 109 is pilot_hardness_signal; candidate 111 is solved_hardness_blocking.",
+    "evidence_tier": "exploratory_automated_scan_only",
+    "protocol_qualified_hardness_claim": false,
+    "statement": "These are sanitized records of local exploratory Harbor runs. They are bound to opaque local artifacts and automated trace scans, but have no hash-bound human trace review and are not signed raw-run attestations. They do not satisfy the precommitted multi-trial protocol needed for a model-hard benchmark claim."
+  },
+  "evidence_payload_sha256": "a5fd92c4c8cc178ca698ed7f46ed46df47ef17a833f4d55133ed781ad33e6b85",
+  "frozen_protocol_facts": {
+    "audit_model": "gpt-5.6-sol",
+    "codex_cli_version": "0.146.0",
+    "environment_adapter": "adapters.framework_docker:FrameworkDockerEnvironment",
+    "framework": "tensorcircuit",
+    "image_digest_observation": {
+      "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+      "note": "This same-tag digest is recorded in local blueprint metadata, not in the selected Harbor result records. Treat the tag as run-bound and the digest as a qualified local observation only.",
+      "selected_harbor_results_bind_digest": false,
+      "sha256": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
+      "source": "reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim/blueprint.json",
+      "source_record_sha256": "22765dfe0dd6e63ef71613eccd0258d319bde3c21431d7a180d6fc355afd4342"
+    },
+    "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "model_pilot_model": "gpt-5.6-sol",
+    "model_pilot_reasoning_effort": "high",
+    "model_pilot_solver_adapter": "adapters.codex_para:CodexPara",
+    "network_policy": {
+      "network_isolation": false,
+      "note": "Selected configs contained proxy bridge keys. Values are excluded. The command audit found no network-command matches in admitted model rollouts.",
+      "proxy_bridge_configured": true
+    },
+    "override_cpus": 8,
+    "override_memory_mb": 8192,
+    "tensorcircuit_version_observed_in_pilot_trajectories": "1.7.0.dev20260618",
+    "verifier_adapter": "adapters.codex_para_verifier:CodexParaVerifier"
+  },
+  "integrity": {
+    "builder": {
+      "path": "scripts/build_problem_discovery_evidence.py",
+      "sha256": "10aaade8f155eb60a0f15b64aa47525fae7b7563c9f1a303f015d27fba6eddbc",
+      "size_bytes": 82658
+    },
+    "schema": {
+      "path": "reports/orbit_q_problem_discovery/empirical_evidence.schema.json",
+      "sha256": "4b5ca5c43a0cb94d403811086d59e725da322e3e9b612bc51e24794aab035196",
+      "size_bytes": 27902
+    },
+    "source_binding_manifest": {
+      "path": "reports/orbit_q_problem_discovery/empirical_evidence.sources.json",
+      "sha256": "016b72c78757022254c77e0df881e061d59f733c6825fef812721b2a102af50a",
+      "size_bytes": 15868
+    }
+  },
+  "sanitization": {
+    "note": "Raw local artifacts remain untracked under .artifacts. The ledger stores repo-relative locators, sizes, hashes, exact typed metrics, and recursively sanitized facts only. Raw config content is excluded while its opaque digest is included in the snapshot.",
+    "policy": "whitelisted_fields_and_sha256_only",
+    "raw_auth_copied": false,
+    "raw_config_copied": false,
+    "raw_environment_copied": false,
+    "raw_transcript_or_rollout_copied": false
+  },
+  "schema_version": 1,
+  "snapshot_id": "orbit-q-exploratory-harbor-sha256:c27ca4e36adb9fe256cfdc7f6c5a1c6a90ceb89aede304d78b3fef92a5c2ef48",
+  "source_artifact_set_sha256": "c27ca4e36adb9fe256cfdc7f6c5a1c6a90ceb89aede304d78b3fef92a5c2ef48",
+  "source_cutoff_utc": "2026-08-09T19:03:20.023450Z"
+}

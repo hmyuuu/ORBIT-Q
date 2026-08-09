@@ -27,6 +27,27 @@ CX = np.array(
 )
 CZ = np.diag([1, 1, 1, -1]).astype(np.complex128)
 PAULI = {0: I2, 1: X, 2: Y, 3: Z}
+DEFAULT_SEED = 1042026
+
+
+def default_seed():
+    return int(
+        os.environ.get(
+            "ORBIT_Q_CANDIDATE_SEED",
+            os.environ.get("ORBIT_CUTTING_SEED", str(DEFAULT_SEED)),
+        )
+    )
+
+
+def case_digest(value):
+    encoded = json.dumps(
+        value,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        allow_nan=False,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
 
 
 def _gate(name, *qubits, theta=None):
@@ -99,7 +120,10 @@ def _fragment_means(case):
 
 
 def _signed(r, e):
-    return float(0.5 * (e[4] + e[5]) + 0.5 * sum(r[j] * (e[2 * j] - e[2 * j + 1]) for j in range(3)))
+    return float(
+        0.5 * (e[4] + e[5])
+        + 0.5 * sum(r[j] * (e[2 * j] - e[2 * j + 1]) for j in range(3))
+    )
 
 
 def _uncut(case):
@@ -119,9 +143,12 @@ def _means_and_coefficients(r, e):
             0.5 * (e[0] - e[1]),
             0.5 * (e[2] - e[3]),
             0.5 * (e[4] - e[5]),
-            0.5 * r[0], -0.5 * r[0],
-            0.5 * r[1], -0.5 * r[1],
-            0.5 * (1 + r[2]), 0.5 * (1 - r[2]),
+            0.5 * r[0],
+            -0.5 * r[0],
+            0.5 * r[1],
+            -0.5 * r[1],
+            0.5 * (1 + r[2]),
+            0.5 * (1 - r[2]),
         ]
     )
     return means, coefficients
@@ -159,7 +186,11 @@ def _random_circuit(rng, n, depth):
     gates = []
     for layer in range(depth):
         for q in range(n):
-            gates.append(_gate(str(rng.choice(["rx", "ry", "rz"])), q, theta=rng.uniform(-2.5, 2.5)))
+            gates.append(
+                _gate(
+                    str(rng.choice(["rx", "ry", "rz"])), q, theta=rng.uniform(-2.5, 2.5)
+                )
+            )
         for q in range(layer % 2, n - 1, 2):
             gates.append(_gate(str(rng.choice(["cx", "cz"])), q, q + 1))
     return gates
@@ -171,7 +202,10 @@ def make_cases(seed, count=8):
     for index in range(count):
         nl, nr = int(rng.integers(3, 5)), int(rng.integers(3, 5))
         left = _random_circuit(rng, nl, 3 + index % 2)
-        left += [_gate("cx", nl - 2, nl - 1), _gate("ry", nl - 1, theta=rng.uniform(-1.8, 1.8))]
+        left += [
+            _gate("cx", nl - 2, nl - 1),
+            _gate("ry", nl - 1, theta=rng.uniform(-1.8, 1.8)),
+        ]
         right = [_gate("cz", 0, 1), _gate("rx", 0, theta=rng.uniform(-1.8, 1.8))]
         right += _random_circuit(rng, nr, 3)
         ps = [int(rng.integers(1, 4)) for _ in range(nr)]
@@ -192,7 +226,7 @@ def make_cases(seed, count=8):
 
 def build_config(seed):
     cases = make_cases(seed)
-    digest = hashlib.sha256(json.dumps(cases, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    digest = case_digest(cases)
     return {"cases": cases, "case_digest": digest, "component_order": list(CHANNELS)}
 
 
@@ -221,6 +255,21 @@ def _parse(result, key, dtype):
 
 def evaluate(module_name, seed):
     config = build_config(seed)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": seed,
+                    "case_digest": config["case_digest"],
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
+    os.environ.pop("ORBIT_CUTTING_SEED", None)
     oracle = [_oracle(case) for case in config["cases"]]
     if not all(abs(x["exact"] - x["uncut"]) < 2e-12 for x in oracle):
         raise AssertionError("internal cutting identity canary failed")
@@ -236,19 +285,27 @@ def evaluate(module_name, seed):
     count = len(config["cases"])
     vector_shape, alloc_shape = (count,), (count, len(CHANNELS))
     shapes = (
-        recon.shape == vector_shape and predicted.shape == vector_shape and exact.shape == vector_shape
-        and alloc.shape == alloc_shape and bloch.shape == (count, 3) and responses.shape == (count, 6)
+        recon.shape == vector_shape
+        and predicted.shape == vector_shape
+        and exact.shape == vector_shape
+        and alloc.shape == alloc_shape
+        and bloch.shape == (count, 3)
+        and responses.shape == (count, 6)
     )
     expected_bloch = np.array([x["r"] for x in oracle])
     expected_responses = np.array([x["e"] for x in oracle])
     expected_exact = np.array([x["uncut"] for x in oracle])
     allocation_valid = alloc.shape == alloc_shape and all(
-        np.all(alloc[j] >= case["min_shots"]) and int(alloc[j].sum()) == case["total_shots"]
+        np.all(alloc[j] >= case["min_shots"])
+        and int(alloc[j].sum()) == case["total_shots"]
         for j, case in enumerate(config["cases"])
     )
     if allocation_valid:
         submitted_variance = np.array(
-            [_predicted_variance(x["means"], x["coefficients"], alloc[j]) for j, x in enumerate(oracle)]
+            [
+                _predicted_variance(x["means"], x["coefficients"], alloc[j])
+                for j, x in enumerate(oracle)
+            ]
         )
         optimal_variance = np.array([x["predicted"] for x in oracle])
         expected_recon = np.array(
@@ -263,32 +320,44 @@ def evaluate(module_name, seed):
         expected_recon = np.full(count, np.nan)
     criteria = {
         "all output shapes": shapes,
-        "outputs finite": bool(shapes and all(np.all(np.isfinite(x)) for x in (recon, predicted, exact, bloch, responses))),
+        "outputs finite": bool(
+            shapes
+            and all(
+                np.all(np.isfinite(x))
+                for x in (recon, predicted, exact, bloch, responses)
+            )
+        ),
         "TensorCircuit fragment means match oracle": bool(
-            bloch.shape == (count, 3) and responses.shape == (count, 6)
+            bloch.shape == (count, 3)
+            and responses.shape == (count, 6)
             and np.allclose(bloch, expected_bloch, atol=2e-6, rtol=2e-6)
             and np.allclose(responses, expected_responses, atol=2e-6, rtol=2e-6)
         ),
         "signed exact reconstruction matches uncut oracle": bool(
-            exact.shape == vector_shape and np.allclose(exact, expected_exact, atol=3e-6, rtol=3e-6)
+            exact.shape == vector_shape
+            and np.allclose(exact, expected_exact, atol=3e-6, rtol=3e-6)
         ),
         "allocation obeys budget and minimum": allocation_valid,
         "allocation is variance-aware": bool(
-            allocation_valid and np.all(submitted_variance <= optimal_variance * 1.015 + 1e-15)
+            allocation_valid
+            and np.all(submitted_variance <= optimal_variance * 1.015 + 1e-15)
         ),
         "predicted variance is correct": bool(
-            predicted.shape == vector_shape and np.allclose(predicted, submitted_variance, atol=2e-10, rtol=2e-5)
+            predicted.shape == vector_shape
+            and np.allclose(predicted, submitted_variance, atol=2e-10, rtol=2e-5)
         ),
         "seeded finite-shot reconstruction is reproducible": bool(
-            recon.shape == vector_shape and np.allclose(recon, expected_recon, atol=3e-9, rtol=3e-8)
+            recon.shape == vector_shape
+            and np.allclose(recon, expected_recon, atol=3e-9, rtol=3e-8)
         ),
-        "runtime below 180 seconds": elapsed < 180,
     }
     print("Problem 104 evaluation")
     print(f"Solution module: {module_name}")
     print(f"Case seed: {seed}; case digest: {config['case_digest'][:16]}")
     print(f"End-to-end solution time: {elapsed:.2f}s")
-    print(f"Cases: {count}; total fragment shot budget: {sum(c['total_shots'] for c in config['cases'])}")
+    print(
+        f"Cases: {count}; total fragment shot budget: {sum(c['total_shots'] for c in config['cases'])}"
+    )
     print("Passing criteria:")
     for name, passed in criteria.items():
         print(f"  {name}: {'PASS' if passed else 'FAIL'}")
@@ -299,9 +368,13 @@ def evaluate(module_name, seed):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--solution", default="solution_104")
-    parser.add_argument("--seed", type=int, default=int(os.environ.get("ORBIT_CUTTING_SEED", "1042026")))
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=default_seed(),
+    )
     args = parser.parse_args()
-    evaluate(args.solution, args.seed)
+    raise SystemExit(0 if evaluate(args.solution, args.seed) else 1)
 
 
 if __name__ == "__main__":

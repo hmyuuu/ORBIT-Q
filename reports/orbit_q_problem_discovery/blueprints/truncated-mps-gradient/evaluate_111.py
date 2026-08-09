@@ -15,6 +15,16 @@ import numpy as np
 X = np.array([[0, 1], [1, 0]], dtype=np.complex128)
 Z = np.diag([1.0, -1.0]).astype(np.complex128)
 I4 = np.eye(4, dtype=np.complex128)
+DEFAULT_SEED = 1112026
+
+
+def default_seed():
+    return int(
+        os.environ.get(
+            "ORBIT_Q_CANDIDATE_SEED",
+            os.environ.get("ORBIT_MPS_SEED", str(DEFAULT_SEED)),
+        )
+    )
 
 
 def _make_cases(seed, count=2):
@@ -268,6 +278,21 @@ def _dense_canary():
 
 def evaluate(module_name, seed):
     config = build_config(seed)
+    print(
+        json.dumps(
+            {
+                "orbit_q_case_identity": {
+                    "protocol_seed": seed,
+                    "case_digest": config["case_digest"],
+                }
+            },
+            sort_keys=True,
+            separators=(",", ":"),
+        ),
+        flush=True,
+    )
+    os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
+    os.environ.pop("ORBIT_MPS_SEED", None)
     if not _dense_canary():
         raise AssertionError("independent TEBD dense canary failed")
     expected = [_oracle(case) for case in config["cases"]]
@@ -298,7 +323,6 @@ def evaluate(module_name, seed):
             case["n_qubits"] for case in config["cases"]
         )
         >= 34,
-        "runtime below 300 seconds": elapsed < 300,
     }
     energy_error = (
         float(np.max(np.abs(energies - expected_energy)))
@@ -333,12 +357,7 @@ def main():
     parser.add_argument(
         "--seed",
         type=int,
-        default=int(
-            os.environ.get(
-                "ORBIT_Q_CANDIDATE_SEED",
-                os.environ.get("ORBIT_MPS_SEED", "1112026"),
-            )
-        ),
+        default=default_seed(),
     )
     args = parser.parse_args()
     raise SystemExit(0 if evaluate(args.solution, args.seed) else 1)

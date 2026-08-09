@@ -10,5 +10,15 @@
   "target_framework": "tensorcircuit",
   "expert_runtime_limit_sec": 180,
   "submission_runtime_limit_sec": 300,
-  "status": "prototype"
+  "status": "prototype",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "local_default": 1052026,
+    "base_seed_mapping": "The single base seed initializes the NumPy Generator used for the hidden parameter perturbation; the probe schedule remains fixed.",
+    "determinism_scope": "The exact public inverse-problem config is deterministic under the pinned runtime and is identified by the evaluator-emitted case_digest; the hidden parameter vector is not hashed or exposed.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, and ndarray/scalar normalization over the exact public config; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; QR-derived public observations can drift across numerical runtimes, so trial manifests must bind the image/runtime and case_digest rather than seed alone."
+  }
 }

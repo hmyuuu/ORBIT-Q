@@ -24,6 +24,17 @@
   "verification_explanation": "The evaluator never imports TensorCircuit. It independently propagates binary symplectic stabilizers and Pauli faults, computes target-state coset distance, reconstructs every candidate syndrome, and exhaustively proves the lexicographic optimum.",
   "relevant_experience": "The prototype is based on CSS logical-zero preparation, Clifford fault propagation, and stabilizer-check verification under a fully enumerated encoder-fault model.",
   "status": "prototype_untested_by_model",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_CSS_SEED",
+    "local_default": 1062026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits the ordered 7- and 15-qubit instances.",
+    "determinism_scope": "Exact public instance bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over the ordered exact public instances; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
   "framework": {
     "required": "tensorcircuit",
     "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
@@ -38,7 +49,8 @@
     "effective_line_limit": 160,
     "runtime_limit_seconds": 180,
     "deterministic": true,
-    "hidden_case_source": "runtime seed ORBIT_CSS_SEED or evaluator --seed",
+    "hidden_case_source": "explicit evaluator --seed, otherwise verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_CSS_SEED, or local default 1062026",
+    "determinism_scope": "one base seed drives the ordered 7- and 15-qubit instances; trial evidence binds the pinned image and evaluator-emitted case_digest",
     "anti_hardcoding": "The seed changes the 7- and 15-qubit permutations, generator bases, candidate stabilizers, candidate identifiers, and pool order. The submitted encoder determines the fault ensemble checked by the independent oracle.",
     "oracle": "Independent GF(2) row-space checks, an exact 2^15-amplitude sign canary, binary symplectic Clifford propagation, target-state stabilizer coset distance, and exhaustive set-cover optimization",
     "pass_signal": "Overall: PASS"

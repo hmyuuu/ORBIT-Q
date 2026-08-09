@@ -15,6 +15,17 @@
   "tags": ["circuit-cutting", "finite-shot", "quasiprobability", "variance-allocation"],
   "difficulty_explanation": "The solution must combine signed fragment reconstruction, TensorCircuit boundary-state experiments, derivative-aware integer shot allocation, and canonical seeded sampling.",
   "status": "prototype_untested_by_model",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seed",
+    "legacy_env": "ORBIT_CUTTING_SEED",
+    "local_default": 1042026,
+    "base_seed_mapping": "The single base seed initializes one NumPy Generator stream that emits eight ordered cases and each case's canonical sample_seed.",
+    "determinism_scope": "Exact public case and sampling bytes are deterministic under the pinned runtime and are identified by the evaluator-emitted case_digest.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys and compact separators over the ordered exact public cases, including canonical sample seeds; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
   "framework": {
     "required": "tensorcircuit",
     "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
@@ -26,7 +37,8 @@
     "effective_line_limit": 160,
     "runtime_limit_seconds": 180,
     "deterministic": true,
-    "hidden_case_source": "runtime seed ORBIT_CUTTING_SEED or evaluator --seed",
+    "hidden_case_source": "explicit evaluator --seed, otherwise verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_CUTTING_SEED, or local default 1042026",
+    "determinism_scope": "one base seed drives the ordered eight-case generator and its per-case sample seeds; trial evidence binds the pinned image and evaluator-emitted case_digest",
     "anti_hardcoding": "The seed changes both fragments, observables, shot budgets, and sampling streams; oracle values are not passed to the solution.",
     "oracle": "Independent complex128 NumPy fragments plus an uncut statevector identity canary",
     "pass_signal": "Overall: PASS"

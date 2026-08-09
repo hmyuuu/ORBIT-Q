@@ -15,6 +15,16 @@
   "difficulty_explanation": "The solver must reconcile a precise SU(2) convention, a reflection gauge, complex parity-polynomial constraints, and a non-convex phase-factor inverse problem; polynomial fitting alone does not produce the required circuit artifact.",
   "status": "expert_validated_no_model_trial",
   "claim_boundary": "No GPT-5.6-sol trial has been run; difficulty remains a hypothesis.",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seeds",
+    "local_default_schedule": [102031, 102043, 102059],
+    "base_seed_mapping": "A verifier base seed b expands to the ordered three-instance schedule (b, b + 12, b + 28). An explicit --seeds list overrides that schedule.",
+    "determinism_scope": "The seed schedule mapping is runtime-independent, but exact generated public config bytes are identified by the evaluator-emitted case_digest under the pinned runtime.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, and full finite numeric values over the ordered exact public configs; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
   "scientific_contract": {
     "artifact": "reflection-symmetric QSP phase vector",
     "degree": 8,
@@ -37,8 +47,8 @@
   ],
   "independent_oracle": "NumPy complex 2x2 products plus Chebyshev and QSP identities; no TensorCircuit import",
   "hardcoding_resistance": [
-    "three default generated targets",
-    "arbitrary --seeds evaluation",
+    "three generated targets from each verifier-only base seed",
+    "arbitrary explicit --seeds evaluation",
     "only phase artifacts accepted",
     "held-out response grid",
     "exact result-key restriction"
