@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "problem_id": 111,
+  "numeric_id": 111,
+  "slug": "truncated-mps-gradient",
+  "candidate_id": "f51_truncated_mps_autodiff--representation_stress--forward",
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "mapping_decision": "Do not remap this reserve to an existing family. f27 is a two-dimensional PEPS boundary-observable contract, while f50 is a contraction-planning and selected-amplitude contract; neither covers differentiation through a prescribed fixed-cap MPS trajectory.",
+    "nearest_catalog_families": [
+      "f27_peps_boundary_observable",
+      "f50_memory_constrained_contraction"
+    ],
+    "source_evidence": [
+      {
+        "id": "differentiable-programming-tensor-networks",
+        "title": "Differentiable Programming Tensor Networks",
+        "url": "https://arxiv.org/abs/1903.09650",
+        "role": "scientific basis for automatic differentiation through tensor-network algorithms and decompositions"
+      },
+      {
+        "id": "tebd-reduced-rank-svd",
+        "title": "Improved scaling of Time-Evolving Block-Decimation algorithm through Reduced-Rank Randomized Singular Value Decomposition",
+        "url": "https://arxiv.org/abs/1504.00992",
+        "role": "scientific basis for SVD-truncated TEBD trajectories"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for TensorCircuit tensor-network simulation and automatic differentiation"
+      },
+      {
+        "id": "tensorcircuit-mps-docs",
+        "title": "TensorCircuit Advanced Usage: MPS Simulator",
+        "url": "https://tensorcircuit.readthedocs.io/en/stable/advance.html#mps-simulator",
+        "role": "official API evidence for MPSCircuit and max_singular_values truncation"
+      }
+    ]
+  },
+  "title": "Differentiable truncated-MPS sweep",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_111.py",
+  "expert_solution": "expert/solution_111.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 10,
+  "tags": [
+    "matrix-product-state",
+    "truncated-tebd",
+    "automatic-differentiation",
+    "svd-gradient",
+    "representation-stress",
+    "tensor-network"
+  ],
+  "difficulty_explanation": "The solver must reproduce a direction-sensitive canonical-center sweep, hard SVD truncation after every two-site gate, normalized Pauli contractions, reverse-mode differentiation through retained SVD factors, and exact final bond certificates on 36 qubits. A dense statevector requires roughly one TiB in complex128 per state and is outside the benchmark envelope.",
+  "solution_explanation": "The expert builds the prescribed state with TensorCircuit MPSCircuit, explicitly controls the orthogonality center of every adjacent gate, uses the pinned JAX retained-SVD derivative through tc.backend.value_and_grad, normalizes the final MPS, and queries TensorCircuit Pauli expectations and public bond dimensions.",
+  "verification_explanation": "The evaluator does not import TensorCircuit. It independently implements complex128 canonical MPS center motion, adjacent-gate TEBD, fixed-cap NumPy SVD truncation, normalized Pauli transfer contractions, and central finite differences; a separate four-qubit dense canary validates gate ordering and Pauli conventions.",
+  "relevant_experience": "This prototype combines TEBD gauge management, capped-rank differentiability, truncation-spectrum diagnostics, reverse-mode autodiff, and representation-scale anti-statevector constraints.",
+  "status": "reserve_prototype_untested_by_model",
+  "framework": {
+    "required": "tensorcircuit",
+    "tested_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "tested_numpy": "2.2.6",
+    "tested_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "MPSCircuit",
+      "MPSCircuit.position",
+      "MPSCircuit.apply_adjacent_double_gate",
+      "MPSCircuit.expectation",
+      "MPSCircuit.get_bond_dimensions",
+      "backend.value_and_grad"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_111.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "determinism_scope": "exact case bytes are deterministic only under the pinned image/runtime and must be bound by case_digest; a seed alone is insufficient across NumPy versions",
+    "case_seed_source": "verifier-only ORBIT_Q_CANDIDATE_SEED, legacy ORBIT_MPS_SEED fallback, or evaluator --seed",
+    "hidden_holdout_status": "pending; seeds_completed are public validation canaries and are not a private trial holdout",
+    "anti_hardcoding": "The seed changes every rotation and entangler coefficient, all variational parameters, Pauli energy terms, coefficients, and nonces; exact energies, gradients, spectra, and bond profiles are never supplied.",
+    "oracle": "Independent complex128 canonical TEBD plus retained-rank central finite differences and a four-qubit dense gate-order canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "difficulty_levers": [
+    "36-qubit evaluation cases make dense complex128 statevectors exceed the task memory envelope",
+    "alternating forward RXX and backward RZZ sweeps make center direction and gate order operational",
+    "hard rank-8 and rank-10 caps are active dozens of times per seed",
+    "the scored gradient is the derivative of the approximate retained-SVD algorithm, not the exact untruncated circuit",
+    "random long-range Pauli products require correct normalization and canonical gauge handling",
+    "exact final bond profiles expose implementations that silently ignore truncation"
+  ],
+  "claim_boundary": "This is a deterministic synthetic fixed-cap MPS differentiation benchmark. It measures the declared approximate TEBD algorithm, not convergence to exact many-body dynamics. No solver-model trial has been run and no model-hardness claim is made.",
+  "pinned_image_validation": {
+    "seeds_completed": [
+      1112026,
+      1112037,
+      1112111,
+      9876543
+    ],
+    "additional_seeds_pending": [],
+    "all_completed_passed": true,
+    "expert_runtime_range_sec": [
+      33.916,
+      65.039
+    ],
+    "maximum_energy_error": 2.276e-15,
+    "maximum_gradient_error": 2.198e-5,
+    "maximum_finite_difference_step_drift": 2.549e-10,
+    "minimum_active_cut_gap": 2.869e-6,
+    "active_cuts_per_seed": 58,
+    "static_policy_effective_lines": 72,
+    "static_policy_passed": true,
+    "ruff_passed": true,
+    "materialized_oracle_layout_passed": true,
+    "runner_single_task_dry_run_passed": true
+  },
+  "admission_blockers": [
+    "Promote this reserve through a catalog/shortlist revision and human review, or add an equivalently hash-bound reserve-review path; the current authorization pipeline accepts only the frozen ten-candidate shortlist.",
+    "Freeze and independently record a private holdout seed schedule plus each pinned-image case_digest before any model-hardness trial.",
+    "Prequalify every holdout seed for the declared cut-gap and expert-gradient margins; arbitrary generator seeds are not admissible.",
+    "Complete the authenticated full Harbor expert verifier and audit under the frozen trial image and resource envelope."
+  ],
+  "exploitability_risks": [
+    "The final bond profile saturates to a seed-independent pattern determined by n_qubits and chi in the validated regime. It is useful for catching accidental omission of truncation but is not independent anti-hardcoding evidence; energies and gradients carry the substantive check.",
+    "The four completed validation seeds and the evaluator source are tracked public canaries. A model-hardness trial needs a hash-bound private holdout schedule and must not silently reuse the public default seed."
+  ],
+  "numerical_statistical_risks": [
+    "A singular-value crossing at the retained/discarded boundary makes the capped-rank derivative nondifferentiable; only prequalified seeds that pass the evaluator's relative cut-gap margin are admissible.",
+    "SVD vectors have gauge freedom, but the scored normalized energy and its gradient are gauge invariant away from degeneracies.",
+    "Complex128 central differences with a validated 2e-5 step had at most 2.549e-10 step drift, but the pinned TensorCircuit AD-to-oracle discrepancy reached 2.198e-5; this leaves only 1.36x absolute-tolerance headroom and requires per-seed qualification.",
+    "The benchmark intentionally scores the fixed-rank approximate dynamics and makes no claim that chi=8 or chi=10 is physically converged."
+  ],
+  "api_risks": [
+    "MPSCircuit.apply_adjacent_double_gate must continue honoring center_position and max_singular_values exactly; a change would alter the approximate trajectory.",
+    "The pinned JAX backend uses an autodiff-aware SVD implementation; upgrades can change retained-SVD derivative behavior and require revalidation.",
+    "MPSCircuit.get_bond_dimensions includes both boundary dimensions in the pinned release, so the expert explicitly returns the interior slice [1:-1].",
+    "NumPy Generator.uniform changed outputs by a few ulps between host NumPy 2.4.4 and pinned NumPy 2.2.6, producing different case_digest values for the same seed; manifests must bind the pinned image, NumPy version, and exact case_digest rather than the seed alone.",
+    "TensorCircuit backend and dtype selection are process-global; the expert explicitly selects JAX and complex128.",
+    "MPSCircuit expectation moves the orthogonality center as an implementation detail; normalized physical values should remain invariant but must be canaried after upgrades."
+  ],
+  "commands": {
+    "default": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/truncated-mps-gradient:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_111.py --solution solution_111'",
+    "alternate_seed": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/truncated-mps-gradient:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_111.py --solution solution_111 --seed 1112037'"
+  }
+}
