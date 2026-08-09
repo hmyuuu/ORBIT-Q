@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "problem_id": 110,
+  "candidate_id": "f04_nonmarkovian_memory_identification--benchmark--inverse",
+  "slug": "nonmarkovian-channel-inverse",
+  "title": "Causal-break non-Markovian channel identification",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_110.py",
+  "expert_solution": "expert/solution_110.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 14,
+  "tags": [
+    "open-quantum-systems",
+    "non-markovian",
+    "process-tensor",
+    "channel-identification"
+  ],
+  "difficulty_explanation": "System-only causal breaks do not erase the retained memory. From system Pauli readouts alone, the inverse must distinguish a complex exchange phase, coherent ZZ and memory phases, and finite-temperature damping, then predict unseen intervention sequences.",
+  "solution_explanation": "The expert builds the retained system-memory evolution with TensorCircuit DMCircuit custom collision gates, reset channels, and generalized amplitude-damping channels, then performs deterministic bounded multi-start nonlinear least squares.",
+  "verification_explanation": "A TensorCircuit-free NumPy density-matrix oracle independently composes unitary conjugations and Kraus maps, hides seeded parameter instances, and checks both parameter recovery and unseen causal-break trajectories.",
+  "conditioning_notes": "The exchange-phase interval is narrower than one period and all hidden parameters are interior. Known phase-referenced memory preparations and diverse X/Y system controls and readouts remove the exchange-phase gauge. Only system observables are exposed; causal breaks make retained-memory effects identifiable rather than reducible to one fitted system channel.",
+  "api_risks": "Requires TensorCircuit-NG DMCircuit.unitary, DMCircuit.reset, DMCircuit.amplitudedamping(gamma, p), and append-after-densitymatrix(reuse=False) behavior in the pinned image. The expert requests complex128 and uses finite-difference steps larger than contraction noise.",
+  "status": "prototype_untested_by_model"
+}
