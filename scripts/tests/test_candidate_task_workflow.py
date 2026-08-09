@@ -265,6 +265,31 @@ def test_runner_accepts_explicit_resource_envelope_and_rejects_nonpositive_value
             runner.build_harbor_command(invalid)
 
 
+def test_runner_passes_candidate_seed_only_to_verifier(tmp_path: Path) -> None:
+    task_dir = materialize(tmp_path)
+    args = runner.parse_args(
+        runner_args(task_dir, tmp_path, "--candidate-seed", "730019")
+    )
+    command, _ = runner.build_harbor_command(args)
+
+    seed_binding = "ORBIT_Q_CANDIDATE_SEED=730019"
+    assert seed_binding in command
+    seed_index = command.index(seed_binding)
+    assert command[seed_index - 1] == "--verifier-env"
+    assert seed_binding not in [
+        command[index + 1]
+        for index, item in enumerate(command[:-1])
+        if item == "--agent-env"
+    ]
+
+
+def test_runner_rejects_negative_candidate_seed(tmp_path: Path) -> None:
+    task_dir = materialize(tmp_path)
+    args = runner.parse_args(runner_args(task_dir, tmp_path, "--candidate-seed", "-1"))
+    with pytest.raises(materializer.CandidateTaskError, match="non-negative integer"):
+        runner.build_harbor_command(args)
+
+
 def test_runner_bridges_credential_free_loopback_proxy_to_agent_and_verifier(
     tmp_path: Path, monkeypatch
 ) -> None:

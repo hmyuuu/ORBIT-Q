@@ -176,6 +176,10 @@ def build_harbor_command(args: argparse.Namespace) -> tuple[list[str], Path]:
         raise CandidateTaskError("--override-cpus must be a positive integer")
     if isinstance(args.override_memory_mb, bool) or args.override_memory_mb <= 0:
         raise CandidateTaskError("--override-memory-mb must be a positive integer")
+    if args.candidate_seed is not None and (
+        isinstance(args.candidate_seed, bool) or args.candidate_seed < 0
+    ):
+        raise CandidateTaskError("--candidate-seed must be a non-negative integer")
     if not JOB_NAME_RE.fullmatch(args.job_name):
         raise CandidateTaskError(
             "--job-name may contain only letters, digits, dots, underscores, and hyphens"
@@ -215,6 +219,13 @@ def build_harbor_command(args: argparse.Namespace) -> tuple[list[str], Path]:
             "REQUIRED_QUANTUM_FRAMEWORK=tensorcircuit",
         ]
     )
+    if args.candidate_seed is not None:
+        cmd.extend(
+            [
+                "--verifier-env",
+                f"ORBIT_Q_CANDIDATE_SEED={args.candidate_seed}",
+            ]
+        )
     if args.force_auth_json:
         if not args.expert_only and args.solver_agent != "codex-para":
             raise CandidateTaskError(
@@ -331,6 +342,15 @@ def parse_args(argv: Sequence[str] | None = None) -> argparse.Namespace:
         help="Harbor task memory override in MiB (default: 8192).",
     )
     parser.add_argument(
+        "--candidate-seed",
+        type=int,
+        default=None,
+        help=(
+            "Optional hidden candidate seed passed only to the verifier as "
+            "ORBIT_Q_CANDIDATE_SEED; it is never placed in the solver environment."
+        ),
+    )
+    parser.add_argument(
         "--bridge-loopback-proxy",
         action="store_true",
         help=(
@@ -382,6 +402,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     print(
         "Resource envelope: "
         f"{args.override_cpus} CPUs, {args.override_memory_mb} MiB memory"
+    )
+    print(
+        "Candidate verifier seed: "
+        + (str(args.candidate_seed) if args.candidate_seed is not None else "default")
     )
     print(
         "Loopback proxy bridge: "

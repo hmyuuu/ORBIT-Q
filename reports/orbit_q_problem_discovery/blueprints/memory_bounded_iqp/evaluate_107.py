@@ -237,7 +237,12 @@ def main():
     parser.add_argument(
         "--seed",
         type=int,
-        default=int(os.environ.get("ORBIT_CONTRACTION_SEED", "1072026")),
+        default=int(
+            os.environ.get(
+                "ORBIT_Q_CANDIDATE_SEED",
+                os.environ.get("ORBIT_CONTRACTION_SEED", "1072026"),
+            )
+        ),
     )
     args = parser.parse_args()
     raise SystemExit(0 if evaluate(args.solution, args.seed) else 1)

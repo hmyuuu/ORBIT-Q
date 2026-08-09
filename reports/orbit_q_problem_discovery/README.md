@@ -160,6 +160,28 @@ python3 scripts/run_problem_discovery.py hardness-status \
   --manifest-hash MANIFEST_HASH
 ```
 
+Materialized prototypes are executed through the separate candidate-only
+runner. It accepts exactly one explicit staged task, always requests one
+Harbor trial, and is a dry run unless `--execute` is supplied. Verify the
+packaged expert before invoking a solver:
+
+```bash
+python3 scripts/run_harbor_candidate.py \
+  --task-dir .artifacts/problem-discovery/candidate-tasks/candidate-SLUG \
+  --model gpt-5.6-sol \
+  --audit-model gpt-5.6-sol \
+  --expert-only \
+  --force-auth-json \
+  --bridge-loopback-proxy
+```
+
+For frozen repeated trials, `--candidate-seed INTEGER` is passed only to the
+verifier as `ORBIT_Q_CANDIDATE_SEED`; it is never added to the solver
+environment. Candidate evaluators must explicitly consume that variable, and
+the precommitted seed schedule must be expert-prequalified before a real model
+run. A seed that violates a numerical admission margin is rejected rather than
+counted as model failure.
+
 ## Repository boundary
 
 Discovery records stay under `reports/orbit_q_problem_discovery/`. Raw search
