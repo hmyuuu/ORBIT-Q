@@ -158,7 +158,83 @@
         "execution_authorized": false
       },
       "entry_hash": "8be84d9f43834208cae5d4c8fbb1903defd503991668416f45437e1c51a867aa"
+    },
+    {
+      "candidate_id": "r120_flagged_css_gadget_synthesis--post_shortlist_reserve--robust_fault_tolerant_implementation",
+      "slug": "robust-flagged-css-gadget",
+      "problem_id": 120,
+      "lifecycle_status": "design_only",
+      "blueprint_path": "blueprints/robust-flagged-css-gadget",
+      "artifacts": {
+        "blueprint_metadata": {
+          "path": "blueprint.json",
+          "sha256": "fc4f3589c9b30518813276d02adca4649c61ef90e22bb8a4fd36f5f9b61d127b"
+        },
+        "instruction": {
+          "path": "instruction.md",
+          "sha256": "57375ff067d9d92f25dd243aef6171fcd4fbf42c156b25b3b9742ab1f351dee8"
+        },
+        "evaluator": {
+          "path": "evaluate_120.py",
+          "sha256": "ce2ce2626cb735cd4aeefadf5daa4415e603b8a6795ea1e971c42c0b20f741ff"
+        },
+        "expert_solution": {
+          "path": "expert/solution_120.py",
+          "sha256": "2a21f737d343e22c86e5dedd5660225c6a5165c16d407690a80da76fc7a6010c"
+        }
+      },
+      "blueprint_bundle_sha256": "e2f36a0620ad275b5187c64d9441ad8989f7c82b099aebd95a9b9db222747c39",
+      "audit_status": {
+        "classification": "design_only",
+        "scientific_design_review": "completed_with_blockers",
+        "local_oracle_status": "validated_nonbinding",
+        "tensorcircuit_expert_status": "not_executed",
+        "pinned_image_status": "not_executed",
+        "harbor_status": "not_executed",
+        "solver_model_status": "not_executed",
+        "hardness_status": "no_claim",
+        "execution_authorized": false
+      },
+      "entry_hash": "6577a09a9329d1abf092e92a14f7eea941e8b32880d4b5f63f32b25aa5c141e8"
+    },
+    {
+      "candidate_id": "r122_nuisance_projected_fgs_experiment_portfolio--post_shortlist_reserve--robust_integer_design",
+      "slug": "nuisance-projected-fgs-portfolio",
+      "problem_id": 122,
+      "lifecycle_status": "design_only",
+      "blueprint_path": "blueprints/nuisance-projected-fgs-portfolio",
+      "artifacts": {
+        "blueprint_metadata": {
+          "path": "blueprint.json",
+          "sha256": "1b7cd6b48aa42abcd398cbc62d9629717b033dbc8d7a3c9d9a4c6956b46ce8c7"
+        },
+        "instruction": {
+          "path": "instruction.md",
+          "sha256": "8eeec0f411e710f062aae987c5b60ffd4d734be471ff3aec73cbb09154c376a6"
+        },
+        "evaluator": {
+          "path": "evaluate_122.py",
+          "sha256": "396d86a3606298d6ad84e272377232a5be9b7b022ffe6d85c73a6fee37bb7edf"
+        },
+        "expert_solution": {
+          "path": "expert/solution_122.py",
+          "sha256": "2b3c75a3f34f3c7ea976e50a1ba2cef134561ebbe07634a47d37431ce517bc1f"
+        }
+      },
+      "blueprint_bundle_sha256": "16d6eaccc1b6405ee9f96ddb809fff96579270a722d4a4a1e1e45a2f1bf2614a",
+      "audit_status": {
+        "classification": "design_only",
+        "scientific_design_review": "completed_with_blockers",
+        "local_oracle_status": "validated_nonbinding",
+        "tensorcircuit_expert_status": "not_executed",
+        "pinned_image_status": "not_executed",
+        "harbor_status": "not_executed",
+        "solver_model_status": "not_executed",
+        "hardness_status": "no_claim",
+        "execution_authorized": false
+      },
+      "entry_hash": "b14847db6a3c649f472b0e09e64a040919abcf22c5fae3b2abe1a9b45047baf0"
     }
   ],
-  "registry_hash": "b022ad6ac4de3b8469d0ffb3e650277a470fd1b42c64b25494839c56cd534599"
+  "registry_hash": "00e33a26f6ab1d67f568deb4ec049b2cee31de1c5b3bde6bb4b44d5b08121b2c"
 }

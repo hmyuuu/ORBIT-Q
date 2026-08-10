@@ -401,3 +401,85 @@ candidate 109 has only one historical exploratory failure signal. The next
 scientific action is therefore human review of candidate 101's exact contract
 and sealed expert-only plan. No solver trial is authorized by this checkpoint,
 and any eventual benchmark run must execute only the selected candidate task.
+
+## Phase 9 — Synthesis-first candidate selection
+
+The next discovery cycle compared three constructive directions rather than
+adding another direct diagnostic: a flagged CSS gadget and recovery synthesizer,
+a verifier-executed batched-amplitude contraction compiler, and a
+nuisance-projected fermionic-Gaussian experiment portfolio. All three can make
+the returned artifact operationally relevant, but they have different current
+risks. The contraction compiler offers the strongest mechanical adherence
+check because the verifier itself executes constant-free bytecode, yet its
+64-qubit TensorCircuit leaf stability, slicing, and resource margins are
+unmeasured. The fermionic portfolio is scientifically distinct from QFIM and
+GRAPE, but its proposed 8,208 Gaussian evolutions, integer repair, and isolated
+hidden-design protocol add several feasibility dependencies at once.
+
+Candidate 120, robust flagged CSS verification-and-recovery gadget synthesis,
+was selected for the primary prototype. It extends the frozen corpus's
+top-ranked fault-tolerant CSS synthesis gap and directly addresses the weakness
+of solved control 106: the solver must return actual measurement-gadget gate
+orders, flag placements, calibrated entangler variants, and a complete
+outcome-conditioned recovery table. The independent verifier can replay the
+submitted circuit under every declared Pauli fault and evaluate coherent-noise
+scenarios, so no solver-declared diagnostic or fidelity is trusted. The output
+artifact therefore changes both fault tolerance and robust fidelity.
+
+The scientific mechanism is source-grounded. Peham et al. describe automated
+fault-tolerant CSS state-preparation and verification synthesis
+(https://arxiv.org/abs/2408.11894). Schmid et al. treat deterministic
+verification/correction synthesis and hook-fault flags as a global design
+problem (https://arxiv.org/abs/2501.05527). Chamberland and Beverland establish
+the flag-circuit principle for arbitrary-distance stabilizer codes
+(https://arxiv.org/abs/1708.02246). These sources motivate the contract; they do
+not establish GPT-5.6 hardness.
+
+The prototype remains `design_only` and **HOLD**. Its largest uncertainties are
+whether a genuinely TensorCircuit-central expert can couple GF(2) fault
+partitioning with coherent circuit evaluation in at most 160 effective lines,
+whether targeted one-edit gadget mutants have sufficient numerical separation,
+and whether pinned expert runtime stays below 180 seconds. The contraction
+compiler and fermionic portfolio remain parallel design-only backups. No
+Docker, Harbor, solver, audit model, private seed, or canonical task is
+authorized by this phase.
+
+The parallel fermionic-Gaussian portfolio prototype became Problem 122. Its
+independent NumPy Bogoliubov-isometry evaluator, dense Fock canary, finite-
+difference check, and semantic FGSSimulator shim passed on four selected public
+development seeds. The 138-effective-line expert passed the static policy, and
+ten complete scientific or schema mutants were rejected on each selected seed.
+Four additional explored seeds failed either the expert threshold or mutant
+separation, so this is not an admission-stable generator. Independent review
+found no scientific defect but confirmed that real pinned TensorCircuit parity,
+the proposed 40-mode scale, hidden-artifact isolation, and model hardness are
+all unverified. Problem 122 is therefore exact-byte registered only as
+`design_only`; the safe runner refuses both expert and model execution.
+
+The first Problem 120 implementation also exposed a useful negative result.
+Its full target-state coset oracle, dual X/Z Steane orientation, exhaustive
+single-fault branches, and target-state flag-safety rule are internally sound,
+but an independently regenerated sorted gadget with deterministic calibrated
+variants still cleared the initial coherent-fidelity floor without using
+TensorCircuit. Rejecting a changed gadget with its stale decoder was not valid
+anti-shortcut evidence. The design remains unregistered while calibration is
+reworked against complete regenerated artifacts; if that shortcut cannot be
+made to fail with honest margin, the prototype will stay HOLD and the
+verifier-executed contraction compiler will become the primary direction.
+
+That calibration was subsequently repaired without weakening the full SHA-256
+case identity, 160-line expert limit, or fault semantics. The final generator makes
+the public nominal model one member of the hidden minimum, and each admission
+baseline is now a complete artifact with a freshly synthesized 256-row decoder
+and fully reoptimized allowed variants. Cheap, first-candidate, sorted,
+reversed, and the red-team deterministic recipe all miss the case-specific
+floors by at least 0.001, while the 157-effective-line expert clears both
+floors. The default self-test independently re-executes 99 fault branches per
+case, finds zero target-coset/syndrome discrepancies, exercises a functional
+dangerous hook and wrong flag window in each case, and rejects fourteen
+complete or schema mutations. Two nearby development seeds fail the expert
+floor, so admission is not seed-stable and future promotion must use an honest
+positive-instance rule plus at least 25 fresh records. Independent review gave
+Problem 120 a `design_only` GO and an execution HOLD; its exact four-file
+bundle is now provenance-registered, while the safe runner still refuses both
+expert and model execution.

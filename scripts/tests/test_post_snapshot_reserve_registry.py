@@ -46,6 +46,18 @@ RESERVES = (
         "partition_allocation_synthesis",
         119,
     ),
+    (
+        "robust-flagged-css-gadget",
+        "r120_flagged_css_gadget_synthesis--post_shortlist_reserve--"
+        "robust_fault_tolerant_implementation",
+        120,
+    ),
+    (
+        "nuisance-projected-fgs-portfolio",
+        "r122_nuisance_projected_fgs_experiment_portfolio--post_shortlist_reserve--"
+        "robust_integer_design",
+        122,
+    ),
 )
 PRIMARY_RESERVE = RESERVES[0]
 ARTIFACT_CASES = tuple(

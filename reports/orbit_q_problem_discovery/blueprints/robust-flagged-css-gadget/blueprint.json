@@ -1,0 +1,168 @@
+{
+  "schema_version": 1,
+  "problem_id": 120,
+  "numeric_id": 120,
+  "slug": "robust-flagged-css-gadget",
+  "candidate_id": "r120_flagged_css_gadget_synthesis--post_shortlist_reserve--robust_fault_tolerant_implementation",
+  "title": "Robust flagged CSS single-gadget and ideal-syndrome recovery synthesis",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_120.py",
+  "expert_solution": "expert/solution_120.py",
+  "target_framework": "tensorcircuit",
+  "lifecycle_status": "design_only",
+  "execution_authorized": false,
+  "status": "reserve_design_hold_local_shim_only_pinned_tensorcircuit_unverified",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 18,
+  "tags": [
+    "quantum-error-correction",
+    "css-state-preparation",
+    "flag-fault-tolerance",
+    "circuit-synthesis",
+    "recovery-policy",
+    "coherent-error-robustness"
+  ],
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "mapping_decision": "Do not remap this reserve to frozen f03. Problem 106 instantiated f03 and was solved by GPT-5.6-sol/high; it used ideal nondestructive checks. Problem 120 instead makes the returned physical flagged gadget and its common recovery policy determine exhaustive gadget-fault and coherent-performance outcomes.",
+    "source_evidence": [
+      {
+        "id": "flag-ft-arbitrary-distance",
+        "title": "Flag fault-tolerant error correction with arbitrary distance codes",
+        "url": "https://arxiv.org/abs/1708.02246",
+        "role": "foundational primary source for flag circuits that signal propagated errors whose weight exceeds the number of faults"
+      },
+      {
+        "id": "automated-ft-state-preparation",
+        "title": "Automated Synthesis of Fault-Tolerant State Preparation Circuits for Quantum Error Correction Codes",
+        "url": "https://arxiv.org/abs/2408.11894",
+        "role": "primary basis for automated CSS preparation and verification-circuit synthesis"
+      },
+      {
+        "id": "deterministic-ft-state-preparation",
+        "title": "Deterministic Fault-Tolerant State Preparation for Near-Term Quantum Error Correction: Automatic Synthesis Using Boolean Satisfiability",
+        "url": "https://arxiv.org/abs/2501.05527",
+        "role": "primary basis for flag-hook detection and outcome-conditioned correction synthesis"
+      },
+      {
+        "id": "stabilizerbench",
+        "title": "StabilizerBench: A Benchmark for AI-Assisted Quantum Error Correction Circuit Synthesis",
+        "url": "https://arxiv.org/abs/2604.21287",
+        "role": "primary benchmark evidence that gate-level fault-tolerant synthesis is distinct from stabilizer-state diagnostics"
+      },
+      {
+        "id": "tensorcircuit-paper",
+        "title": "TensorCircuit: a Quantum Software Framework for the NISQ Era",
+        "url": "https://arxiv.org/abs/2205.10091",
+        "role": "framework evidence for circuit-state simulation and custom gates"
+      }
+    ]
+  },
+  "scientific_contract": {
+    "scope": "A reduced distance-three building block with an ideal encoded input: synthesize one physical flagged stabilizer-measurement gadget and a deterministic recovery table for each scrambled Steane logical-zero case.",
+    "strict_one_fault_criterion": "For every declared single Pauli fault, every raw data error with target-state-stabilizer coset weight above one must raise the flag, and the one common recovery indexed by the observed check bit, flag bit, and ideal trailing six-bit code syndrome must leave a data Pauli equivalent modulo the full signed logical-zero target stabilizer to weight at most one.",
+    "claim_boundary": "This is target-state flag-safety, not an arbitrary-logical-data flag guarantee, because the quotient includes the logical-Z state generator. The encoded data input is ideal. The gadget, ancilla preparation, and ancilla measurements are faulted. The trailing full-code syndrome extraction and returned Pauli recovery are ideal. Atomic dressed-CX variants have ideal Clifford action CX; their non-Pauli coherent dressing is used only by scenario scoring. This prototype is not a complete deterministic fault-tolerant preparation, threshold calculation, or hardware noise claim."
+  },
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "Circuit(inputs=...)",
+      "Circuit.cnot",
+      "Circuit.unitary",
+      "Circuit.state",
+      "gates.Gate"
+    ],
+    "centrality": "The expert must use TensorCircuit to rank binary-valid physical gadgets and calibrated CX-variant assignments by coherent state fidelity. GF(2) may prune faults and synthesize the decoder, but a TensorCircuit import without artifact-determining circuit simulation is insufficient."
+  },
+  "contract": {
+    "entrypoint": "solution_120.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "deterministic": true,
+    "output_contains_metrics": false,
+    "oracle": "Independent phase-aware GF(2) exhaustive fault propagation plus a TensorCircuit-free complex128 NumPy statevector scorer and dense toy canary",
+    "pass_signal": "Overall: PASS"
+  },
+  "reference_algorithm": {
+    "effective_python_lines": 157,
+    "logical_python_statements": 155,
+    "search": "For each case, enumerate 5 checks x 24 support orders x 6 flag windows, synthesize a common 256-row decoder for every flag-safe structure, rank structures with TensorCircuit on the public nominal coherent model, then enumerate six opaque variant choices under the cost budget for the twelve best structures.",
+    "tensorcircuit_centrality": "Circuit.cnot, Circuit.unitary, and Circuit.state determine the selected check, order, flag window, and five costly-variant placements; the returned artifact changes measured coherent fidelity.",
+    "oracle_independence": "The verifier never imports the expert. It separately enumerates 99 ideal/single-fault branches per case using phase-aware binary Pauli propagation and scores 9-qubit circuits with dense NumPy tensor application. An exhaustive 4^7 Pauli canary confirms zero disagreements between literal target-stabilizer coset weight <=1 and the full seven-generator syndrome criterion.",
+    "expected_complexity": "Two 720-structure searches plus at most 64 variant assignments on twelve finalists per case; state dimension is 2^9=512. The local shim run is well below the 300 second contract, but pinned TensorCircuit runtime and peak RSS remain promotion gates."
+  },
+  "generator_and_admission": {
+    "protocol_seed": 1202026,
+    "case_digest": "ad70027e256ab2adcf7e3c317bc2fa4634a80c2f2f85821d8d3096a56bd1db56",
+    "identity_protocol": "The verifier flushes {orbit_q_case_identity:{protocol_seed,case_digest}} before spawning the solution. The digest commits to the public config and a digest of verifier-only scenarios. A CLI seed conflicting with verifier-owned environment input is rejected.",
+    "hidden_entropy": "The oracle seed is never sent to the solution process or printed. This design-only file has deterministic local self-test entropy; executable promotion must supply fresh verifier-only entropy and remove any development default from solver-visible packaging.",
+    "baseline_margin": 0.001,
+    "admission_rule": "Every fully regenerated baseline artifact below includes an independently synthesized valid 256-row decoder. Because the hidden scenario set includes the public nominal model, a nominal score at least 0.001 below the floor proves rejection under the min-scenario rule.",
+    "default_case_evidence": [
+      {
+        "case": "fg-0-fec7bd3fae3e",
+        "floor": 0.948,
+        "expert_hidden_minimum": 0.9539028657037221,
+        "best_all_cheap_nominal": 0.740313280613344,
+        "best_first_candidate_nominal": 0.9224552156154309,
+        "best_sorted_nominal": 0.942730094663679,
+        "best_reversed_nominal": 0.9410518334585004,
+        "reviewer_recipe_nominal": 0.8244243643926074
+      },
+      {
+        "case": "fg-1-f77d93fe1a7f",
+        "floor": 0.9498,
+        "expert_hidden_minimum": 0.9509053264065783,
+        "best_all_cheap_nominal": 0.6230330136638897,
+        "best_first_candidate_nominal": 0.8530653747986927,
+        "best_sorted_nominal": 0.9486775179951957,
+        "best_reversed_nominal": 0.9423314316238782,
+        "reviewer_recipe_nominal": 0.6709573418546098
+      }
+    ],
+    "functional_mutants": "No-gadget and schema/type mutants fail; both selected gadgets contain dangerous data-CNOT hook branches caught by the flag; each has an allowed wrong flag window that fails flag safety; a reachable recovery mutation fails common recovery. The reviewer recipe is first candidate + sorted support + [0,3] + costly variants at indices 1,3,4,5."
+  },
+  "local_validation": {
+    "binding_status": "non-binding host design validation only",
+    "host_command": "PYTHONDONTWRITEBYTECODE=1 python3 evaluate_120.py --self-test",
+    "host_result": "PASS; 16.21 s wall time, 2.10 s isolated expert time, 14 complete/schema mutants rejected, 99 branches per case, 42/46 reachable observations, dense two-site error 5.55e-17, phase-CNOT error 0, coset/syndrome mismatches 0",
+    "seed_suite": [
+      {
+        "protocol_seed": 1202026,
+        "case_digest": "ad70027e256ab2adcf7e3c317bc2fa4634a80c2f2f85821d8d3096a56bd1db56",
+        "result": "PASS"
+      },
+      {
+        "protocol_seed": 1202037,
+        "case_digest": "2879e5b69b7749e86455f576ae903ab778ae4450ae0060ffff5c7539af724298",
+        "result": "HOLD evidence: the compact reference expert missed the hidden coherent-fidelity floor"
+      },
+      {
+        "protocol_seed": 1202120,
+        "case_digest": "f2837d7bedec5aeba2c902400ec4f324875164376efc585961d9c8d118c937bc",
+        "result": "HOLD evidence: the compact reference expert missed the hidden coherent-fidelity floor"
+      }
+    ],
+    "tensorcircuit_runtime": "not executed; local validation used the evaluator's deliberately small TensorCircuit API-semantic shim",
+    "peak_memory": "not measured; the dense state dimension is only 512, but real TensorCircuit backend RSS must be measured before promotion",
+    "docker": "not run",
+    "harbor": "not run",
+    "solver_model": "not run",
+    "hardness_status": "no model-hardness claim; HOLD"
+  },
+  "admission_blockers": [
+    "This exact four-file bundle has a separately hashed post-snapshot design_only provenance binding. The safe runner must reject expert or model execution; any executable promotion requires a future separately hashed, human-reviewed lifecycle change.",
+    "A quantum scientist must review the signed target stabilizer, ancilla directions and bases, exhaustive one-fault locations, ideal trailing-syndrome assumption, and atomic dressed-CX claim boundary.",
+    "Run the <=160-line expert with real TensorCircuit in the pinned image; verify custom-gate ordering, complex128 fidelity, TC-call centrality, runtime below 180 seconds, and peak memory.",
+    "Recheck threshold and >=0.001 admission margins on at least 25 separately hashed generated cases; this local prototype proves them only for the default two-case development identity.",
+    "Add positive-reference admission and deterministic resampling: nearby seeds 1202037 and 1202120 passed negative-baseline admission but the compact expert missed a hidden floor, so the current generator is not production-ready beyond its frozen default identity.",
+    "Move hidden entropy entirely into verifier-only deployment input, retain two-process isolation, and ensure the solver image cannot read evaluator source or oracle defaults.",
+    "Before accepting externally supplied configurations, validate the full Steane assumptions rather than trusting the internal generator: n=7, binary row shapes, CSS orthogonality, independent rank-three X/Z checks, logical-Z commutation/independence, and distance three.",
+    "Promote full multi-gadget Steane and Shor-scale variants only as future separately hashed candidates; do not broaden this single-gadget claim in place.",
+    "Use isolated solution and scorer processes with verifier-only hidden entropy, then obtain 25 distinct exact expert-only Harbor records before any one-candidate model pilot."
+  ],
+  "hardness_assessment": "Implementation is scientifically worthwhile as a post-snapshot reserve: unlike solved controls 107 and 111, the answer is not a diagnostic scalar or a fixed contraction. It must co-synthesize a physical gate order, functional flag window, calibrated implementation choices, and a full common-recovery policy, and those choices alter two independent verifier paths. GPT-5.6-sol/high difficulty is still only a design prior. Any clean target-model pass, real-TensorCircuit incompatibility, or failure of multi-seed admission vetoes promotion. Recommendation: HOLD/design_only until the listed human and execution gates pass."
+}

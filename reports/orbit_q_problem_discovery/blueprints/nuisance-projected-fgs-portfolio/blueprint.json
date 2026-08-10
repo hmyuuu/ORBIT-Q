@@ -1,0 +1,216 @@
+{
+  "schema_version": 1,
+  "problem_id": 122,
+  "numeric_id": 122,
+  "slug": "nuisance-projected-fgs-portfolio",
+  "candidate_id": "r122_nuisance_projected_fgs_experiment_portfolio--post_shortlist_reserve--robust_integer_design",
+  "provenance": {
+    "catalog_membership": "new_reserve_outside_frozen_50-family_1000-contract_snapshot",
+    "discovery_stage": "post-shortlist autoresearch reserve",
+    "mapping_decision": "Problem 122 is not a retroactive replacement for frozen candidate 105 or candidate 101. Candidate 105 performs inverse identification from supplied fermionic-Gaussian observations, while candidate 101 optimizes a six-angle probe using mixed-state QFIM. Problem 122 instead synthesizes a sparse integer portfolio of implementable binary experiments, projects classical Fisher information through readout and coherent nuisance directions, and must generalize from public axis anchors to hidden coupled points.",
+    "source_evidence": [
+      {
+        "id": "fermionic-gaussian",
+        "title": "Fermionic Gaussian states: an introduction to numerical approaches",
+        "url": "https://arxiv.org/abs/2111.08343",
+        "role": "repository-catalog basis for covariance-scale fermionic-Gaussian evolution"
+      },
+      {
+        "id": "tensorcircuit-fgs",
+        "title": "TensorCircuit fermionic Gaussian state API",
+        "url": "https://tensorcircuit.readthedocs.io/en/latest/api/fgs.html",
+        "role": "official API basis for FGSSimulator, evol_cp, evol_hp, evol_sp, and get_cmatrix"
+      },
+      {
+        "id": "tensorcircuit-ng-paper",
+        "title": "TensorCircuit-NG: A Universal, Composable, and Scalable Platform for Quantum Computing and Quantum Simulation",
+        "url": "https://arxiv.org/abs/2602.14167",
+        "role": "framework basis for the required TensorCircuit execution path"
+      }
+    ]
+  },
+  "title": "Robust nuisance-projected fermionic-Gaussian experiment portfolio",
+  "instruction": "instruction.md",
+  "evaluator": "evaluate_122.py",
+  "expert_solution": "expert/solution_122.py",
+  "target_framework": "tensorcircuit",
+  "expert_runtime_limit_sec": 180,
+  "submission_runtime_limit_sec": 300,
+  "expert_time_estimate_hours": 20,
+  "tags": [
+    "fermionic-gaussian",
+    "experiment-design",
+    "classical-fisher-information",
+    "nuisance-projection",
+    "integer-shot-allocation",
+    "robust-optimization",
+    "quantum-metrology"
+  ],
+  "difficulty_explanation": "A solver must obtain normalized five-parameter likelihood derivatives from TensorCircuit FGSSimulator, form the nuisance-projected classical Fisher matrix rather than QFIM or the full Fisher determinant, and synthesize a sparse, granular, two-budget integer allocation that improves both D- and E-optimality on coupled hidden points. The prompt specifies correctness but does not disclose the reference allocation or its greedy repair strategy.",
+  "solution_explanation": "The compact expert uses TensorCircuit for every fermionic-Gaussian probability, central differences for four nonlinear coordinates, the exact readout-contrast derivative, a public-plus-Hadamard robust design set, and a deterministic block-granular greedy portfolio constructor with feasibility lookahead.",
+  "verification_explanation": "The scoring oracle never imports or calls TensorCircuit. It independently evolves a complex128 Bogoliubov isometry, recomputes all probabilities, derivatives, Fisher matrices, Schur complements, certificates, hidden metrics, and budgets, checks its covariance convention against a direct tiny Fock-space Jordan-Wigner evolution, compares three- and five-point derivatives, and rejects scientific and schema mutants. The optional local self-test separately loads the expert through real TensorCircuit when installed or an explicitly non-evidentiary semantic shim when absent.",
+  "status": "reserve_design_only_hold_reduced_local_oracle_and_semantic_expert_validated_real_tc_and_admission_pending",
+  "framework": {
+    "required": "tensorcircuit",
+    "target_distribution": "tensorcircuit-nightly==1.7.0.dev20260618",
+    "target_numpy": "2.2.6",
+    "target_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "central_api": [
+      "FGSSimulator",
+      "FGSSimulator.evol_cp",
+      "FGSSimulator.evol_hp",
+      "FGSSimulator.evol_sp",
+      "FGSSimulator.get_cmatrix"
+    ]
+  },
+  "contract": {
+    "entrypoint": "solution_122.py:run_solution",
+    "effective_line_limit": 160,
+    "runtime_limit_seconds": 300,
+    "runtime_policy": "runtime is reported separately and does not veto functional Overall; separately authorized expert admission must impose strict maximum and p95 gates",
+    "deterministic": true,
+    "prototype_shape": {
+      "n_sites": 16,
+      "action_count": 24,
+      "public_training_points": 11,
+      "hidden_points": 40,
+      "shot_budget": 1024,
+      "maximum_active_actions": 8
+    },
+    "planned_promotion_shape": {
+      "n_sites": 40,
+      "action_count": 48,
+      "hidden_points": 56,
+      "shot_budget": 4096,
+      "note": "Not implemented or validated by this reduced design-only bundle. Promotion requires separately hashed executable bytes and renewed thresholds."
+    },
+    "artifact_schema": {
+      "exact_keys": [
+        "shot_allocation",
+        "public_logdet",
+        "public_min_eigenvalue"
+      ],
+      "shot_allocation": "int64 ndarray of shape (24,), nonnegative, exact granularity and resource constraints",
+      "public_logdet": "finite float64 ndarray of shape (11,)",
+      "public_min_eigenvalue": "finite float64 ndarray of shape (11,)"
+    },
+    "oracle": "Independent complex128 Bogoliubov-isometry evolution, direct tiny dense Fock-space Jordan-Wigner canary, and separate derivative-stencil agreement",
+    "pass_signal": "Overall: PASS"
+  },
+  "scientific_contract": {
+    "parameter_order": [
+      "hopping",
+      "pairing",
+      "staggered_potential",
+      "phase_offset",
+      "readout_contrast"
+    ],
+    "target_parameter_count": 3,
+    "nuisance_parameter_count": 2,
+    "single_shot_information": "outer(dp/dz, dp/dz) / (p * (1-p))",
+    "nuisance_prior_information": [4.0, 9.0],
+    "effective_information": "I_tt - I_tn @ inv(I_nn) @ I_nt",
+    "score_regularizer": 0.25,
+    "functional_thresholds": {
+      "minimum_hidden_logdet_gain": 1.32,
+      "e_ratio_floor": 0.00000001,
+      "minimum_hidden_regularized_e_ratio": 1.05,
+      "maximum_hidden_regularized_condition": 450.0,
+      "minimum_hidden_probability_margin": 0.01,
+      "maximum_public_certificate_error": 0.000002
+    }
+  },
+  "seed_protocol": {
+    "public_seed_env": "ORBIT_Q_CANDIDATE_SEED",
+    "hidden_key_env": "ORBIT_Q_HIDDEN_KEY",
+    "local_default_public_seed": 1222026,
+    "local_hidden_key": "A fixed public development key is used when ORBIT_Q_HIDDEN_KEY is absent; those points are contaminated local canaries and are not private evidence.",
+    "private_derivation_design": "HMAC-SHA256(K_hidden, 'r122-hidden-v1:' || public_case_digest)",
+    "privacy_blocker": "The tracked evaluator still precomputes hidden data in the same verifier process that later imports untrusted code. No private or model execution is authorized until a separately reviewed two-phase/container protocol freezes the solution artifact before mounting or deriving hidden data."
+  },
+  "hardness_levers": [
+    "the output is a nonunique constructive portfolio rather than a forward scalar or prescribed trace",
+    "classical measurement Fisher information must be distinguished from mixed-state QFIM",
+    "two nuisance directions require the Schur complement with normalized-coordinate derivatives",
+    "axis-only public anchors do not expose all coupled hidden corners",
+    "sparsity, granularity, per-action caps, exact shot count, and interrogation cost couple continuous design to integer repair",
+    "opaque shuffled action identities and seeded dynamics defeat positional portfolios",
+    "the planned 40-mode promotion scale makes a complex128 dense Fock vector require 16 TiB"
+  ],
+  "anti_shortcut_mutants": [
+    "baseline allocation",
+    "nominal-only D-optimal allocation",
+    "full or target-only Fisher information without nuisance Schur projection",
+    "physical-coordinate rather than normalized-coordinate derivatives",
+    "using q rather than contrast-adjusted p in Bernoulli information",
+    "naive continuous-weight rounding",
+    "stale positional allocation after action shuffling",
+    "standalone covariance or dense state simulator",
+    "float, Boolean, object, ndarray-subclass, NaN, extra-key, budget, and certificate mutations"
+  ],
+  "claim_boundary": "This is a reduced deterministic design-only prototype for a synthetic fermionic-Gaussian experiment-design diagnostic. It does not estimate laboratory Fisher information, certify asymptotic attainability, model finite-shot estimator bias, or establish optimality of the expert allocation. The local public development key is not secret. The evaluator's local semantic FGS shim, when used because TensorCircuit is unavailable, checks expert API intent only and is not TensorCircuit execution evidence. No Docker, pinned TensorCircuit image, Harbor, private prequalification, solver model, or hardness trial has run, and no model-hardness claim is made.",
+  "local_static_validation": {
+    "host_numpy": "2.4.4",
+    "binding_status": "non-binding public development evidence only; selected and failed seeds are contaminated and unauthorized for private/model use",
+    "passed_public_development_seeds": [
+      1222026,
+      1222037,
+      1222048,
+      1222070
+    ],
+    "passed_case_digests": {
+      "1222026": "4398f13dd1e5ef59a3b0a6bdf05d407957faf6e24e638568980208563f56c0c7",
+      "1222037": "968593759566418db3e230c1ecbf9c11ca3b7b6146c26e409cf52897c03cb016",
+      "1222048": "f246bdb7dfae1d2abcef5683ee564acb2be0c33deda20514ffe9b818111425ea",
+      "1222070": "31f893273ab41280f080291fc07b9dbcabe39b6a4a091e299967506478c2c5df"
+    },
+    "exploratory_failures": {
+      "1222059": "semantic expert minimum hidden logdet gain 0.975110 was below the frozen 1.32 functional gate",
+      "1222081": "multiple target-only/public-only or stale-order scientific mutants survived",
+      "1222122": "multiple target-only/public-only scientific mutants survived",
+      "9876543": "multiple target-only/public-only scientific mutants survived"
+    },
+    "minimum_passing_hidden_logdet_gain": 1.4266401607564716,
+    "minimum_passing_hidden_e_ratio": 7.57161107409825,
+    "maximum_passing_regularized_condition": 62.27528548456347,
+    "minimum_passing_probability_margin": 0.02562626996100148,
+    "maximum_public_certificate_error": 0.0,
+    "semantic_proxy_runtime_sec_range_under_parallel_host_load": [
+      3.768650999991223,
+      3.801760209025815
+    ],
+    "maximum_dense_fock_probability_error": 3.986394547794703e-15,
+    "maximum_three_vs_five_point_derivative_error": 6.47630102215517e-13,
+    "scientific_and_schema_mutants_rejected_per_passing_seed": 10,
+    "expert_effective_python_lines": 138,
+    "expert_logical_statement_count": 103,
+    "expert_static_policy_score": 1.0,
+    "ruff_check_passed": true,
+    "ruff_format_check_passed": true,
+    "tensorcircuit_expert_executed": false,
+    "semantic_expert_proxy_executed": true,
+    "semantic_expert_proxy_scope": "The local host has no TensorCircuit installation. An in-process API shim backed by the evaluator's isometry operations checked only expert control flow, formulas, allocation, schema, and metrics; it is not independent framework evidence.",
+    "dense_fock_canary_status": "passed on all four final-byte public development seeds",
+    "derivative_canary_status": "passed on all four final-byte public development seeds",
+    "scientific_mutant_status": "all ten tracked mutants rejected on the four listed final-byte seeds; four additional exploratory seeds exposed insufficient expert or mutant separation and remain explicit promotion blockers"
+  },
+  "admission_blockers": [
+    "This exact bundle has a separately hashed post-snapshot design_only registry binding for provenance only. The safe runner rejects that lifecycle; do not append or remap it into the frozen 1,000-contract snapshot. A future human-reviewed executable-promotion contract would be required before any run.",
+    "Run and optimize the exact expert under the pinned TensorCircuit image only after a separately hashed executable-promotion contract is approved; verify FGSSimulator conventions, runtime, memory, and the 160-line result.",
+    "Replace the reduced 16-mode/24-action prototype with separately hashed 40-mode/48-action promotion bytes and recalibrate all functional and strict expert margins; the planned scale is not represented by the current evaluator.",
+    "Implement true two-phase hidden-artifact isolation so the solution process exits and its artifact hash is frozen before any verifier-only hidden key or artifact is available.",
+    "Precommit and pass at least 25 fresh pinned expert-only cases with zero solver/audit-provider calls, no reruns or substitutions, positive scientific margins, runtime below 180 seconds, and retained raw evidence.",
+    "Add a deterministic public-case admission/retry rule or redesign the action generator before promotion: four explored seeds failed either the 1.32 expert gate or scientific-mutant separation, so arbitrary generator seeds are not currently admissible.",
+    "Require human approval before a single-candidate GPT-5.6-sol/high manifest; one clean model pass vetoes the frozen design and failures require two independent substantive-failure auditors."
+  ],
+  "api_risks": [
+    "FGSSimulator's C[i,i] outcome-zero convention must match the independent isometry and dense Fock canary.",
+    "Signed hopping and complex pairing angles, even/odd bond order, and evol_sp phase convention require pinned-image parity.",
+    "TensorCircuit backend and dtype settings are process global; complex128 is required.",
+    "The compact greedy construction is only threshold-feasible and has no global optimality certificate."
+  ],
+  "commands": {
+    "local_self_test": "PYTHONDONTWRITEBYTECODE=1 python3 evaluate_122.py --self-test",
+    "pinned_expert_lifecycle": "Not authorized while design_only. Human review and a separately hashed executable-promotion contract must precede any Docker, Harbor, expert, or model command."
+  }
+}
