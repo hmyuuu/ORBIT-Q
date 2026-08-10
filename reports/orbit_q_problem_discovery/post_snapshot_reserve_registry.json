@@ -198,6 +198,44 @@
       "entry_hash": "6577a09a9329d1abf092e92a14f7eea941e8b32880d4b5f63f32b25aa5c141e8"
     },
     {
+      "candidate_id": "r121_verifier_executed_batched_amplitude_compiler--post_shortlist_reserve--symbolic_contraction_program",
+      "slug": "verifier-executed-amplitude-compiler",
+      "problem_id": 121,
+      "lifecycle_status": "design_only",
+      "blueprint_path": "blueprints/verifier-executed-amplitude-compiler",
+      "artifacts": {
+        "blueprint_metadata": {
+          "path": "blueprint.json",
+          "sha256": "b01bb94e96f7bd057c796b736bf0922d7cb4e34ffa12f80c08dfefdba0062526"
+        },
+        "instruction": {
+          "path": "instruction.md",
+          "sha256": "6263ac9cd730ba66b4b77280ece793dc4124afdd63b30e51e041d662fac02327"
+        },
+        "evaluator": {
+          "path": "evaluate_121.py",
+          "sha256": "d941c947c983b7ea77710831207aee84f8bab473d856c564b78a508808077cbd"
+        },
+        "expert_solution": {
+          "path": "expert/solution_121.py",
+          "sha256": "14a007ad574ac472e65aa8e8824d4d6b8f849f26df0e19d40a33215bc06ea59d"
+        }
+      },
+      "blueprint_bundle_sha256": "3dfa3364d4880fcaafd4bb999813c396ede092147038e749af84ba14d5b8a2f9",
+      "audit_status": {
+        "classification": "design_only",
+        "scientific_design_review": "completed_with_blockers",
+        "local_oracle_status": "validated_nonbinding",
+        "tensorcircuit_expert_status": "not_executed",
+        "pinned_image_status": "not_executed",
+        "harbor_status": "not_executed",
+        "solver_model_status": "not_executed",
+        "hardness_status": "no_claim",
+        "execution_authorized": false
+      },
+      "entry_hash": "acc905791d291bc8f7828670e789e5622e0e2a4155a55e577248f111849593a8"
+    },
+    {
       "candidate_id": "r122_nuisance_projected_fgs_experiment_portfolio--post_shortlist_reserve--robust_integer_design",
       "slug": "nuisance-projected-fgs-portfolio",
       "problem_id": 122,
@@ -236,5 +274,5 @@
       "entry_hash": "b14847db6a3c649f472b0e09e64a040919abcf22c5fae3b2abe1a9b45047baf0"
     }
   ],
-  "registry_hash": "00e33a26f6ab1d67f568deb4ec049b2cee31de1c5b3bde6bb4b44d5b08121b2c"
+  "registry_hash": "7cb3e97b80b7344530980e27eba09b883726820c0f5ab0d89b4597a022c55db8"
 }

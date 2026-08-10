@@ -483,3 +483,37 @@ positive-instance rule plus at least 25 fresh records. Independent review gave
 Problem 120 a `design_only` GO and an execution HOLD; its exact four-file
 bundle is now provenance-registered, while the safe runner still refuses both
 expert and model execution.
+
+## Phase 10 — Verifier-executed contraction artifact
+
+Problem 121 implements the contraction-compiler backup selected in Phase 9.
+For one 64-qubit shallow circuit it asks for constant-free symbolic variable-
+elimination bytecode covering 112 native RZZ factors and 48 amplitudes grouped
+as six canonical eight-lane batches. The artifact must preserve opaque source
+provenance, a shared lane hyperedge, two-variable slicing, all 62 eliminations,
+canonical temporaries and terminal operands, and exact live-memory,
+intermediate-size, FMA, and digest certificates. The trusted evaluator replays
+those semantics on declared and freshly instantiated tensors and compares the
+result with an independent row-transfer oracle; submitted amplitudes and costs
+are never accepted.
+
+Four public development seeds passed. Their dense and sliced-bytecode canaries
+were below 6.3e-16, execution relative errors were below 2.0e-14, and ten
+complete-artifact mutants were rejected on every seed. The TensorCircuit expert
+is 134 effective lines with 98 logical statements and static score 1.0. An
+initial audit found that a child could patch its own determinism helper and that
+JSON serialization erased type subclasses. The hardened evaluator instead
+runs two fresh workers, validates exact built-in types before JSON, discards
+ordinary output, kills each new-session process group, and compares canonical
+artifacts only in the pristine parent. Hostile regressions cover child helper
+patching, integer subclasses, and ordinary descendants.
+
+Independent final review found no scientific or resource-accounting defect and
+gave a provenance-only `design_only` GO. It also identified the remaining
+boundary precisely: session-escaping or double-fork descendants and a shared
+writable host are not contained, and functional replay cannot prove that the
+solver used TensorCircuit rather than merely reconstructing the public graph.
+Real pinned TensorCircuit APIs, runtime, memory, hardened container/cgroup
+teardown, source-policy audit, private cases, and model hardness remain
+unverified. Problem 121 is therefore exact-byte registered but execution stays
+HOLD and the safe runner rejects both expert and model paths.

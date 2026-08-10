@@ -53,6 +53,12 @@ RESERVES = (
         120,
     ),
     (
+        "verifier-executed-amplitude-compiler",
+        "r121_verifier_executed_batched_amplitude_compiler--post_shortlist_reserve--"
+        "symbolic_contraction_program",
+        121,
+    ),
+    (
         "nuisance-projected-fgs-portfolio",
         "r122_nuisance_projected_fgs_experiment_portfolio--post_shortlist_reserve--"
         "robust_integer_design",
