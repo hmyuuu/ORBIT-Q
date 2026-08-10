@@ -87,6 +87,8 @@ Prototype admission requires all of the following:
 - verifier-only succeeds in at least 20 reproductions;
 - at least 25 distinct seeds pass finished expert-only Harbor verifier runs;
 - every expert run freezes the task, prompt, image, CPU/memory, and oracle mode;
+- private expert verification disables the LLM audit and binds a zero provider-call budget;
+- raw rewards and audit details prove that the private LLM audit was skipped;
 - the evaluator emits a hash-bound admission record under one fixed threshold policy;
 - measured peak memory fits the observed runner envelope.
 
@@ -200,16 +202,16 @@ python3 scripts/run_problem_discovery.py hardness-status \
   --manifest-hash MANIFEST_HASH
 ```
 
-Materialized prototypes are executed through the separate candidate-only
-runner. It accepts exactly one explicit staged task, always requests one Harbor
-trial, and is a dry run unless `--execute` is supplied. Expert prequalification
-is explicitly excluded from model-hardness evidence. Materialize from the
-review snapshot first; this embeds the reviewed candidate contract into the
-exact task directory:
+Materialized prototypes use the separate candidate-only runner. It accepts
+exactly one explicit staged task, always requests one Harbor trial, and is a
+dry run unless `--execute` is supplied. Expert prequalification is explicitly
+excluded from model-hardness evidence. The following public-canary preview is
+non-executing and cannot become private prototype evidence; materialization
+embeds the reviewed candidate contract into the exact task directory:
 
 ```bash
 python3 scripts/materialize_candidate_task.py \
-  --blueprint-dir reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape \
+  --blueprint-dir reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim \
   --discovery-workspace reports/orbit_q_problem_discovery \
   --output-root .artifacts/problem-discovery/candidate-tasks
 ```
@@ -217,40 +219,93 @@ python3 scripts/materialize_candidate_task.py \
 Post-snapshot reserve designs are tracked separately in
 `post_snapshot_reserve_registry.json`. The registry self-hashes each entry and
 the complete payload, pins the untouched discovery snapshot, and binds the
-exact blueprint files. Registered `design_only` reserves may be materialized
+exact blueprint files while enforcing unique candidate, slug, and numeric
+identities. Registered `design_only` reserves may be materialized
 for provenance inspection, but the candidate runner rejects both expert and
 model paths (including dry runs). Registration is not review, promotion, or
 execution authorization, and it never appends or remaps a frozen candidate.
 
-Then run one previously unused seed with the image digest resolved and reviewed
-out of band. A successful run is collected automatically into one immutable
-schema-compatible case item:
+Preview one public development seed after resolving the image digest out of
+band. The absence of `--execute` is intentional. Private expert runs must come
+from a separately hashed sealed plan and exact human approval, not by copying
+this command and adding an execution flag:
 
 ```bash
 python3 scripts/run_harbor_candidate.py \
-  --task-dir .artifacts/problem-discovery/candidate-tasks/candidate-robust-leakage-grape \
+  --task-dir .artifacts/problem-discovery/candidate-tasks/candidate-mixed-sld-qfim \
   --workspace reports/orbit_q_problem_discovery \
-  --audit-model gpt-5.6-sol \
   --expert-only \
-  --candidate-seed 1092026 \
+  --candidate-seed 101021 \
   --docker-image challenge-benchmark-quantum-tensorcircuit:py311 \
   --container-image-digest sha256:REPLACE_WITH_64_LOWERCASE_HEX \
-  --job-name expert-robust-leakage-grape-seed-1092026 \
-  --expert-evidence-dir .artifacts/problem-discovery/expert-prequalification \
-  --force-auth-json \
-  --bridge-loopback-proxy \
-  --execute
+  --job-name preview-mixed-sld-qfim-public-seed-101021 \
+  --expert-evidence-dir .artifacts/problem-discovery/expert-prequalification
 ```
 
-At present, candidate 109 (`robust-leakage-grape`) is the only active shortlist
-candidate whose evaluator declares the candidate-specific numerical admission
-record required by this producer. Candidate 115 (`noisy-ppt3-replica`) also
-implements the convention, but it is a post-shortlist reserve: its case items
-cannot be recorded as reviewed prototype evidence until humans explicitly
-promote it and rematerialize it against the resulting reviewed contract. Other
-candidates remain ineligible for this command until their own evaluator metrics
-and thresholds are reviewed and implemented; the materializer/runner preflight
-rejects missing declarations rather than inventing a generic margin.
+An actual `--expert-only --execute` call additionally requires
+`--expert-execution-approval ABSOLUTE_JSON`. The current-owner mode-0600 human
+batch approval binds the sealed mode-0600 plan, owner-only reviewed driver,
+candidate/source/task/evaluator/expert hashes, digest-addressed image, Harbor
+binary path/hash/version, resources, disabled-audit policy, zero provider-call
+budget, the exact runner-Python launcher/resolved target/target hash/environment
+prefix/`pyvenv.cfg` hash, private output roots, and every exact ordinal/seed/job.
+Both output
+roots must already be nonsymlink mode-0700 directories. The reviewed driver
+atomically creates its bound mode-0600 terminal start reservation before the
+first case. The runner then consumes one mode-0600 per-job receipt with
+`O_EXCL`, enforces strict ordinal order, requires successful bound evidence for
+every predecessor, rejects every current/later artifact, and runs Harbor under
+umask 077. A failed or crashed claimed case permanently blocks later cases.
+Dry-run previews need no approval and never create a receipt.
+
+The sealed driver must import and use
+`build_expert_subprocess_env()` from `scripts/run_harbor_candidate.py` as the
+environment for its driver-to-runner subprocess and must invoke the exact
+hash-bound Harbor virtual-environment Python launcher, not the Python used to
+prepare the plan. The runner recomputes the launcher path, resolved interpreter
+path/bytes, environment prefix, and `pyvenv.cfg` bytes before a receipt can be
+claimed. It uses the same environment mapping for `harbor --version` and the
+Harbor execution. The helper copies only
+`PATH`, `HOME`, `USER`, `LOGNAME`, `SHELL`, `TMPDIR`, `TMP`, `TEMP`, `LANG`,
+`LC_ALL`, `LC_CTYPE`, `TZ`, `TERM`, `NO_COLOR`, `PYTHONUNBUFFERED`,
+`XDG_RUNTIME_DIR`, and `__CF_USER_TEXT_ENCODING` when present, then forces the
+repository `PYTHONPATH` and `PYTHONDONTWRITEBYTECODE=1`. Everything else is
+dropped, including AWS/Bedrock, OpenAI, Anthropic, Google, Azure, Hugging Face,
+proxy, and unrelated host variables. This exact exported helper is the
+provider-free driver/runner contract; a blacklist or a copy of the allowlist is
+not equivalent.
+
+This is local unsigned custody: after a valid human approval and start
+reservation exist, an exact same-owner invocation is indistinguishable from the
+reviewed driver invoking the runner. The driver hash records reviewed
+orchestration; it is not a cryptographic caller identity. The approval must
+carry the exact acknowledgement
+`I_ACCEPT_LOCAL_OPERATOR_CUSTODY_NOT_HOST_CONFIDENTIAL` and binds the policy
+`local_operator_custody_private`. Private seeds traverse the runner/Harbor
+argument vector and resolved verifier config, and therefore remain visible to
+same-host process observers and the trusted operator. This workflow is not
+host-adversary confidential and may run only on a dedicated, single-user,
+trusted-operator host.
+
+The approval hashes the reviewed runner, driver, materialized task, verifier
+harness, Harbor entry-point bytes/version, and declared runtime bindings. It is
+not complete code attestation for every transitive Python, Harbor, Docker, or
+operating-system dependency; those local/runtime dependencies remain inside
+the trusted-operator boundary.
+
+Candidate 101 (`mixed-sld-qfim`) now declares the exact numerical admission
+record required by this producer, but it still has no human approval or private
+prequalification authorization. Candidate 109 (`robust-leakage-grape`) also
+implements the record shape, but remains `HOLD`: its historical v1 expert screen
+stopped at 22/23 passes, while the current v6 expert has only a 12/12 preserved
+public feasibility result. The v6 task still derives hidden cases from
+solver-visible seed state and lacks hostile-process isolation, so neither
+revision is eligible for private prequalification or a solver trial. Candidate
+115 (`noisy-ppt3-replica`) implements the convention but is a post-shortlist
+reserve and cannot produce reviewed prototype evidence without explicit
+promotion. Other candidates remain ineligible until their own metrics and
+thresholds are reviewed and implemented; preflight rejects missing or HOLD
+declarations rather than inventing a generic margin.
 
 For frozen repeated trials, `--candidate-seed INTEGER` is passed only to the
 verifier as `ORBIT_Q_CANDIDATE_SEED`; it is never added to the solver
@@ -260,7 +315,9 @@ run. A seed that violates a numerical admission margin is rejected rather than
 counted as model failure. Prototype evidence schema v2 records at least 25
 finished, unique expert-only Harbor jobs, not self-declared case JSON. For every
 job the pipeline rehashes and reparses the raw Harbor result, resolved config,
-trial lock, job lock, functional stdout, and evaluator admission record. It
+trial lock, job lock, functional stdout, evaluator admission record, and audit
+details. The reward carries numeric `llm_audit_skipped_score=1.0`, while the
+audit-details record carries the exact boolean `llm_audit_skipped=true`. It
 derives the job/pass/runtime, nonnegative `protocol_seed`, full lowercase
 64-hex `case_digest`, numerical margins, and minimum margin; declared summaries
 must match. The case identity must be the first nonempty functional-output line,
@@ -268,7 +325,7 @@ and exactly one final `Overall: PASS` must close the output. All jobs must share
 one hash-derived threshold policy and must bind the frozen candidate, expert,
 evaluator, task, prompt, image, and resource envelope. Authorization can select
 only a subset of those records; their complete payloads are hashed into the
-manifest and all six raw files are rehashed and reparsed at authorization,
+manifest and all seven raw files are rehashed and reparsed at authorization,
 execution/reservation, trial import, and hardness summary.
 
 The expert producer also freezes the verifier runtime surface. Before Harbor
@@ -284,6 +341,11 @@ evaluator admission record, the raw result hash words, and recorded prototype
 bindings. The collector and later prototype gates also recompute Harbor's local
 task package digest and legacy `Task.checksum` from that same directory; a
 well-formed but unrelated lock digest or result checksum is rejected.
+
+A private expert verifier never constructs or installs the Codex runtime, loads
+provider credentials, or sends source, seeds, digests, or output to an audit
+model. A separate public/source-only policy review is required before later
+promotion.
 
 The evaluator emits only observed numerical values and fixed thresholds. The
 shared verifier reads the full captured evaluator stdout, checks the case
@@ -334,6 +396,14 @@ build IDs, and submitted code still runs in the evaluator process rather than a
 separately sandboxed solution process. Pilot signals may guide research, but
 `hardness-status` reports these as admission limitations and fails closed until
 all three controls are machine-observed.
+
+For candidates 101 and 109, the current expert-feasibility generators also
+derive public configuration and hidden holdouts from one deterministic base
+seed. NumPy PCG64 is reproducible, not a secrecy primitive. Trusted expert-only
+prequalification may use that contract, but a solver pilot must first bind an
+independent verifier-only hidden seed/key or an isolated precomputed holdout
+artifact. A failure under the current shared-seed, same-process contract cannot
+support a model-hardness conclusion.
 
 ## Repository boundary
 

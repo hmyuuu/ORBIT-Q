@@ -12,9 +12,61 @@ taught us.
 - Exploratory expert-pass/model-pass controls: **105, 106, 107, 108, 111**.
 - Exploratory expert-pass/model-fail signal: **109**, one run only, paired by
   seed and task checksum but not by a full case digest.
-- No solver run was launched while preparing this packet.
+- Candidate 109 historical v1 private expert screen: **22 passes in 23
+  attempts**; the screen stopped at its first scientific-admission failure and
+  the final two precommitted cases were not run.
+- Candidate 109 current v6 public trusted-expert feasibility: **4/4 tuning and
+  8/8 untouched validation passes**, with an immutable pre-run plan, preserved
+  raw local evidence, and independent read-only reconstruction.
+- Neither candidate 109 screen used Harbor or a solver/model. No solver run was
+  launched while preparing this packet.
 - A real pilot still requires the repository's concept, prototype, pilot,
   manifest, prequalified-seed, and two-auditor gates.
+
+### Candidate 109 historical v1 and current v6 expert results
+
+Candidate 109's historical v1 expert passed the first 22 cases in its
+precommitted 25-case direct pinned screen, then failed case ordinal 23. The
+screen stopped immediately as required; ordinals 24 and 25 remain unrun and
+must not be used as replacement attempts. The failing case completed in
+`34.299573` seconds. Its held-out p95 infidelity was
+`0.000734152692426715`, above the unchanged `0.0007` gate. Worst infidelity
+(`0.0010902181534833133` against `0.00125`), worst leakage
+(`6.147127383582252e-05` against `0.00015`), maximum drive
+(`2.3140415923829685` against `3.15`), maximum slew
+(`1.0342867345004598` against `1.15`), and the zero edge amplitude all passed.
+
+The sanitized aggregate is bound to the sealed plan, exact task/evaluator/
+expert/image identities, and all 46 attempted-case stdout/stderr file hashes.
+Its raw-log-set SHA-256 is
+`ce5ad7e1409697ec2634170929fc3c203e6c8753c00d3ea54396efcdb66fb994`;
+the sanitized summary file SHA-256 is
+`8683da16e5df176eccdbcc006d204bc8d448cb683e7446076ffe54875090bc0d`.
+The ignored aggregate contains no private seed or case digest. These are direct
+expert-only results, not Harbor records, model evidence, or the 25 passing
+schema-v2 seed/digest records required for canonical expert prequalification.
+The current v6 expert is a different frozen artifact. Its immutable public plan
+passed all four tuning-role canaries and all eight untouched validation
+canaries with no reruns, substitutions, or byte changes. Across validation,
+runtime was `41.696585`–`47.453723` seconds; maximum p95 infidelity was
+`0.0006779807950682837`, worst infidelity `0.0008354746181724604`, leakage
+`0.00007580683367447438`, drive `2.4102313353427793`, slew
+`1.1193594678209193`, and edge amplitude `0.0`. The pre-run plan SHA-256 is
+`1a6cf4930bfcedf8d1bbe23e9922c9e9d01440580308c29fa80ecab835e62254`,
+the raw-log-set SHA-256 is
+`e471d8e5bb0b838cf604980246fa15aab1480ddcad4c63de3a4c178ea2c7949b`,
+and the branch-portable sanitized record payload SHA-256 is
+`18c86fda728039597aca8073fa3379ce0f704eba2dc78a64baf8fa7138b48998`.
+An independent read-only audit reconstructed all 12 local raw attempts. This is
+durable public trusted-expert feasibility, not private prequalification or
+Harbor evidence.
+
+Candidate 109 remains **HOLD**. Its hidden interior ensemble is derived from
+the same seed state that produces solver-visible configuration, and submitted
+code still shares the evaluator process with mutable transitive globals. A
+solver trial requires independent verifier-only hidden entropy, process/oracle
+isolation, a new exact task review, and fresh private prequalification. The
+historical v1 cases remain terminal and cannot be rerun or substituted.
 
 ### Candidate 115 pinned feasibility result
 
@@ -72,17 +124,56 @@ TensorCircuit image. Held-out score gains were `1.214079`, `1.122106`, and
 `0.827440` against a `0.32` requirement; minimum QFIM eigenvalues were
 `1.144806`, `1.370845`, and `2.047831` against `0.025`.
 
-An independent three-formula audit checked JAX derivatives against the
-spectral SLD formula and a separately vectorized SLD equation. The maximum
-JAX-to-spectral difference was `6.656e-9`, and the spectral/vectorized-SLD
-difference was `4.441e-15`. A broader NumPy audit over 420 hidden states found
-minimum support `2.105e-3`, comfortably above the `2e-5` gate.
+Prior unpreserved local scientific audits checked JAX derivatives against the
+spectral SLD formula and a separately vectorized SLD equation. They reported a
+maximum JAX-to-spectral difference of `6.656e-9`, a
+spectral/vectorized-SLD difference of `4.441e-15`, and minimum support
+`2.105e-3` over 420 hidden states. These are corroborating observations, not
+raw-backed evidence for the current bundle; the durable canary below directly
+records the evaluator's SLD-identity and support metrics.
 
-This repairs only the expert-feasibility layer. The one exact run took
-`179.48` seconds, just `0.52` seconds below the 180-second expert target, so no
-p95 runtime claim is justified. Candidate 101 still lacks the full one-seed
-case-identity/admission protocol, 25 private prequalified records, authenticated
-Harbor/LLM-policy evidence, and human promotion. No GPT-5.6-sol trial ran.
+The evaluator now expands one verifier-only base seed into the exact ordered
+three-instance schedule, emits and flushes a full configuration digest before
+untrusted import, scrubs both the seed environment and evaluator arguments,
+and emits fixed expert-admission metrics. Hoisting otherwise unchanged JAX
+kernels to module scope lets the three same-shape instances reuse compilation;
+all 160 Adam steps, starts, QFIM formulas, objectives, and thresholds are
+unchanged. The evaluator also precomputes all hidden ensembles before untrusted
+import, prints no private schedule afterward, and invokes no seeded RNG between
+solution calls. It also binds the trusted numerical oracle chain and clock
+before solution import. The final exact materialized bundle finished in
+`103.8569` seconds, leaving `76.1431` seconds below the strict 180-second gate.
+The minimum held-out gain was `0.8274396`, minimum QFIM eigenvalue `1.1448062`,
+minimum support `3.0388e-3`, and maximum SLD identity error `4.885e-15`; every
+direct metric passed. The tracked canary record has payload SHA-256
+`9da061c40745ebd51923de778dbf20a5fcfdfb75f6e062c55acda907250552cc`
+and binds preserved raw stdout SHA-256
+`1fafb35e0764c8e3324831c07c315f8463e34322389f069a642269e81fb48d58`.
+Earlier direct observations used predecessor evaluator/task bytes and are
+retained only as scientific/runtime corroboration.
+
+A fresh private-v5 expert plan is sealed locally against these exact final
+bytes and the byte-frozen no-provider runner. It contains 25 unique private
+base seeds and case previews; all 25 single-candidate Oracle command previews
+passed without executing Docker, Harbor, a solver, or an audit model. Its plan
+SHA-256 is
+`489f3c03cf8b1e714b922f1050745293c310a9d069de8233825070a4ec9f811f`
+and payload SHA-256 is
+`003aae1df402b0efd313e17674b08893774e2403c7907b197cf9aa41cea6f8f1`.
+The reviewed driver SHA-256 is
+`7c6ede9cf9e45a6eb88f22b1507cea135314e98e363747dbd74f9d2928521c13`,
+and the byte-frozen runner SHA-256 is
+`d8d213a259e96fbaec9a1b2ad91638aef8019f987feddc982ba5b8f8479f6067`.
+The ignored plan, reviewed driver, and approval templates are mode `0600`, and
+their dedicated output roots are mode `0700`. No human execution approval,
+terminal reservation, Harbor completion, or model/provider call exists. The
+Harbor-only execution path fails closed without a separately reviewed approval
+that acknowledges local-operator custody and same-host process visibility.
+
+This establishes direct expert feasibility, not protocol admission. One exact-
+bundle runtime observation does not establish p95, and candidate 101 still lacks 25 private
+prequalified Harbor records, authenticated policy evidence, human approval,
+and a GPT-5.6-sol trial on the exact bundle.
 
 ### Candidates 117 and 118 local design results
 
@@ -114,6 +205,25 @@ Both 117 and 118 are post-snapshot design iterations, not frozen-shortlist
 members. They are exact-byte-bound as `design_only`; that registry state is
 provenance, not review, promotion, or execution authorization.
 
+### Candidate 119 local design result
+
+Candidate 119 jointly synthesizes a seven-fragment observable-lightcone cut
+plan and one shared nine-stratum shot allocation for a 76-qubit circuit. The
+independent NumPy cone oracle agrees with a dense eight-qubit canary within
+`1.554e-15`; four development seeds pass and ten semantic/type mutations are
+rejected per seed. The 158-line expert passes static policy and a Circuit API
+shim, but has not executed in the pinned TensorCircuit image.
+
+Independent review found and repaired two fail-open design defects: generation
+now checks uniform shots over all 2,415 feasible layouts, and the evaluator no
+longer accepts coercible strings or tuple matrices. It also disproved the
+original minimax wording by finding a one-shot exchange that improves the
+reference allocation by `1.866%`. The task now claims only threshold-feasible
+synthesis. The product of independent single-RPP QPD factors remains a declared
+conservative proxy, and the finite public search may still be recipe-exposed.
+Candidate 119 is therefore exact-byte-bound as `design_only`; both expert and
+model runner paths reject it before authorization.
+
 The solved controls rule out several weak notions of difficulty. GPT-5.6-sol/high
 successfully implemented a named fermionic-Gaussian inverse, exact CSS algebra,
 a reusable tensor-network contraction plan, conditioned QKSD, and a truncated
@@ -121,21 +231,24 @@ MPS gradient. Random labels, tight line limits, specialized APIs, or a long
 formula are therefore not sufficient by themselves. The useful signal from 109
 is different: the submission had to synthesize a feasible artifact that
 generalized over a hidden coupled distribution, while satisfying competing
-fidelity, leakage, amplitude, slew, and edge constraints. The expert also had a
-physics-informed construction before deterministic refinement.
+fidelity, leakage, amplitude, slew, and edge constraints. Historical v1 still
+failed its precommitted private screen at 22/23. Current v6 clears 12 preserved
+public cases, but that cannot replace private evidence and does not resolve
+shared-seed or same-process model isolation. The earlier exploratory model
+failure therefore remains only a signal.
 
 ## Recommended review order
 
 | Priority | Direction | Why it remains plausible | Current gate | Recommended human decision |
 |---:|---|---|---|---|
-| 1 | 109: robust leakage-aware GRAPE | Only present expert-pass/model-fail signal; failure was held-out optimization quality rather than static policy or source audit | Public expert and one exploratory pilot exist; no protocol-qualified prototype | Review now for a fresh 25-seed expert prequalification campaign and then a five-seed pilot |
-| 2 | 101: robust mixed-state SLD-QFIM probe synthesis | The repaired constructive expert clears all frozen robust-gain and support/QFIM gates, and the output is a continuous artifact scored on hidden nuisance ensembles | Direct pinned expert passes, but runtime margin is only 0.52s and the case-identity/private-prequalification protocol is missing | Review the scientific contract and protocol upgrade; require 25 private expert cases and p95 runtime before considering a solver pilot |
+| 1 | 101: robust mixed-state SLD-QFIM probe synthesis | The constructive expert clears every robust-gain, support, QFIM, identity, static, and strict runtime gate; the output is a continuous artifact scored on hidden nuisance ensembles | Exact schedule-scrubbed, oracle-prebound protocol and hash-bound direct expert pass exist with 76.14s runtime margin; no private Harbor records, human approval, or model evidence | Review the scientific/framework contract and sealed 25-case expert plan; require all expert records and p95 runtime before considering a solver pilot |
+| 2 | 109: robust leakage-aware GRAPE | Only present exploratory expert-pass/model-fail signal; the task still demands hidden-distribution artifact synthesis under coupled physical constraints | Historical v1 stopped at 22/23 private cases; current v6 passed 4+8 preserved public canaries, but shares seed state with public config and lacks hostile-process isolation | Keep HOLD. Require independent hidden entropy, isolated oracle execution, fresh exact review, and private expert prequalification before any pilot |
 | 3 | 117: replica-transfer program synthesis | Many p2/p3/p4 queries force generic replica semantics and exact shared-program certificates; local oracle independence is strong | Local canaries pass, but pinned TensorCircuit feasibility and graph-execution adherence are unproved | Approve only a pinned expert/adherence study; no model pilot until telemetry or audit proves the returned graph computed the moments |
 | 4 | 116: coherent toric recovery portfolio v1 | A 98-qubit representation barrier and phase-sensitive 2^48-term coset sums are scientifically sound | Static oracle/expert exist and design-only provenance is bound, but eight artifacts collapse to four quality-distinct homology classes | Hold v1; add implementation-dependent recovery performance or a genuinely synthesized recovery set before pinned feasibility and any pilot |
 | 5 | 115: noisy p3-PPT replica MPS | Dense fallback is impossible and opposite three-cycles plus traced Kraus environments create real representation pressure | Independent physics review and 4/4 pinned expert canaries pass, but 3/4 exceed the 180-second target and the 95-line expert transcribes exposed replica maps | Keep as a feasibility control; do not spend a solver pilot on the frozen form |
 | 6 | 118: retained-memory QEC intervention policy | Temporal back-action and a shared resource budget are scientifically meaningful | Local spatial/temporal canaries pass, but the finite schedule/DP recipe is exposed and pinned TC is unverified | Preserve as a design iteration; redesign around causal prefix sharing or a reusable process-tensor program before feasibility work |
 | 7 | Fault-tolerant CSS preparation synthesis v2 | Automated CSS preparation is grounded, but the solved CSS verifier shows direct algebra is too easy | Frozen f03 lead needs redesign | Require circuit/recovery synthesis across hidden propagated-fault sets rather than verification of a supplied construction |
-| 8 | Worst-case circuit-cut and shot-allocation synthesis | Cuts, signed recombination, and variance allocation must jointly generalize to hidden observables | Direct reconstruction prototype exists; no model evidence | Add hidden graph/observable families and score a synthesized allocation rather than one declared cut |
+| 8 | 119: robust lightcone cut planning | Joint partition/allocation and 54 framework pilots are more meaningful than fixed-cut reconstruction | Local oracle and strict artifact checks pass; pinned TensorCircuit is untested, allocation is threshold-feasible rather than optimal, and the QPD product is a conservative proxy | Keep `design_only`; review the proxy and recipe exposure before spending pinned feasibility resources |
 | 9 | Non-Abelian geometric tensor and Wilson loop | Hidden rotations of a degenerate subspace defeat per-eigenvector phases; only gauge-covariant links are stable | Source-grounded lead; no prototype | Prototype only if production scale blocks dense eigenspaces and the oracle scores basis-invariant outputs |
 | 10 | Implicit tensor-network fixed-point response | Requires a gauge-projected adjoint solve rather than differentiating a visible finite sweep recipe | Source-grounded lead; no prototype | Build only after demonstrating a stable transfer gap, independent finite-difference oracle, and substantial advantage over unrolling |
 
@@ -190,12 +303,15 @@ pilot approval:
 
 ## Proposed immediate decision
 
-The highest-value human actions are to review 109 for protocol-qualified expert
-prequalification and to decide whether candidate 101's repaired robust-design
-contract merits a protocol upgrade. Candidate 101 has a passing constructive
-expert but only one runtime observation with 0.52 seconds of headroom; it is not
-pilot-ready. Candidates 115, 116, 117, and 118 remain HOLD controls or design
-iterations for the reasons above. In particular, 117 is the intended stronger
-replica-program successor, but its functional certificate still cannot prove
-execution adherence. No solver test should run until human decisions and all
-candidate-specific admission gates are recorded.
+Candidate 101 is the next viable human-review target. Its exact upgraded
+protocol and direct expert now pass with substantial runtime margin, so the
+review decision is whether to approve its sealed 25-case expert-only plan. That
+approval would authorize feasibility evidence only, never a solver trial.
+
+Candidate 109 remains HOLD. Historical v1 is terminal at 22/23 passes, its last
+two cases remain unrun, and they must not be substituted or used to dilute the
+failure. Current v6 has a fully frozen 12/12 public trusted-expert result, but
+only an independent-hidden-seed and isolated-oracle revision followed by fresh
+human review can produce new private evidence. Candidates 115–119 remain HOLD
+controls or design iterations for the reasons above. No solver test should run
+until human decisions and every candidate-specific admission gate are recorded.

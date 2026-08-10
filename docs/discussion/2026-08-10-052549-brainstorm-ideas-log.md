@@ -263,3 +263,141 @@ now exact-byte-bound there as `design_only`. The runner rejects that lifecycle
 before both expert and model paths; the registry is not execution authority.
 Only a future separately hashed, human-reviewed executable-promotion contract
 could authorize a run, without appending or remapping the frozen snapshot.
+
+## Phase 7 — Robust circuit-cut partition and shot-allocation reserve
+
+The next design request combined two decisions that problem 104 had fixed in
+advance: where a large circuit should be cut and how a finite execution budget
+should be shared. The failure-mining lesson from the earlier GPT-5.6 runs was
+kept explicit. A larger reconstruction formula alone would likely remain a
+transcription task, while candidate 109's only exploratory failure signal came
+from genuinely constrained robust synthesis. The new direction therefore
+scores a partition/allocation artifact rather than merely asking for another
+expectation value.
+
+Primary-source search grounded five parts of the design:
+
+- Tang et al., *CutQC: Using Small Quantum Computers for Large Quantum Circuit
+  Evaluations* (arXiv:2012.02333), motivate automated capacity-constrained
+  circuit partitioning.
+- Brandhofer, Polian, and Krsulich, *Optimal Partitioning of Quantum Circuits
+  using Gate Cuts and Wire Cuts* (arXiv:2308.09567), treat cut selection and
+  execution overhead as one resource problem.
+- Schmitt, Piveteau, and Sutter, *Cutting circuits with multiple two-qubit
+  unitaries* (arXiv:2312.11638), establish angle- and gate-dependent QPD costs
+  and, importantly, warn that cutting gates jointly can beat products of
+  independent single-gate decompositions.
+- Chen et al., *Enhanced Quantum Circuit Cutting Framework for Sampling
+  Overhead Reduction* (arXiv:2412.17704), explicitly optimize shot
+  distribution using subexperiment variance contributions.
+- Eddins, Tran, and Rall, *Lightcone shading for classically accelerated
+  quantum error mitigation* (arXiv:2409.04401), provide a neighboring example
+  of observable-specific causal influence reducing quasiprobability overhead.
+
+Several stronger-looking formulations were rejected before implementation. An
+exact expansion over every cut configuration would make the number of terms
+exponential and either violate the runtime envelope or force the generator to
+use so few cuts that the partition problem becomes trivial. A per-cut shot
+allocation was also rejected as physically misleading because standard QPD
+sampling allocates across subexperiments, not independent edges. The retained
+contract is deliberately a pre-execution robust variance proxy with shared
+execution strata. It does not claim to reconstruct real samples or equal
+hardware MSE.
+
+Problem 119 uses one seeded 76-qubit circuit with three matching layers and 113
+RPP interactions. The hardware layout must be divided into seven contiguous
+fragments of eight to twelve qubits, giving 2,415 feasible interval
+compositions. Eighteen local Pauli observables and three coherent calibration
+scenarios create 54 targets. Their exact backward cones contain at most eight
+qubits and seven interactions. The expert must use TensorCircuit for all pilot
+expectations, identify which partition cuts lie in each observable cone, apply
+the angle-dependent single-RPP factor `gamma = 1 + 2|sin(theta)|`, and assign
+90,000 integer shots across nine shared strata below a worst-target variance
+cutoff. Opaque fragment, gate, observable, scenario, and stratum identities,
+plus exact cut/lightcone and continuous certificates, are all scored.
+
+The evaluator never imports TensorCircuit. It constructs the cone circuits
+directly from complex128 NumPy RPP matrices, exhaustively searches all feasible
+layout compositions, and recomputes every artifact and variance. A separate
+eight-qubit dense circuit agrees with the cone oracle to at most 1.554e-15.
+Four non-binding host seeds passed; their reference robust variances ranged
+from 6.996e-5 to 1.272e-4. The selected plans cut 10 to 16 interactions. Even
+the balanced-layout reference allocation was at least 255% worse than the
+selected plan, so the partition objective is active rather than decorative. The final
+generator also exhaustively checks that uniform shots fail across all 2,415
+partitions. Ten strict type, contiguity, identity, finite-value, allocation,
+certificate, coercible-string/tuple, and valid-but-suboptimal-plan mutations
+were rejected on every seed.
+
+The 158-effective-line expert passes the repository static policy with 101
+logical statements and no raw-simulator hint. A conventional in-memory Circuit
+shim matched the independent oracle end to end: maximum pilot error 2.165e-15,
+robust-variance error 8.132e-20, and default-seed proxy runtime 2.953 seconds.
+This is semantic evidence about the intended gate order and basis changes, not
+a TensorCircuit execution or runtime estimate.
+
+An independent Phase 7 audit reproduced the lightcone, RPP, seed-scrub, and
+static checks, but found that the initial generator only compared uniform shots
+on the balanced layout, the validator coerced numeric strings and tuple
+matrices, and the shared 96-step allocation heuristic was not an integer
+minimax certificate. The first two defects were repaired locally: generation
+now compares the best uniform-shot score over every feasible partition, and
+the validator requires nested lists and finite real non-boolean numbers. The
+audit improved the default heuristic allocation from 6.995601480311e-5 to
+6.867465835582e-5 by one-shot exchanges. The benchmark therefore asks only for
+a threshold-feasible joint design, accepts better plans, and makes no global
+allocation-optimality claim.
+
+The verdict is **HOLD**. The independent product of single-RPP QPD factors is a
+declared conservative benchmark proxy, not the optimal joint multi-gate
+overhead described in the literature. Real TensorCircuit behavior for the XX
+and YY basis conjugations, `expectation_ps` convention, complex128 parity, and
+54 repeated cone circuits remains untested. More strategically, the public
+objective and 2,415-layout search may still be reproducible by GPT-5.6 once the
+quantum pilots are correct; local feasibility cannot establish likely
+hardness. Problem 119 should be exact-byte registered only as `design_only`,
+then receive human design review and a separately hashed executable-promotion
+decision before pinned expert feasibility or prequalification can begin. Only
+after those gates pass may humans consider a separately authorized
+one-candidate model pilot.
+
+## Phase 8 — Evidence-qualified checkpoint and human decision boundary
+
+The final checkpoint separates promising expert feasibility from model
+hardness. Candidate 101's schedule-scrubbed, oracle-prebound mixed-state QFIM
+evaluator and module-scope-JIT expert were frozen into one exact materialized
+task. A network-disabled pinned-image direct run passed all functional,
+scientific, static, and strict admission metrics in 103.8569 seconds, leaving
+76.1431 seconds below the 180-second expert gate. The branch-portable record
+binds the exact evaluator, expert, blueprint, task bundle, runtime versions,
+and preserved local raw hashes. A fresh private-v5 plan now commits 25 unique
+cases and 25 safe one-candidate Oracle command previews against a byte-frozen
+provider-free runner, but it remains unexecuted and has no human approval or
+terminal reservation. Its only permitted execution path is Harbor Oracle on a
+trusted single-user host after a separate exact approval that acknowledges
+same-host process visibility. This establishes a constructive solution and a
+credible next review target, not Harbor admission or model hardness.
+
+Candidate 109 now has two intentionally separate histories. The historical v1
+private screen remains terminal at 22 passes in 23 attempts, with the final two
+cases unrun and no rerun or substitution permitted. The current v6 expert was
+instead tested on an immutable public plan: four tuning-role and eight untouched
+validation canaries all passed, with raw local evidence preserved and an
+independent read-only reconstruction. Its tracked record is durable sanitized
+public trusted-expert feasibility. It cannot replace private prequalification,
+because the hidden stream is derived from solver-visible seed state and the
+evaluator does not isolate hostile submitted code from mutable oracle process
+state.
+
+Problem 119's lifecycle was also made explicit. Exact-byte `design_only`
+registration is provenance only. The allowed order is human design review,
+then a separately hashed executable-promotion contract, then pinned expert
+feasibility and prequalification. Direct Docker commands that bypass that
+lifecycle were removed; model work would require still-later human gates.
+
+The honest conclusion remains **zero confirmed protocol-scoped GPT-5.6-sol/high
+hard problems**. Problems 105, 106, 107, 108, and 111 are solved controls;
+candidate 109 has only one historical exploratory failure signal. The next
+scientific action is therefore human review of candidate 101's exact contract
+and sealed expert-only plan. No solver trial is authorized by this checkpoint,
+and any eventual benchmark run must execute only the selected candidate task.

@@ -566,8 +566,9 @@ def _artifact(path: Path) -> dict[str, Any]:
 
 
 def _functional_evidence(
-    text: str, problem_id: int, thresholds: dict[str, float]
+    text: str, problem_id: int, binding: dict[str, Any]
 ) -> dict[str, Any]:
+    thresholds = binding.get("functional_thresholds", {})
     safe_metrics: dict[str, Any] = {}
     seed: int | None = None
     case_digest: str | None = None
@@ -669,6 +670,14 @@ def _functional_evidence(
             }
         )
 
+    threshold_source = binding.get("functional_threshold_source")
+    evaluation_check_source = None
+    if threshold_source is not None:
+        evaluation_check_source = (
+            f"{binding['source_snapshot']}/{threshold_source['file']}; "
+            "selected task content is bound by trial.task_checksum"
+        )
+
     return {
         "overall_pass_marker": "Overall: PASS" in text,
         "seed": seed,
@@ -676,12 +685,7 @@ def _functional_evidence(
         "case_digest_scope": digest_scope,
         "metrics": safe_metrics,
         "evaluation_checks": evaluation_checks,
-        "evaluation_check_source": (
-            "reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape/evaluate_109.py; "
-            "selected task content is bound by trial.task_checksum"
-            if problem_id == 109
-            else None
-        ),
+        "evaluation_check_source": evaluation_check_source,
     }
 
 
@@ -1002,7 +1006,7 @@ def _build_run(
     functional_evidence = _functional_evidence(
         functional_text,
         spec.problem_id,
-        binding.get("functional_thresholds", {}),
+        binding,
     )
     functional_evidence.update(
         {

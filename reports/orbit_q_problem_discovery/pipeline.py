@@ -514,6 +514,7 @@ EXPERT_RUN_EVIDENCE_NAMES = (
     "harbor_job_lock",
     "functional_output",
     "admission_record",
+    "audit_details",
 )
 
 
@@ -688,18 +689,7 @@ def _verified_expert_run_item(
 
 
 def _expert_expected_config(bindings: dict[str, Any], seed: int) -> dict[str, Any]:
-    verifier_env = {
-        "REQUIRED_QUANTUM_FRAMEWORK": "tensorcircuit",
-        "ORBIT_Q_EXPERT_PREQUALIFICATION_MODE": "expert_only_oracle",
-        "ORBIT_Q_CANDIDATE_ID": bindings["candidate_id"],
-        "ORBIT_Q_CANDIDATE_HASH": bindings["candidate_hash"],
-        "ORBIT_Q_CANDIDATE_SEED": str(seed),
-        "ORBIT_Q_CONTAINER_IMAGE_DIGEST": bindings["container_image_digest"],
-        "ORBIT_Q_EXPERT_BASELINE_SHA256": bindings["expert_baseline_sha256"],
-        "ORBIT_Q_EVALUATOR_SHA256": bindings["evaluator_sha256"],
-        "ORBIT_Q_TASK_BUNDLE_SHA256": bindings["task_bundle_sha256"],
-        "ORBIT_Q_FRAMEWORK_PROMPT_SHA256": bindings["framework_prompt_sha256"],
-    }
+    verifier_env = _required_expert_verifier_env(bindings, seed)
     return {
         "schema_version": 1,
         "mode": "expert_only_oracle",
@@ -858,9 +848,12 @@ def _required_expert_verifier_env(
 ) -> dict[str, str]:
     return {
         "PYTHONDONTWRITEBYTECODE": "1",
+        "CODEX_AUDIT_ENABLED": "0",
         "REQUIRED_QUANTUM_FRAMEWORK": "tensorcircuit",
         "ORBIT_Q_NON_HARDNESS_RUN": "expert_prequalification",
         "ORBIT_Q_EXPERT_PREQUALIFICATION_MODE": "expert_only_oracle",
+        "ORBIT_Q_AUDIT_POLICY": "disabled_private_prequalification",
+        "ORBIT_Q_PROVIDER_CALL_BUDGET": "0",
         "ORBIT_Q_CANDIDATE_ID": bindings["candidate_id"],
         "ORBIT_Q_CANDIDATE_HASH": bindings["candidate_hash"],
         "ORBIT_Q_CANDIDATE_SEED": str(seed),
@@ -927,7 +920,7 @@ def _validate_real_expert_config(
     if not isinstance(verifier, dict) or (
         verifier.get("import_path") != VERIFIER_IMPORT_PATH
         or verifier.get("disable", False) is not False
-        or verifier.get("kwargs", {}).get("expert_only") is not True
+        or verifier.get("kwargs", {}) != {"expert_only": True}
     ):
         raise ValueError("expert Harbor config lacks the expert-only verifier")
     verifier_env = verifier.get("env")
@@ -985,6 +978,16 @@ def _parse_expert_prequalification_run(
     trial_lock = _read_json_object(paths["harbor_lock"], "expert Harbor trial lock")
     job_lock = _read_json_object(paths["harbor_job_lock"], "expert Harbor job lock")
     result = _read_json_object(paths["raw_job"], "raw expert Harbor result")
+    audit_details = _read_json_object(
+        paths["audit_details"], "expert verifier audit details"
+    )
+    if audit_details.get("audit") != {
+        "llm_audit_score": 1.0,
+        "llm_audit_skipped": True,
+    }:
+        raise ValueError(
+            "private expert audit details do not prove a skipped LLM audit"
+        )
     if (
         result.get("finished_at") in (None, "")
         or result.get("exception_info") is not None
@@ -1049,6 +1052,12 @@ def _parse_expert_prequalification_run(
         for name in ("n_input_tokens", "n_output_tokens", "cost_usd")
     ):
         raise ValueError("expert Oracle result contains solver-model usage")
+    verifier_info = result.get("verifier_info")
+    if verifier_info is not None and (
+        not isinstance(verifier_info, dict)
+        or verifier_info.get("model_info") is not None
+    ):
+        raise ValueError("private expert verifier reports model usage")
     rewards = result.get("verifier_result", {}).get("rewards")
     if not isinstance(rewards, dict):
         raise ValueError("raw expert Harbor result is missing verifier rewards")
@@ -1061,6 +1070,11 @@ def _parse_expert_prequalification_run(
         value = rewards.get(name)
         if not isinstance(value, (int, float)) or isinstance(value, bool) or value != 1:
             raise ValueError("expert Harbor verifier did not produce a complete pass")
+    if (
+        isinstance(rewards.get("llm_audit_skipped_score"), bool)
+        or rewards.get("llm_audit_skipped_score") != 1
+    ):
+        raise ValueError("private expert rewards do not prove a skipped LLM audit")
     runtime = rewards.get("runtime_sec")
     if (
         not isinstance(runtime, (int, float))

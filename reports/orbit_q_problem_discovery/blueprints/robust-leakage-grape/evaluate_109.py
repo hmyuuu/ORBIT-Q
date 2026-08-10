@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import copy
 import hashlib
 import importlib
 import json
 import os
+import sys
 import time
 from itertools import product
 
@@ -107,6 +109,7 @@ def _configuration(seed):
         "maximum_worst_infidelity": 0.00125,
         "maximum_p95_infidelity": 0.0007,
         "maximum_worst_leakage": 0.00015,
+        # Public solver-local randomness only: base seed modulo 2**31 - 1.
         "optimization_seed": int(seed % (2**31 - 1)),
     }
 
@@ -139,10 +142,19 @@ def main():
         default=default_seed(),
     )
     args = parser.parse_args()
+    verifier_seed = os.environ.get("ORBIT_Q_CANDIDATE_SEED")
+    if verifier_seed is not None and int(verifier_seed) != args.seed:
+        raise ValueError("--seed cannot override the verifier-authorized seed")
     config = _configuration(args.seed)
+    hidden_members = _heldout(config, args.seed)
+    solution_config = copy.deepcopy(config)
     digest = case_digest(config)
-    print(
-        json.dumps(
+    trusted_print = print
+    trusted_json_dumps = json.dumps
+    trusted_metrics = _metrics
+    trusted_clock = time.perf_counter
+    trusted_print(
+        trusted_json_dumps(
             {
                 "orbit_q_case_identity": {
                     "protocol_seed": args.seed,
@@ -155,10 +167,11 @@ def main():
         flush=True,
     )
     os.environ.pop("ORBIT_Q_CANDIDATE_SEED", None)
-    started = time.perf_counter()
+    sys.argv[:] = [sys.argv[0]]
+    started = trusted_clock()
     try:
-        result = importlib.import_module(args.solution).run_solution(config)
-        elapsed = time.perf_counter() - started
+        result = importlib.import_module(args.solution).run_solution(solution_config)
+        elapsed = trusted_clock() - started
         required_keys = {
             "controls",
             "training_worst_infidelity",
@@ -170,8 +183,10 @@ def main():
                 "training_worst_infidelity, and training_worst_leakage"
             )
         controls = np.asarray(result["controls"], dtype=float)
-        training_i, training_l = _metrics(controls, config, config["training_ensemble"])
-        hidden_i, hidden_l = _metrics(controls, config, _heldout(config, args.seed))
+        training_i, training_l = trusted_metrics(
+            controls, config, config["training_ensemble"]
+        )
+        hidden_i, hidden_l = trusted_metrics(controls, config, hidden_members)
         amplitudes = np.linalg.norm(controls, axis=1)
         slew = np.linalg.norm(np.diff(controls, axis=0), axis=1)
         reported_i = float(result["training_worst_infidelity"])
@@ -201,12 +216,12 @@ def main():
             and summary["max_edge_amplitude"] <= config["max_edge_amplitude"] + 1e-9
         )
     except Exception as exc:
-        elapsed = time.perf_counter() - started
+        elapsed = trusted_clock() - started
         passed = False
         summary = {"error": f"{type(exc).__name__}: {exc}"}
-    print(f"End-to-end solution time: {elapsed:.6f}s")
-    print(f"Case seed: {args.seed}; case digest: {digest[:16]}")
-    print(json.dumps(summary, sort_keys=True))
+    trusted_print(f"End-to-end solution time: {elapsed:.6f}s")
+    trusted_print(f"Case digest: {digest[:16]}")
+    trusted_print(trusted_json_dumps(summary, sort_keys=True))
     if passed:
         admission_metrics = {
             "orbit_q_expert_admission_metrics": {
@@ -253,11 +268,13 @@ def main():
                 ],
             }
         }
-        print(
-            json.dumps(admission_metrics, sort_keys=True, separators=(",", ":")),
+        trusted_print(
+            trusted_json_dumps(
+                admission_metrics, sort_keys=True, separators=(",", ":")
+            ),
             flush=True,
         )
-    print("Overall: PASS" if passed else "Overall: FAIL")
+    trusted_print("Overall: PASS" if passed else "Overall: FAIL")
     raise SystemExit(0 if passed else 1)
 
 

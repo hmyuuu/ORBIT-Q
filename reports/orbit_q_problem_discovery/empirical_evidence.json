@@ -1787,7 +1787,7 @@
           "functional_evidence": {
             "case_digest": null,
             "case_digest_scope": "not_emitted",
-            "evaluation_check_source": "reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape/evaluate_109.py; selected task content is bound by trial.task_checksum",
+            "evaluation_check_source": ".artifacts/problem-discovery/candidate-tasks/candidate-robust-leakage-grape.stale-before-admission-protocol-20260810/tests/evaluate_109.py; selected task content is bound by trial.task_checksum",
             "evaluation_checks": [
               {
                 "comparator": "<=",
@@ -2032,7 +2032,7 @@
           "functional_evidence": {
             "case_digest": null,
             "case_digest_scope": "not_emitted",
-            "evaluation_check_source": "reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape/evaluate_109.py; selected task content is bound by trial.task_checksum",
+            "evaluation_check_source": ".artifacts/problem-discovery/candidate-tasks/candidate-robust-leakage-grape.stale-before-admission-protocol-20260810/tests/evaluate_109.py; selected task content is bound by trial.task_checksum",
             "evaluation_checks": [
               {
                 "comparator": "<=",
@@ -2575,7 +2575,7 @@
     "protocol_qualified_hardness_claim": false,
     "statement": "These are sanitized records of local exploratory Harbor runs. They are bound to opaque local artifacts and automated trace scans, but have no hash-bound human trace review and are not signed raw-run attestations. They do not satisfy the precommitted multi-trial protocol needed for a model-hard benchmark claim."
   },
-  "evidence_payload_sha256": "94d0c4d40d18688587cb646cf3ce4d97216f782da19b7bd081c5dd9d9ecff726",
+  "evidence_payload_sha256": "8d01f4fc4a6efaf8126d97a4b7a5c8612c7fe4c39e5592c1c5c5e654593fa99a",
   "frozen_protocol_facts": {
     "audit_model": "gpt-5.6-sol",
     "codex_cli_version": "0.146.0",
@@ -2587,7 +2587,7 @@
       "selected_harbor_results_bind_digest": false,
       "sha256": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
       "source": "reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim/blueprint.json",
-      "source_record_sha256": "eb8e6d9ca52f3556e795a48e102e28878f524bf36ba94eb6446ee3e22226c059"
+      "source_record_sha256": "718957fe3196eee1050e321f0b187b57324db284bc989a940c93737a6f6a426f"
     },
     "image_tag": "challenge-benchmark-quantum-tensorcircuit:py311",
     "model_pilot_model": "gpt-5.6-sol",
@@ -2606,8 +2606,8 @@
   "integrity": {
     "builder": {
       "path": "scripts/build_problem_discovery_evidence.py",
-      "sha256": "10aaade8f155eb60a0f15b64aa47525fae7b7563c9f1a303f015d27fba6eddbc",
-      "size_bytes": 82658
+      "sha256": "877b4f673e5af486c573da89d443ec94683d1839bb7fe09821d81f7e3f4e518f",
+      "size_bytes": 82795
     },
     "schema": {
       "path": "reports/orbit_q_problem_discovery/empirical_evidence.schema.json",
@@ -2616,8 +2616,8 @@
     },
     "source_binding_manifest": {
       "path": "reports/orbit_q_problem_discovery/empirical_evidence.sources.json",
-      "sha256": "016b72c78757022254c77e0df881e061d59f733c6825fef812721b2a102af50a",
-      "size_bytes": 15868
+      "sha256": "8b43f2e5bdf72ed75061e496e128ee2fbc3688dc1d7c50116f87ecfe321a8e06",
+      "size_bytes": 15909
     }
   },
   "sanitization": {
@@ -2629,7 +2629,7 @@
     "raw_transcript_or_rollout_copied": false
   },
   "schema_version": 1,
-  "snapshot_id": "orbit-q-exploratory-harbor-sha256:eae54177fd3b7ad25aa9ce1ddbb381bc568de086cb7c65edb1202a3bc1171a5c",
-  "source_artifact_set_sha256": "eae54177fd3b7ad25aa9ce1ddbb381bc568de086cb7c65edb1202a3bc1171a5c",
+  "snapshot_id": "orbit-q-exploratory-harbor-sha256:9a35b8137cfafb404c5ea29b918f52926ac883712d0fa60bbceb7e41004096ce",
+  "source_artifact_set_sha256": "9a35b8137cfafb404c5ea29b918f52926ac883712d0fa60bbceb7e41004096ce",
   "source_cutoff_utc": "2026-08-09T19:03:20.023450Z"
 }

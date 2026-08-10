@@ -13,8 +13,20 @@
   "expert_time_estimate_hours": 12,
   "tags": ["qfim", "mixed-state", "robust-design", "quantum-metrology"],
   "difficulty_explanation": "The solver must differentiate a noisy mixed-state circuit, form stable three-parameter SLD-QFIMs on fixed support, and optimize a robust log-determinant objective across an ensemble.",
-  "status": "prototype_pinned_direct_expert_validated_model_untested",
-  "claim_boundary": "The repaired expert passes the three frozen public evaluator seeds in the pinned image and an independent three-formula QFIM canary. The single 179.48-second observation has only 0.52 seconds of margin to the nominal 180-second expert target and does not establish p95 runtime. This is direct expert-canary evidence only: the evaluator still lacks the full single-seed case-identity/admission protocol, no authenticated Harbor or LLM-policy audit has run, no private holdout is frozen, no human promotion is recorded, and no GPT-5.6-sol trial has run. Difficulty remains a hypothesis.",
+  "status": "direct_functional_and_strict_expert_metrics_pass_authenticated_harbor_and_model_pending",
+  "claim_boundary": "The exact tracked module-scope-JIT expert passed every functional, scientific, static, and strict expert-admission metric in a public-default, network-disabled direct canary of the exact schedule-scrubbed, oracle-prebound evaluator. The separately tracked direct-canary record binds the final materialized task and preserved ignored raw-output hashes without changing this task contract. The evaluator precomputes all hidden ensembles before solution import and emits no private schedule afterward. This is a direct pinned canary only, not an authenticated Harbor run or admission record. No private prequalification set, human promotion, LLM-policy audit, or GPT-5.6-sol trial has run on this exact bundle, and difficulty remains a hypothesis.",
+  "seed_protocol": {
+    "deterministic": true,
+    "verifier_env": "ORBIT_Q_CANDIDATE_SEED",
+    "cli_override": "--seeds",
+    "local_default_schedule": [101021, 101033, 101051],
+    "base_seed_mapping": "A verifier base seed b expands to the ordered three-instance schedule (b, b + 12, b + 30). An explicit --seeds schedule is accepted only in that form and cannot override a verifier-authorized base seed.",
+    "determinism_scope": "The schedule mapping is runtime-independent. The evaluator hashes the ordered exact public configs passed to the three solution calls; hidden theta/noise draws and independent oracle results are excluded.",
+    "case_identity": "SHA-256 of canonical JSON with sorted keys, compact separators, finite ndarray/scalar normalization, and full numeric values over the ordered exact public configs; functional stdout emits the full case_digest and protocol_seed in one structured orbit_q_case_identity JSON line and flushes it before untrusted import.",
+    "seed_scrub": "The evaluator constructs all hidden ensembles before importing untrusted code, then removes ORBIT_Q_CANDIDATE_SEED and replaces sys.argv with the evaluator program name immediately after emitting case identity. It does not print the private schedule or invoke seeded RNG between solution calls.",
+    "trusted_dependency_binding": "The evaluator default-binds its numerical oracle chain and captures the evaluator callable, clock, output/JSON functions, aggregators, thresholds, and exit callable before solution import. This blocks tested __main__ name replacement and clock spoofing but is not full same-process hostile isolation.",
+    "pinned_numpy_note": "The target image pins NumPy 2.2.6 and SciPy 1.17.1; a seed alone is not a cross-runtime case identity, so trial manifests must bind the image/runtime and case_digest."
+  },
   "scientific_contract": {
     "artifact": "six two-qubit probe-circuit parameters",
     "estimated_parameters": 3,
@@ -39,7 +51,7 @@
   "independent_oracle": "NumPy/SciPy density propagation, finite differences, spectral SLD formula, and a separate vectorized SLD equation",
   "hardcoding_resistance": [
     "three default generated generator ensembles",
-    "arbitrary --seeds evaluation",
+    "arbitrary nonnegative verifier base-seed schedules of the required (b, b + 12, b + 30) form",
     "35 held-out members per instance",
     "only circuit parameters accepted",
     "scores and QFIMs recomputed independently"
@@ -49,17 +61,32 @@
     "expert_runtime_target_sec": 180,
     "timed_execution_limit_sec": 300
   },
+  "expert_admission_protocol": {
+    "structured_output_key": "orbit_q_expert_admission_metrics",
+    "schema_version": 1,
+    "strict_thresholds": [
+      {"metric": "minimum_heldout_robust_score_gain", "direction": "at_least", "threshold": 0.32},
+      {"metric": "minimum_heldout_qfim_eigenvalue", "direction": "at_least", "threshold": 0.025},
+      {"metric": "minimum_support_eigenvalue", "direction": "at_least", "threshold": 0.00002},
+      {"metric": "maximum_sld_spectral_identity_error", "direction": "at_most", "threshold": 3e-7},
+      {"metric": "total_solution_runtime_seconds", "direction": "at_most", "threshold": 180.0}
+    ],
+    "threshold_policy_binding": "The generic trusted score_submission harness canonicalizes these ordered metric/direction/threshold rows and records their SHA-256 in expert-admission.json. Every observed metric must have a strict positive margin."
+  },
   "validation": {
     "image": "challenge-benchmark-quantum-tensorcircuit:py311",
     "image_digest": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
     "tensorcircuit_version": "1.7.0.dev20260618",
-    "command": "PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101",
+    "command": "PYTHONPATH=/work/solution python /work/tests/evaluate_101.py --solution solution_101",
     "default_seeds": [101021, 101033, 101051],
-    "overall": "PASS",
-    "timed_solution_seconds": 179.48,
+    "case_digest": "f0ce2c6c70f31e13e860f891cd82dc5b11b397d0c57eaa3a73a51d9ad2fd3fae",
+    "protocol_seed": 101021,
+    "current_evaluator_sha256": "b0c7e3e9f4fda7ef1c6187c489a1bbb0ea938f5995652e820d37ef0501661a14",
+    "expert_baseline_sha256": "4e5f06909ad685a2dedb403d3bab4dbaf95bce54deff55bb8796ebb5c18ccfac",
+    "direct_canary_record": "reports/orbit_q_problem_discovery/direct_canaries/mixed-sld-qfim-public.json",
+    "functional_overall": "SEE_DIRECT_CANARY_RECORD",
+    "expert_admission_overall": "SEE_DIRECT_CANARY_RECORD",
     "expert_runtime_target_seconds": 180,
-    "expert_runtime_margin_seconds": 0.52,
-    "runtime_observations": 1,
     "expert_runtime_p95_established": false,
     "heldout_score_gains": [1.214079, 1.122106, 0.82744],
     "required_gain": 0.32,
@@ -67,11 +94,66 @@
     "required_minimum_qfim_eigenvalue": 0.025,
     "heldout_minimum_support_eigenvalues": [0.003039, 0.003595, 0.01498],
     "required_support_floor": 0.00002,
-    "expert_effective_lines": 134,
+    "maximum_sld_spectral_identity_error": 4.8849813e-15,
+    "required_maximum_sld_spectral_identity_error": 3e-7,
+    "expert_effective_lines": 139,
     "expert_static_policy_score": 1.0,
-    "jax_vs_independent_spectral_qfim_max_error": 6.65601e-9,
-    "independent_spectral_vs_vectorized_sld_max_error": 4.4408921e-15,
-    "validation_scope": "direct pinned-image evaluator and formula canary; not authenticated prequalification",
+    "validation_scope": "The separate direct-canary record binds the exact materialized task, pinned-image functional stdout, host static-policy output, and runtime-version evidence; authenticated Harbor evidence is pending.",
+    "current_protocol_evidence_status": "direct_canary_recorded_authenticated_protocol_pending",
+    "privacy_hardening": {
+      "hidden_ensembles_precomputed_before_untrusted_import": true,
+      "private_schedule_printed_after_untrusted_import": false,
+      "seeded_rng_invoked_between_solution_calls": false,
+      "focused_interception_regression_passed": true,
+      "trusted_oracle_chain_prebound_before_solution_import": true,
+      "ordinary_main_name_replacement_and_clock_spoof_regression_passed": true,
+      "non_real_numeric_and_coercible_probe_dtypes_rejected": true,
+      "submitted_solution_process_isolation_complete": false,
+      "independent_hidden_seed_from_public_config_seed": false
+    },
+    "prior_unpreserved_current_byte_observation": {
+      "evaluator_sha256": "16232e0fb6ab5d3b836925ea20d3ee6523c1629c995fca6dddede00ad1334873",
+      "expert_sha256": "4e5f06909ad685a2dedb403d3bab4dbaf95bce54deff55bb8796ebb5c18ccfac",
+      "timed_solution_seconds": 113.7048628879711,
+      "runtime_margin_seconds": 66.2951371120289,
+      "raw_artifacts_preserved": false,
+      "evidence_scope": "corroborating direct observation only; the separately tracked canary record is the durable current evidence"
+    },
+    "prior_unpreserved_scientific_formula_canary": {
+      "jax_vs_independent_spectral_qfim_max_error": 6.65601e-9,
+      "independent_spectral_vs_vectorized_sld_max_error": 4.4408921e-15,
+      "raw_artifacts_preserved": false,
+      "evidence_scope": "historical formula cross-check only; the current direct-canary record proves the evaluator-emitted SLD identity metric, not these two separate maxima"
+    },
+    "pre_privacy_hardening_module_scope_jit_observations": [
+      {
+        "evaluator_sha256": "69f7bf0e3a58db2aacba1ed4e169d6d09c2a164953a250ba3b1b0ed0d6fa8fa7",
+        "timed_solution_seconds": 106.729504718096,
+        "evidence_scope": "scientific/runtime corroboration only; post-import schedule logging and between-call seeded RNG were later removed"
+      },
+      {
+        "evaluator_sha256": "69f7bf0e3a58db2aacba1ed4e169d6d09c2a164953a250ba3b1b0ed0d6fa8fa7",
+        "timed_solution_seconds": 109.78075476107188,
+        "evidence_scope": "byte-identical expert temp-path corroboration only; not exact current evaluator evidence"
+      },
+      {
+        "evaluator_sha256": "92cb2c89e9301ef33951d7a46d5714b093091138bde6f5b647d7344327a71d35",
+        "timed_solution_seconds": 118.04661143000703,
+        "evidence_scope": "post-import schedule print removed, but hidden seeded ensembles were not yet precomputed before untrusted code"
+      }
+    ],
+    "previous_unhoisted_jit_expert_observation": {
+      "expert_sha256": "feab4ffdeeebf2af7ca3d7d02329f0505e7dbf4d5c08a862bd624ab526761e8a",
+      "timed_solution_seconds": 214.8239676,
+      "runtime_margin_seconds": -34.8239676,
+      "reason": "Fresh nested JIT functions forced repeated compilation for the three same-shape instances; module-scope JIT reuse removes that overhead without changing the optimizer, objective, starts, iteration count, QFIM formula, evaluator, or thresholds."
+    },
+    "pre_protocol_predecessor_observation": {
+      "evaluator_sha256": "acad1ce0b12ea2169696d95a8e51da94c8e7fb5bb1d8dbadc29e5d1c2840f285",
+      "timed_solution_seconds": 179.48,
+      "runtime_margin_seconds": 0.52,
+      "evidence_scope": "historical predecessor evaluator only; not evidence for the upgraded protocol bundle"
+    },
     "previous_rejected_expert": {
       "timed_solution_seconds": 103.17,
       "passing_seed_gains": [1.053185, 0.518008],
@@ -79,13 +161,13 @@
       "rejected_seed_gain": 0.160336,
       "reason": "The original expert optimized only the four supplied theta points and selected by training minimum eigenvalue, overfitting seed 101051. The replacement uses a deterministic public-box design ensemble and hard robust-score selection without changing evaluator gates."
     },
-    "admission_status": "expert_baseline_restored_but_protocol_upgrade_required_before_review_or_model",
+    "admission_status": "direct_metrics_pass_authenticated_harbor_pending",
     "model_trials_run": 0
   },
   "admission_blockers": [
-    "Upgrade the evaluator to one verifier-only base seed, emit and flush one full 64-hex case identity before untrusted code, and scrub all seed variables before import.",
-    "Add candidate-specific expert-admission metrics, fixed threshold-policy hashing, and exact materialized-task bindings before the safe runner may collect prequalification evidence.",
+    "Run one authenticated pinned expert-only Harbor admission on a reviewed seed and retain the case digest, threshold-policy hash, evaluator/task hashes, 160-line result, and strict runtime margin; the public direct canary record is feasibility evidence only.",
     "Prequalify at least 25 private seed/digest records in the pinned image with runtime, memory, fixed-support, robust-gain, minimum-QFIM, and formula-agreement margins.",
+    "Before any solver pilot, derive the hidden ensemble from an independent verifier-only seed or isolated precomputed artifact rather than the PCG64 stream that also generates solver-visible public configuration; same-process submitted-solution isolation remains incomplete.",
     "Complete human physics/framework/independent review plus authenticated expert Harbor functional, static, and LLM-policy audit before any solver manifest.",
     "One clean GPT-5.6-sol/high pass vetoes this frozen design; failures require two independent substantive-failure auditors."
   ],
@@ -96,7 +178,7 @@
     "Differentiating through a 16x16 complex linear solve exercises higher-order JAX autodiff and is the primary compilation risk."
   ],
   "commands": {
-    "quick": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101 --seeds 101021'",
-    "default": "docker run --rm -v $PWD/reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim:/work -w /work challenge-benchmark-quantum-tensorcircuit:py311 sh -lc 'PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101'"
+    "quick": "docker run --rm --network none --cpus 8 --memory 8192m -v $PWD/reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim:/work:ro -w /work challenge-benchmark-quantum-tensorcircuit@sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7 sh -lc 'PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101 --seeds 101021,101033,101051'",
+    "default": "docker run --rm --network none --cpus 8 --memory 8192m -v $PWD/reports/orbit_q_problem_discovery/blueprints/mixed_sld_qfim:/work:ro -w /work challenge-benchmark-quantum-tensorcircuit@sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7 sh -lc 'PYTHONPATH=/work/expert python evaluate_101.py --solution solution_101'"
   }
 }

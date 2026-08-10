@@ -84,11 +84,13 @@ The evaluator calls `run_solution(config)` for several deterministic instances:
 ```
 
 The Cartesian product of the four training sensing points and three training
-noise arrays is available for optimization. Hidden sensing coordinates are
-drawn independently and uniformly from `[-0.53, 0.53]`. Each hidden channel
-entry is the corresponding mean supplied training-channel entry plus an
-independent zero-mean Gaussian perturbation with standard deviation `0.0045`,
-clipped to `[0.008, 0.052]`. Exact held-out draws remain hidden. A robust
+noise arrays is available for optimization. Within the deterministic hidden
+stream derived from the verifier base seed, sensing components are IID uniform
+on `[-0.53, 0.53]`. Each hidden channel entry is the corresponding mean
+supplied training-channel entry plus a componentwise IID zero-mean Gaussian
+perturbation with standard deviation `0.0045`, clipped to `[0.008, 0.052]`.
+This construction provides reproducibility for expert feasibility, not
+cryptographic confidentiality. Exact held-out draws remain hidden. A robust
 solution may construct its own deterministic design points inside this
 declared box; it must not assume that the four supplied sensing points exhaust
 the scored domain.
@@ -117,9 +119,14 @@ evaluator:
 - every QFIM is real symmetric and positive semidefinite to numerical tolerance;
 - held-out robust-score gain over the zero probe is at least `0.32`;
 - the smallest held-out QFIM eigenvalue is at least `0.025`;
-- analytic SLD and spectral SLD formulas agree on evaluator canary members;
-- all timed solution calls together finish within 300 seconds.
+- the vectorized SLD-equation solve and spectral SLD formula agree on evaluator
+  canary members using the same finite-difference state derivatives;
+- all timed solution calls are measured and reported independently of the
+  functional science criteria.
 
-The intended expert runtime target is below 180 seconds.  The solution may use
-any quantum software framework; framework constraints are supplied separately
-by the benchmark runner.
+The expert-admission protocol retains a strict total runtime threshold below
+180 seconds. The materialized task also retains the benchmark's 180-second
+full-runtime-score and 300-second zero-runtime-score thresholds; runtime is a
+separate comparison dimension and does not multiply functional correctness.
+The solution may use any quantum software framework; framework constraints are
+supplied separately by the benchmark runner.

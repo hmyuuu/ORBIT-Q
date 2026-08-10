@@ -261,7 +261,8 @@
             "harbor_lock",
             "harbor_job_lock",
             "functional_output",
-            "admission_record"
+            "admission_record",
+            "audit_details"
           ],
           "properties": {
             "raw_job": {"$ref": "#/$defs/file"},
@@ -269,9 +270,10 @@
             "harbor_lock": {"$ref": "#/$defs/file"},
             "harbor_job_lock": {"$ref": "#/$defs/file"},
             "functional_output": {"$ref": "#/$defs/file"},
-            "admission_record": {"$ref": "#/$defs/file"}
+            "admission_record": {"$ref": "#/$defs/file"},
+            "audit_details": {"$ref": "#/$defs/file"}
           },
-          "description": "Finished expert-only Harbor evidence. The pipeline rehashes and reparses all six files and derives every summary field."
+          "description": "Finished expert-only Harbor evidence. The pipeline rehashes and reparses all seven files, including proof that the private LLM audit was skipped, and derives every summary field."
         }
       }
     }

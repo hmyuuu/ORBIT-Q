@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "record_payload_sha256": "9da061c40745ebd51923de778dbf20a5fcfdfb75f6e062c55acda907250552cc",
+  "candidate": {
+    "problem_id": 101,
+    "slug": "mixed-sld-qfim",
+    "candidate_id": "f02_mixed_state_sld_qfim_probe--benchmark--robust_ensemble",
+    "discovery_candidate_hash": "be222ff1591873d3b597c38fbce2aea0d84764a38260fef42910384c95023d7a"
+  },
+  "evidence_class": "direct_public_expert_canary_not_harbor_not_model",
+  "claim_boundary": "One public-default, network-disabled direct evaluator run of the exact materialized candidate and expert. This is local unsigned custody evidence, not Harbor expert prequalification, human approval, an LLM-policy audit, a private holdout, or model-hardness evidence.",
+  "source_bindings": {
+    "blueprint_sha256": "718957fe3196eee1050e321f0b187b57324db284bc989a940c93737a6f6a426f",
+    "evaluator_sha256": "b0c7e3e9f4fda7ef1c6187c489a1bbb0ea938f5995652e820d37ef0501661a14",
+    "expert_sha256": "4e5f06909ad685a2dedb403d3bab4dbaf95bce54deff55bb8796ebb5c18ccfac",
+    "blueprint_instruction_sha256": "cf8c5a943c5d96443d96973af3ed10597f3270e0c2e78aa2dd3ec4107e22dc37",
+    "materialized_instruction_sha256": "1091225acaf33288a7603f95c9b1a7633a447e044ed472d93893fb9366d21da3",
+    "materialized_candidate_metadata_sha256": "9777a322376095a644a5647e1ccf1014b59976e14d0a1d5496edae07800d1984",
+    "materialized_task_policy_sha256": "6153370cedeb0cb202723d9db58250b200b0e0b3cf38d94647573209bb8dab50",
+    "materialized_task_bundle_sha256": "4ce296ff098a3d5620b225df76e36025bd8beffa8bc5cfeacbaf9cfc765e37c0",
+    "harbor_packager_digest": "433872ca42aa89d0bfa60140d8d6ee2d3aa38cddf40346afd393e2186090ed85",
+    "legacy_task_checksum": "818235f92f9a88aa17e9c2c5b505cf78bd7246b7205dc23b2469615a3b06983b",
+    "verifier_harness_sha256": "de6fee5416402bf64f58ac85f9f839e53a0a858b687db1d111e2456886d2510f"
+  },
+  "execution": {
+    "date": "2026-08-10",
+    "command_template": "docker run --rm --network none --cpus 8 --memory 8192m -e PYTHONDONTWRITEBYTECODE=1 -e NUMBA_DISABLE_JIT=1 -v <repository>/.artifacts/problem-discovery/candidate-tasks/candidate-mixed-sld-qfim:/work:ro -w /work/tests <digest-addressed-image> sh -lc 'PYTHONPATH=/work/solution python evaluate_101.py --solution solution_101'",
+    "container_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "container_image_digest": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
+    "runtime_versions": {
+      "python": "3.11.15",
+      "numpy": "2.2.6",
+      "scipy": "1.17.1",
+      "tensorcircuit": "1.7.0.dev20260618"
+    },
+    "cpu_limit": 8,
+    "memory_limit_mb": 8192,
+    "network": "none",
+    "return_code": 0,
+    "harbor_executed": false,
+    "solver_agent_invoked": false,
+    "model_invoked": false,
+    "llm_audit_invoked": false,
+    "canonical_tasks_executed": false
+  },
+  "case_identity": {
+    "protocol_seed": 101021,
+    "case_digest": "f0ce2c6c70f31e13e860f891cd82dc5b11b397d0c57eaa3a73a51d9ad2fd3fae",
+    "public_default_case": true
+  },
+  "result": {
+    "functional_overall": "PASS",
+    "static_policy_score": 1.0,
+    "effective_lines": 139,
+    "logical_statements": 78,
+    "runtime_seconds": 103.85688071511686,
+    "runtime_threshold_seconds": 180.0,
+    "runtime_margin_seconds": 76.14311928488314,
+    "runtime_p95_established": false,
+    "admission_metrics": {
+      "minimum_heldout_robust_score_gain": 0.827439589105027,
+      "minimum_heldout_qfim_eigenvalue": 1.1448062113010318,
+      "minimum_support_eigenvalue": 0.003038830103677885,
+      "maximum_sld_spectral_identity_error": 4.884981308350689e-15,
+      "total_solution_runtime_seconds": 103.85688071511686
+    },
+    "strict_admission_metrics_passed": true
+  },
+  "raw_artifacts": {
+    "custody": "local_ignored_unsigned",
+    "locator": ".artifacts/problem-discovery/direct-canaries/mixed-sld-qfim/4ce296ff098a3d5620b225df76e36025bd8beffa8bc5cfeacbaf9cfc765e37c0",
+    "files": [
+      {
+        "name": "stdout.txt",
+        "sha256": "1fafb35e0764c8e3324831c07c315f8463e34322389f069a642269e81fb48d58",
+        "size_bytes": 2094
+      },
+      {
+        "name": "stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_bytes": 0
+      },
+      {
+        "name": "static-policy.json",
+        "sha256": "756f235188c54b8493e66984bcad475897c122d09c06078000688c69e889328f",
+        "size_bytes": 846
+      },
+      {
+        "name": "runtime-versions.json",
+        "sha256": "d54e71315320ef53727e9ececff58d258b859145a33c648e5b7a151b4b88dcda",
+        "size_bytes": 97
+      },
+      {
+        "name": "runtime-versions.stderr.txt",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size_bytes": 0
+      }
+    ]
+  }
+}

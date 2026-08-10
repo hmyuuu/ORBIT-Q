@@ -40,6 +40,12 @@ RESERVES = (
         "r118_process_tensor_qec_policy--post_shortlist_reserve--robust_synthesis",
         118,
     ),
+    (
+        "robust-lightcone-cut-planner",
+        "r119_robust_lightcone_cut_planner--post_shortlist_reserve--"
+        "partition_allocation_synthesis",
+        119,
+    ),
 )
 PRIMARY_RESERVE = RESERVES[0]
 ARTIFACT_CASES = tuple(
@@ -192,6 +198,62 @@ def test_registry_rejects_duplicate_ids_and_slugs_after_valid_rehash(
 
     with pytest.raises(reserve_registry.ReserveRegistryError, match=message):
         reserve_registry.load_verified_registry(workspace)
+
+
+def test_registry_rejects_duplicate_problem_id_after_valid_rehash(
+    tmp_path: Path,
+) -> None:
+    workspace = copy_registry_workspace(tmp_path)
+    document = read_registry(workspace)
+    duplicate = copy.deepcopy(document["reserves"][0])
+    duplicate["candidate_id"] = "distinct-post-snapshot-reserve"
+    duplicate["slug"] = "distinct-reserve-slug"
+    document["reserves"].append(duplicate)
+    write_rehashed_registry(workspace, document)
+
+    with pytest.raises(
+        reserve_registry.ReserveRegistryError, match="duplicate reserve problem_id"
+    ):
+        reserve_registry.load_verified_registry(workspace)
+
+
+def test_registry_rejects_blueprint_numeric_id_mismatch(tmp_path: Path) -> None:
+    workspace = copy_registry_workspace(tmp_path)
+    metadata_path = workspace / "blueprints" / PRIMARY_RESERVE[0] / "blueprint.json"
+    metadata = json.loads(metadata_path.read_text())
+    metadata["numeric_id"] += 1
+    metadata_path.write_text(json.dumps(metadata, indent=2) + "\n")
+    document = read_registry(workspace)
+    entry = document["reserves"][0]
+    metadata_hash = reserve_registry.file_sha256(metadata_path)
+    entry["artifacts"]["blueprint_metadata"]["sha256"] = metadata_hash
+    entry["blueprint_bundle_sha256"] = reserve_registry.blueprint_bundle_hash(
+        entry["artifacts"]
+    )
+    write_rehashed_registry(workspace, document)
+
+    with pytest.raises(
+        reserve_registry.ReserveRegistryError,
+        match="identity differs from blueprint metadata",
+    ):
+        reserve_registry.load_verified_registry(workspace)
+
+
+def test_reserve_119_keeps_runtime_separate_and_rejects_seed_override() -> None:
+    source = (
+        DISCOVERY / "blueprints" / "robust-lightcone-cut-planner" / "evaluate_119.py"
+    ).read_text()
+    assert '"timed call within 300 seconds"' not in source
+    assert (
+        "Runtime is reported separately and does not change functional correctness"
+        in source
+    )
+    assert 'verifier_seed = os.environ.get("ORBIT_Q_CANDIDATE_SEED")' in source
+    assert "int(verifier_seed) != args.seed" in source
+    assert (
+        'raise ValueError("--seed cannot override the verifier-authorized seed")'
+        in source
+    )
 
 
 @pytest.mark.parametrize(("slug", "relative"), ARTIFACT_CASES)

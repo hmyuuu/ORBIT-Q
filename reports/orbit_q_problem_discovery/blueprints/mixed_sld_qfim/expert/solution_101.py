@@ -9,6 +9,7 @@ import tensorcircuit as tc
 jax.config.update("jax_enable_x64", True)
 K = tc.set_backend("jax")
 tc.set_dtype("complex128")
+OPTIMIZER = optax.adam(0.04)
 
 
 def density_matrix(probe, theta, weights, noise):
@@ -97,43 +98,50 @@ def robust_objective(probe, theta_points, noise_points, weights, regularizer):
     )
 
 
+def batch_loss(probes, theta, noise, weights, regularizer):
+    return -jnp.sum(
+        jax.vmap(
+            lambda probe: robust_objective(probe, theta, noise, weights, regularizer)
+        )(probes)
+    )
+
+
+@jax.jit
+def step(probes, state, theta, noise, weights, regularizer):
+    _, gradient = jax.value_and_grad(batch_loss)(
+        probes, theta, noise, weights, regularizer
+    )
+    updates, state = OPTIMIZER.update(gradient, state, probes)
+    return optax.apply_updates(probes, updates), state
+
+
+def hard_score(probe, theta, noise, weights, regularizer):
+    values = [
+        jnp.linalg.slogdet(
+            qfim(probe, point, weights, channel) + regularizer * jnp.eye(3)
+        )[1]
+        for point in theta
+        for channel in noise
+    ]
+    return jnp.min(jnp.stack(values))
+
+
+@jax.jit
+def hard_scores(probes, theta, noise, weights, regularizer):
+    return jax.vmap(
+        lambda probe: hard_score(probe, theta, noise, weights, regularizer)
+    )(probes)
+
+
 def optimize(config, starts):
     weights = jnp.asarray(config["generator_weights"])
     theta, noise = design_ensemble(config)
-    regularizer = float(config["score_regularizer"])
-    optimizer = optax.adam(0.04)
-    state = optimizer.init(starts)
-
-    def batch_loss(probes):
-        return -jnp.sum(
-            jax.vmap(
-                lambda probe: robust_objective(
-                    probe, theta, noise, weights, regularizer
-                )
-            )(probes)
-        )
-
-    @jax.jit
-    def step(probes, opt_state):
-        _, gradient = jax.value_and_grad(batch_loss)(probes)
-        updates, opt_state = optimizer.update(gradient, opt_state, probes)
-        return optax.apply_updates(probes, updates), opt_state
-
+    regularizer = jnp.asarray(config["score_regularizer"])
+    state = OPTIMIZER.init(starts)
     probes = starts
     for _ in range(160):
-        probes, state = step(probes, state)
-
-    def hard_score(probe):
-        values = [
-            jnp.linalg.slogdet(
-                qfim(probe, point, weights, channel) + regularizer * jnp.eye(3)
-            )[1]
-            for point in theta
-            for channel in noise
-        ]
-        return jnp.min(jnp.stack(values))
-
-    return probes, jax.jit(jax.vmap(hard_score))(probes)
+        probes, state = step(probes, state, theta, noise, weights, regularizer)
+    return probes, hard_scores(probes, theta, noise, weights, regularizer)
 
 
 def run_solution(config):

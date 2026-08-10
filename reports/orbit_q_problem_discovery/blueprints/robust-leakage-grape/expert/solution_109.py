@@ -23,10 +23,13 @@ Y_DRIVE = -1j * (LOWERING - K.conj(K.transpose(LOWERING)))
 
 def _members(config):
     keys = ("detuning", "amplitude_fraction", "anharmonic_shift")
-    limits = [config["uncertainty_bounds"][key] for key in keys]
-    values = [[0.0, low, high] for low, high in limits]
-    points = [dict(zip(keys, point)) for point in product(*values)]
-    return np.asarray([[point[key] for key in keys] for point in points], dtype=float)
+    limits = np.asarray([config["uncertainty_bounds"][key] for key in keys])
+    grids = [
+        np.asarray(list(product(np.linspace(-1.0, 1.0, count), repeat=3)))
+        for count in (3, 4)
+    ]
+    normalized = np.unique(np.vstack(grids), axis=0)
+    return limits[:, 0] + (normalized + 1.0) * (limits[:, 1] - limits[:, 0]) / 2.0
 
 
 def _unitary(controls, member, config):
@@ -108,11 +111,11 @@ def run_solution(config):
         smooth = K.mean(slew_square)
         slew_excess = K.relu(slew_square - config["max_slew_per_slice"] ** 2)
         return 100.0 * (
-            0.3 * K.mean(errors)
-            + 0.7 * K.sum(risk_mass * errors)
+            0.4 * K.mean(errors)
+            + 0.6 * K.sum(risk_mass * errors)
             + 1.8 * K.mean(leakage)
             + 3e-4 * smooth
-            + 0.12 * K.mean(slew_excess**2)
+            + 2.0 * K.mean(slew_excess**2)
         )
 
     bounds = []
@@ -120,7 +123,7 @@ def run_solution(config):
         limit = 0.0 if index in (0, n - 1) else max_drive / np.sqrt(2)
         bounds.extend([(-limit, limit), (-limit, limit)])
     flat = initial.reshape(-1)
-    for risk, iterations in ((25.0, 90), (180.0, 150)):
+    for risk, iterations in ((25.0, 90), (3000.0, 220)):
         value_gradient = K.jit(K.value_and_grad(lambda value: objective(value, risk)))
 
         def evaluate(value):
@@ -136,8 +139,10 @@ def run_solution(config):
             options={"maxiter": iterations, "ftol": 2e-12, "gtol": 2e-8, "maxls": 30},
         ).x
     controls = flat.reshape(n, 2)
-    amplitudes = np.linalg.norm(controls, axis=1)
-    controls *= np.minimum(1.0, max_drive / np.maximum(amplitudes, 1e-15))[:, None]
+    amplitude = np.max(np.linalg.norm(controls, axis=1))
+    slew = np.max(np.linalg.norm(np.diff(controls, axis=0), axis=1))
+    scale = min(1.0, max_drive / max(amplitude, 1e-15), 0.999 * config["max_slew_per_slice"] / max(slew, 1e-15))
+    controls *= scale
     public = np.asarray(
         K.numpy(
             _metrics(

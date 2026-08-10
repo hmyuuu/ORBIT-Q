@@ -363,6 +363,7 @@ def main() -> None:
         "runtime_sec": -1.0,
         "static_policy_score": 0.0,
         "llm_audit_score": 0.0,
+        "llm_audit_skipped_score": 0.0,
         "line_count_score": 0.0,
         "framework_score": 0.0,
         "no_forbidden_framework_score": 0.0,
@@ -434,6 +435,9 @@ def main() -> None:
             "runtime_sec": float(functional["runtime_sec"]),
             "static_policy_score": float(static["static_policy_score"]),
             "llm_audit_score": float(audit.get("llm_audit_score", 0.0)),
+            "llm_audit_skipped_score": (
+                1.0 if audit.get("llm_audit_skipped") is True else 0.0
+            ),
             "line_count_score": float(static["line_count_score"]),
             "framework_score": float(static["framework_score"]),
             "no_forbidden_framework_score": float(

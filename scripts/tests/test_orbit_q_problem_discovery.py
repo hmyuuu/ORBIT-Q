@@ -270,9 +270,12 @@ def _prototype_bundle(workspace: Path, candidate_id: str) -> Path:
         )
         verifier_env = {
             "PYTHONDONTWRITEBYTECODE": "1",
+            "CODEX_AUDIT_ENABLED": "0",
             "REQUIRED_QUANTUM_FRAMEWORK": "tensorcircuit",
             "ORBIT_Q_NON_HARDNESS_RUN": "expert_prequalification",
             "ORBIT_Q_EXPERT_PREQUALIFICATION_MODE": "expert_only_oracle",
+            "ORBIT_Q_AUDIT_POLICY": "disabled_private_prequalification",
+            "ORBIT_Q_PROVIDER_CALL_BUDGET": "0",
             "ORBIT_Q_CANDIDATE_ID": candidate_id,
             "ORBIT_Q_CANDIDATE_HASH": candidate_hash,
             "ORBIT_Q_CANDIDATE_SEED": str(seed),
@@ -310,7 +313,7 @@ def _prototype_bundle(workspace: Path, candidate_id: str) -> Path:
             },
             "verifier": {
                 "import_path": "adapters.codex_para_verifier:CodexParaVerifier",
-                "kwargs": {"audit_model": "gpt-5", "expert_only": True},
+                "kwargs": {"expert_only": True},
                 "env": verifier_env,
                 "disable": False,
             },
@@ -400,6 +403,7 @@ def _prototype_bundle(workspace: Path, candidate_id: str) -> Path:
                     "functional_score": 1.0,
                     "static_policy_score": 1.0,
                     "llm_audit_score": 1.0,
+                    "llm_audit_skipped_score": 1.0,
                     "runtime_sec": 30.0 + seed / 100,
                     **{
                         f"expert_admission_sha256_word_{index}": int(
@@ -415,6 +419,19 @@ def _prototype_bundle(workspace: Path, candidate_id: str) -> Path:
             evidence_root / f"expert-raw-job-{seed}.json",
             json.dumps(raw_result, indent=2) + "\n",
         )
+        raw_evidence["audit_details"] = _write_artifact(
+            evidence_root / f"expert-audit-details-{seed}.json",
+            json.dumps(
+                {
+                    "audit": {
+                        "llm_audit_score": 1.0,
+                        "llm_audit_skipped": True,
+                    }
+                },
+                indent=2,
+            )
+            + "\n",
+        )
         ordered_hashes = {
             name: raw_evidence[name]["sha256"]
             for name in (
@@ -424,6 +441,7 @@ def _prototype_bundle(workspace: Path, candidate_id: str) -> Path:
                 "harbor_job_lock",
                 "functional_output",
                 "admission_record",
+                "audit_details",
             )
         }
         run_evidence_sha256 = hashlib.sha256(
@@ -1222,6 +1240,10 @@ def test_expert_prequalification_is_derived_from_raw_run_evidence(
         "expert-binding",
         "evaluator-binding",
         "image-binding",
+        "audit-skip-reward",
+        "audit-skip-details",
+        "audit-provider-kwargs",
+        "verifier-model-info",
         "declared-margin",
     )
     for mutation_name in mutation_names:
@@ -1254,6 +1276,26 @@ def test_expert_prequalification_is_derived_from_raw_run_evidence(
             path = Path(run["raw_evidence"]["raw_job"]["path"])
             payload = json.loads(path.read_text())
             payload["finished_at"] = None
+            _rewrite_expert_run_artifact(run, "raw_job", payload)
+        elif mutation_name == "audit-skip-reward":
+            path = Path(run["raw_evidence"]["raw_job"]["path"])
+            payload = json.loads(path.read_text())
+            payload["verifier_result"]["rewards"]["llm_audit_skipped_score"] = 0.0
+            _rewrite_expert_run_artifact(run, "raw_job", payload)
+        elif mutation_name == "audit-skip-details":
+            path = Path(run["raw_evidence"]["audit_details"]["path"])
+            payload = json.loads(path.read_text())
+            payload["audit"]["llm_audit_skipped"] = False
+            _rewrite_expert_run_artifact(run, "audit_details", payload)
+        elif mutation_name == "audit-provider-kwargs":
+            path = Path(run["raw_evidence"]["harbor_config"]["path"])
+            payload = json.loads(path.read_text())
+            payload["verifier"]["kwargs"]["audit_model"] = "gpt-5"
+            _rewrite_expert_run_artifact(run, "harbor_config", payload)
+        elif mutation_name == "verifier-model-info":
+            path = Path(run["raw_evidence"]["raw_job"]["path"])
+            payload = json.loads(path.read_text())
+            payload["verifier_info"] = {"model_info": {"name": "gpt-5"}}
             _rewrite_expert_run_artifact(run, "raw_job", payload)
         elif mutation_name == "job-lock":
             path = Path(run["raw_evidence"]["harbor_job_lock"]["path"])

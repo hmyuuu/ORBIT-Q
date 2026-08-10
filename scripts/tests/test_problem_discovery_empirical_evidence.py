@@ -280,7 +280,15 @@ def test_109_pilot_is_a_substantive_failure_signal_not_a_hardness_claim() -> Non
             "max_edge_amplitude",
         )
     )
-    assert "evaluate_109.py" in pilot["functional_evidence"]["evaluation_check_source"]
+    assert pilot["functional_evidence"]["evaluation_check_source"] == (
+        ".artifacts/problem-discovery/candidate-tasks/"
+        "candidate-robust-leakage-grape.stale-before-admission-protocol-20260810/"
+        "tests/evaluate_109.py; selected task content is bound by trial.task_checksum"
+    )
+    assert (
+        "reports/orbit_q_problem_discovery/blueprints/robust-leakage-grape"
+        not in pilot["functional_evidence"]["evaluation_check_source"]
+    )
     assert pilot["functional_evidence"]["verifier_functional_return_code"] == 1
     assert pilot["llm_source_audit"]["faithfully_implements_problem"] is True
     assert pilot["llm_source_audit"]["obvious_implementation_error"] is False

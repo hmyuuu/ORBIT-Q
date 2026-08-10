@@ -198,6 +198,7 @@ def load_verified_registry(workspace: Path) -> dict[str, Any]:
         raise ReserveRegistryError("reserve registry requires at least one entry")
     seen_ids: set[str] = set()
     seen_slugs: set[str] = set()
+    seen_problem_ids: set[int] = set()
     frozen_ids = _frozen_candidate_ids(workspace)
     blueprint_root = (workspace / "blueprints").resolve()
     if (workspace / "blueprints").is_symlink() or not blueprint_root.is_dir():
@@ -242,6 +243,8 @@ def load_verified_registry(workspace: Path) -> dict[str, Any]:
             or problem_id <= 0
         ):
             raise ReserveRegistryError(f"{label} problem_id must be a positive integer")
+        if problem_id in seen_problem_ids:
+            raise ReserveRegistryError(f"duplicate reserve problem_id: {problem_id}")
         if entry.get("lifecycle_status") != "design_only":
             raise ReserveRegistryError(
                 f"{label} must remain design_only; this registry cannot authorize runs"
@@ -332,12 +335,14 @@ def load_verified_registry(workspace: Path) -> dict[str, Any]:
             metadata.get("candidate_id") != candidate_id
             or metadata.get("slug") != slug
             or metadata.get("problem_id") != problem_id
+            or metadata.get("numeric_id") != problem_id
         ):
             raise ReserveRegistryError(
                 f"{label} identity differs from blueprint metadata"
             )
         seen_ids.add(candidate_id)
         seen_slugs.add(slug)
+        seen_problem_ids.add(problem_id)
     return document
 
 

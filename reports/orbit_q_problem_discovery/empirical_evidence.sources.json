@@ -194,7 +194,7 @@
       "slug": "robust-leakage-grape",
       "task_checksum": "879607220dc8eefdb9b7302a554bdbe30e65e0f2b71050deb57466e5e7f05c1d",
       "task_name": "candidate-robust-leakage-grape",
-      "source_snapshot": ".artifacts/problem-discovery/candidate-tasks/candidate-robust-leakage-grape",
+      "source_snapshot": ".artifacts/problem-discovery/candidate-tasks/candidate-robust-leakage-grape.stale-before-admission-protocol-20260810",
       "task_source_set_sha256": "eff81bcf0555bad84e9768cfa24b99e98b47daac2e73c20c38e5576039241ec7"
     },
     {

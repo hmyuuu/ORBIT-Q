@@ -34,19 +34,25 @@ class CodexParaVerifier(Verifier):
         super().__init__(*args, **kwargs)
         self.audit_model = audit_model
         self.expert_only = expert_only
-        self._codex = CodexPara(
-            logs_dir=self.trial_paths.verifier_dir,
-            model_name=audit_model,
-            profile=profile,
-            profile_config_path=profile_config_path,
-            force_auth_json=force_auth_json,
-            install_retries=install_retries,
-            install_retry_delay_sec=install_retry_delay_sec,
-            model_catalog_path=model_catalog_path,
-            logger=self.logger,
+        self._codex = (
+            None
+            if expert_only
+            else CodexPara(
+                logs_dir=self.trial_paths.verifier_dir,
+                model_name=audit_model,
+                profile=profile,
+                profile_config_path=profile_config_path,
+                force_auth_json=force_auth_json,
+                install_retries=install_retries,
+                install_retry_delay_sec=install_retry_delay_sec,
+                model_catalog_path=model_catalog_path,
+                logger=self.logger,
+            )
         )
 
     async def _setup_codex_runtime(self) -> None:
+        if self._codex is None:
+            raise RuntimeError("Codex runtime is disabled for expert-only verification")
         await self._codex.install(self.environment)
 
         remote_codex_home = self._codex._REMOTE_CODEX_HOME.as_posix()
@@ -113,17 +119,23 @@ class CodexParaVerifier(Verifier):
         )
         if self._codex.profile:
             self.override_env["CODEX_PROFILE"] = self._codex.profile
+
+    @override
+    async def verify(self) -> VerifierResult:
         if self.expert_only:
             self.override_env.update(
                 {
+                    "CODEX_AUDIT_ENABLED": "0",
+                    "ORBIT_Q_AUDIT_POLICY": "disabled_private_prequalification",
+                    "ORBIT_Q_PROVIDER_CALL_BUDGET": "0",
                     "ORBIT_Q_EXPERT_PREQUALIFICATION_MODE": "expert_only_oracle",
                     "ORBIT_Q_NON_HARDNESS_RUN": "expert_prequalification",
                 }
             )
+            return await super().verify()
 
-    @override
-    async def verify(self) -> VerifierResult:
         await self._setup_codex_runtime()
+        assert self._codex is not None
         try:
             return await super().verify()
         finally:

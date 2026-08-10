@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "record_payload_sha256": "18c86fda728039597aca8073fa3379ce0f704eba2dc78a64baf8fa7138b48998",
+  "candidate": {
+    "problem_id": 109,
+    "slug": "robust-leakage-grape",
+    "candidate_id": "f16_robust_leakage_grape--benchmark--robust_ensemble",
+    "discovery_candidate_hash": "f99d78b299e6c2b2ae6b0df423045f443c7ed024c75f243b88b94c32ba405448"
+  },
+  "evidence_class": "durable_direct_public_trusted_expert_validation_not_harbor_not_model",
+  "claim_boundary": "A frozen public v6 protocol ran the exact trusted expert on four tuning-role canaries and eight untouched validation canaries. The predeclared aggregate is runner-produced local-custody evidence, and an independent read-only audit separately reconstructed all preserved outputs. This sanitized record is branch-portable, but the complete evidence bundle remains local, ignored, unsigned custody. It is not private expert prequalification, Harbor evidence, hostile-model isolation, human approval, or model-hardness evidence.",
+  "source_bindings": {
+    "blueprint_sha256": "a8b1402877d74b80e05c7aa1ef210f1b36d4dca0a0d0a5f398e0c5fb291ced0e",
+    "evaluator_sha256": "381666d85b5c817e14bdeb7c5ace37f25850130f90e98e66547055fb63397f01",
+    "expert_sha256": "8ff4fe8db5924b9432ada964181ca20969e8751dbdc52db5475db9126efac23f",
+    "blueprint_instruction_sha256": "8e60e8b969f1f1fc2ad0507e5672ac32b74ef931d26d7330e73a765e7b5274d0"
+  },
+  "protocol_bindings": {
+    "version": "v6",
+    "immutable_pre_run_plan_sha256": "1a6cf4930bfcedf8d1bbe23e9922c9e9d01440580308c29fa80ecab835e62254",
+    "immutable_pre_run_plan_size_bytes": 7756,
+    "pre_run_plan_sidecar_sha256": "d30dacc5d9207edde9b4f8214e59e359d3e206d5560d9da9cc949a30f7d1f5c0",
+    "runner_sha256": "c57797b57070d5f475367da7b02acfc7e4c19a894e4fa2f2afdbc60949e94b67",
+    "summary_builder_sha256": "675ae24e6c03a98a2b5c05b3c291ac47be6f15d1e3fa9ebb14621b8576cb4f02",
+    "local_sanitized_summary_sha256": "f8278b043bb1dfe29afa7bfdb8ae8b6fcf5691ccb0072f4562cf62e66ea9aa7b",
+    "local_sanitized_summary_size_bytes": 15024,
+    "local_sanitized_summary_sidecar_sha256": "e626c5ae74ce02e3e86587f086a542e50f05d5ecf7114221dc5615bc4aca31a0",
+    "plan_was_outcome_free_and_read_only_before_first_run": true,
+    "expert_frozen_for_all_tuning_and_validation_runs": true,
+    "validation_opened_only_after_all_tuning_runs_passed": true,
+    "strict_sequential_execution": true,
+    "exclusive_attempt_and_output_creation": true,
+    "reruns_allowed": false,
+    "substitutions_allowed": false,
+    "stop_after_first_failure": true
+  },
+  "execution": {
+    "date": "2026-08-10",
+    "container_image": "challenge-benchmark-quantum-tensorcircuit:py311",
+    "container_image_digest": "sha256:8e627b582a5cdccca2ef40fb07f81671f5f5345ae1a07f40cef65537aa218bc7",
+    "cpu_limit": 8,
+    "memory_limit_mib": 8192,
+    "memory_swap_limit_mib": 8192,
+    "network": "none",
+    "candidate_count_per_container": 1,
+    "attempt_count": 12,
+    "successful_return_count": 12,
+    "failed_return_count": 0,
+    "harbor_executed": false,
+    "solver_agent_invoked": false,
+    "model_invoked": false,
+    "llm_audit_invoked": false,
+    "private_cases_used": false,
+    "canonical_tasks_executed": false
+  },
+  "result": {
+    "functional_overall": "PASS",
+    "tuning_role": {
+      "attempt_count": 4,
+      "pass_count": 4,
+      "failure_count": 0,
+      "runtime_seconds_range": [41.151652, 43.479434],
+      "metric_maxima": {
+        "heldout_p95_infidelity": 0.0006487046194482149,
+        "heldout_worst_infidelity": 0.0008277529300485531,
+        "heldout_worst_leakage": 0.0000614026630232356,
+        "max_drive_amplitude": 2.395039488475754,
+        "max_slew_per_slice": 1.120482814903348,
+        "max_edge_amplitude": 0.0
+      }
+    },
+    "untouched_validation": {
+      "attempt_count": 8,
+      "pass_count": 8,
+      "failure_count": 0,
+      "runtime_seconds_range": [41.696585, 47.453723],
+      "metric_maxima": {
+        "heldout_p95_infidelity": 0.0006779807950682837,
+        "heldout_worst_infidelity": 0.0008354746181724604,
+        "heldout_worst_leakage": 0.00007580683367447438,
+        "max_drive_amplitude": 2.4102313353427793,
+        "max_slew_per_slice": 1.1193594678209193,
+        "max_edge_amplitude": 0.0
+      }
+    },
+    "thresholds": {
+      "maximum_p95_infidelity": 0.0007,
+      "maximum_worst_infidelity": 0.00125,
+      "maximum_worst_leakage": 0.00015,
+      "maximum_drive_amplitude": 3.15,
+      "maximum_slew_per_slice": 1.15,
+      "maximum_edge_amplitude": 0.035
+    },
+    "rerun_count": 0,
+    "substitution_count": 0,
+    "expert_bytes_unchanged": true,
+    "all_acceptance_gates_passed": true
+  },
+  "raw_artifacts": {
+    "custody": "local_ignored_unsigned",
+    "locator": ".artifacts/problem-discovery/development-canaries/robust-leakage-grape-v6",
+    "attempt_directory_count": 12,
+    "artifact_file_count": 48,
+    "artifact_set_sha256": "0b02e29c952224540525cac69239ef11d1f8eb2cd8e1cf4122c45973caf3eed9",
+    "stdout_file_count": 12,
+    "stderr_file_count": 12,
+    "nonempty_stderr_file_count": 0,
+    "raw_stream_file_count": 24,
+    "raw_log_set_sha256": "e471d8e5bb0b838cf604980246fa15aab1480ddcad4c63de3a4c178ea2c7949b",
+    "raw_content_in_tracked_record": false,
+    "public_case_identifiers_in_tracked_record": false,
+    "execution_commands_in_tracked_record": false
+  },
+  "independent_read_only_audit": {
+    "status": "passed",
+    "all_twelve_raw_outputs_reconstructed": true,
+    "plan_and_sidecar_hashes_matched": true,
+    "frozen_source_hashes_matched": true,
+    "resource_and_network_bindings_matched": true,
+    "strict_sequence_and_no_rerun_history_matched": true,
+    "return_and_verdict_rows_matched": true,
+    "public_identity_rows_matched_predeclared_cases": true,
+    "raw_admission_rows_and_threshold_comparisons_recomputed": true,
+    "physical_metric_provenance": "Physical metrics are evaluator-emitted values cross-bound across the raw summary and admission rows; the read-only audit did not independently recompute them from pulse controls.",
+    "artifact_and_summary_hashes_matched": true,
+    "audit_boundary": "The independent audit was read-only reconstruction of local public expert evidence. It was not a model-based source-policy audit, private prequalification, Harbor verification, or hostile-model isolation."
+  },
+  "remaining_hold": {
+    "status": "blocked_before_any_solver_trial",
+    "independent_hidden_entropy_required": true,
+    "process_isolation_required": true,
+    "reason": "The current hidden interior ensemble is deterministically derived from solver-visible public configuration state, and the evaluator executes untrusted solution code in the oracle process with mutable transitive globals.",
+    "historical_private_boundary": "The older v1 private screen tested a different expert, passed 22 of 23 attempted cases, stopped at its first failure, and left two scheduled cases unrun; none may be rerun or substituted."
+  }
+}

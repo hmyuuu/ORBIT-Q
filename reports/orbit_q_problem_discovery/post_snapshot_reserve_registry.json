@@ -120,7 +120,45 @@
         "execution_authorized": false
       },
       "entry_hash": "f9bb22deffafecde05d9a3dee4a056ee3b327047d24aaa60bef977fef28eba50"
+    },
+    {
+      "candidate_id": "r119_robust_lightcone_cut_planner--post_shortlist_reserve--partition_allocation_synthesis",
+      "slug": "robust-lightcone-cut-planner",
+      "problem_id": 119,
+      "lifecycle_status": "design_only",
+      "blueprint_path": "blueprints/robust-lightcone-cut-planner",
+      "artifacts": {
+        "blueprint_metadata": {
+          "path": "blueprint.json",
+          "sha256": "44c476eb566f88f4df28f58749ee002c36a37994b2d00fd15a96599a9c7ec9b0"
+        },
+        "instruction": {
+          "path": "instruction.md",
+          "sha256": "597e69d5b73d0a9da9ff30fd5a2910dede657e5045e6a76618e2daa0347e7ccb"
+        },
+        "evaluator": {
+          "path": "evaluate_119.py",
+          "sha256": "b90ee879f3605cb20cfb2fbf1a8b3f7d5344b9a5ebebb37852ed9290b8602a08"
+        },
+        "expert_solution": {
+          "path": "expert/solution_119.py",
+          "sha256": "b18024a97a2fc23c02166f52229e8002f6d14ae53cab491e56b09567b67f3b0d"
+        }
+      },
+      "blueprint_bundle_sha256": "00b30eb7e076156819f81917a4563d33bdc4da487e56c073794b0e1484cbdb11",
+      "audit_status": {
+        "classification": "design_only",
+        "scientific_design_review": "completed_with_blockers",
+        "local_oracle_status": "validated_nonbinding",
+        "tensorcircuit_expert_status": "not_executed",
+        "pinned_image_status": "not_executed",
+        "harbor_status": "not_executed",
+        "solver_model_status": "not_executed",
+        "hardness_status": "no_claim",
+        "execution_authorized": false
+      },
+      "entry_hash": "8be84d9f43834208cae5d4c8fbb1903defd503991668416f45437e1c51a867aa"
     }
   ],
-  "registry_hash": "d2b84f6f81c29113c67fe16d7ac92966d95b060a1a2c9087e6c788d71b9b5b54"
+  "registry_hash": "b022ad6ac4de3b8469d0ffb3e650277a470fd1b42c64b25494839c56cd534599"
 }
